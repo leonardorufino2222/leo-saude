@@ -188,8 +188,8 @@ function imc(p){return (p/(AL*AL)).toFixed(1)}
 function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200)}
 function lp(){const l=S.logs.length?S.logs[S.logs.length-1]:null;return l?l.peso:PI}
 function wk(){return Math.min(12,Math.max(1,Math.ceil((new Date()-new Date(DI))/(7*864e5))))}
-function dayT(){const d=new Date().getDay();return{0:'rest',1:'treino',2:'natacao',3:'musculacao',4:'mobilidade',5:'treino',6:'refeed'}[d]}
-function dayKcal(){const t=dayT();if(t==='rest')return{k:1800,l:'Descanso',c:'var(--t3)'};if(t==='refeed')return{k:2260,l:'Refeed (Sábado)',c:'var(--aw)'};if(t==='mobilidade')return{k:1800,l:'Descanso / Mobilidade',c:'var(--t3)'};return{k:1966,l:'Treino / Natação',c:'var(--a)'}}
+function dayT(){const d=new Date().getDay();return{0:'rest',1:'treino',2:'natacao',3:'rest',4:'treino',5:'treino',6:'bicicleta'}[d]}
+function dayKcal(){const t=dayT();if(t==='rest')return{k:1750,l:'Descanso',c:'var(--t3)'};if(t==='bicicleta')return{k:1900,l:'Bicicleta (Sábado)',c:'var(--ap)'};return{k:1950,l:'Treino / Natação',c:'var(--a)'}}
 
 // ======= NAV =======
 let CP='home';
@@ -383,10 +383,13 @@ const TR={
 };
 
 const SEMANA=[
-  {d:'Seg',t:'A',l:'Musculação A',c:'bb'},{d:'Ter',t:'NAT',l:'Natação',c:'bb'},
-  {d:'Qua',t:'BCI',l:'Bicicleta*',c:'bpp'},{d:'Qui',t:'MOB',l:'Mobilidade',c:'bg'},
-  {d:'Sex',t:'C',l:'Musculação C',c:'bw'},{d:'Sáb',t:'NAT',l:'Natação + Bici',c:'bb'},
-  {d:'Dom',t:'REST',l:'Descanso',c:''},
+  {d:'Seg',t:'A',l:'Musculação A — Push',c:'bb'},
+  {d:'Ter',t:'NAT',l:'Natação',c:'bb'},
+  {d:'Qua',t:'REST',l:'Descanso (ergom. 20min opcional)',c:''},
+  {d:'Qui',t:'B',l:'Musculação B — Pull+Core',c:'bg'},
+  {d:'Sex',t:'C',l:'Musculação C — Legs',c:'bw'},
+  {d:'Sáb',t:'BCI',l:'Bicicleta (rua ou ergom.)',c:'bpp'},
+  {d:'Dom',t:'REST',l:'Descanso total',c:''},
 ];
 
 function rTreino(){
@@ -407,7 +410,7 @@ function rTreino(){
     <table class="tbl"><thead><tr><th>Dia</th><th>Atividade</th><th>Fase</th></tr></thead><tbody>
     ${SEMANA.map(s=>`<tr><td style="font-family:'DM Mono',monospace;font-size:11px;color:var(--a)">${s.d}</td><td>${s.t==='REST'?`<span style="color:var(--t3)">Descanso 🛌</span>`:`<span class="badge ${s.c}">${s.l}</span>`}</td><td style="font-size:10px;color:var(--t3)">${s.t==='REST'?'—':['Téc.','Prog.','Int.'][S.ph]}</td></tr>`).join('')}
     </tbody></table>
-    <div style="font-size:10px;color:var(--t3);margin-top:8px">*QUA: ergométrica 20 min em casa, opcional. Em crise de Gota: substituir rua pela ergom.</div>
+    <div style="font-size:10px;color:var(--t3);margin-top:8px">QUA: ergométrica 20 min em casa, opcional. SAB: bicicleta rua ou ergométrica. Em crise de Gota: substituir rua pela ergom. DOM: descanso total — família.</div>
   </div>
   <div class="card">
     <div class="ct">Fase do programa</div>
@@ -426,7 +429,7 @@ function togEx(i,t){const k=td()+'_ex';const d=new Set(JSON.parse(localStorage.g
 
 // ======= NUTRIÇÃO =======
 const ND={
-  treino:{l:'Treino / Natação',k:1966,def:500,p:170,c:197,g:55,meals:[
+  treino:{l:'Treino / Natação',k:1950,def:500,p:170,c:197,g:55,meals:[
     {t:'07:00',n:'Café da manhã',d:'Omelete 3 ovos + espinafre + 2 fatias pão integral + laranja',k:380,p:25,c:42,g:12},
     {t:'10:00',n:'Lanche 1',d:'1 iogurte grego 0% + 20g nozes',k:200,p:18,c:10,g:9},
     {t:'13:00',n:'Almoço',d:'150g frango grelhado + 4 col arroz integral + salada à vontade + 1 col azeite',k:550,p:42,c:58,g:13},
@@ -434,7 +437,7 @@ const ND={
     {t:'19:30',n:'Jantar/Pós-treino',d:'150g salmão assado + 150g batata doce + brócolis + abobrinha refogados',k:480,p:42,c:45,g:13},
     {t:'21:30',n:'Ceia',d:'150g iogurte grego + cerejas ou morangos (50g)',k:135,p:15,c:12,g:2},
   ]},
-  rest:{l:'Descanso',k:1800,def:650,p:155,c:160,g:60,meals:[
+  rest:{l:'Descanso',k:1750,def:700,p:155,c:140,g:60,meals:[
     {t:'07:30',n:'Café da manhã',d:'2 ovos mexidos + 1/3 abacate + 2 fatias pão integral + chá verde',k:390,p:18,c:28,g:18},
     {t:'10:00',n:'Lanche 1',d:'150g queijo cottage + pepino + tomate + 80g mirtilos',k:190,p:20,c:16,g:4},
     {t:'13:00',n:'Almoço',d:'130g frango/peixe + 3 col arroz integral + salada grande + azeite',k:480,p:36,c:46,g:12},
