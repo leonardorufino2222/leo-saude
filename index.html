@@ -3,739 +3,698 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
-<meta name="theme-color" content="#0a0a0f"/>
+<meta name="theme-color" content="#0b0b10"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <meta name="apple-mobile-web-app-title" content="Leo Saúde"/>
 <link rel="manifest" href="manifest.json"/>
 <title>Leo Saúde</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700&display=swap" rel="stylesheet"/>
 <style>
 :root{
-  --bg:#0a0a0f;--bg2:#13131a;--bg3:#1c1c26;--bg4:#252530;
-  --accent:#00e5a0;--accent2:#00b8ff;--accent3:#ff6b6b;--warn:#ffb347;--purple:#b085f5;
-  --text:#f0f0f8;--text2:#9090a8;--text3:#5a5a72;--border:#2a2a3a;
-  --radius:14px;
-  --safe-top:env(safe-area-inset-top,0px);--safe-bot:env(safe-area-inset-bottom,0px);
+  --bg:#0b0b10;--bg2:#14141c;--bg3:#1e1e2a;--bg4:#272735;
+  --a:#00e5a0;--a2:#00b8ff;--a3:#ff6b6b;--aw:#ffb347;--ap:#b085f5;
+  --t:#f0f0f8;--t2:#8888a8;--t3:#55556a;--br:#28283a;
+  --r:14px;--st:env(safe-area-inset-top,0px);--sb:env(safe-area-inset-bottom,0px);
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;overflow:hidden}
+html,body{height:100%;background:var(--bg);color:var(--t);font-family:'Syne',sans-serif;overflow:hidden}
 #app{display:flex;flex-direction:column;height:100dvh;max-width:430px;margin:0 auto;position:relative}
-.topbar{padding:calc(var(--safe-top) + 14px) 20px 14px;background:var(--bg);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;position:relative;z-index:10}
-.topbar-title{font-size:15px;font-weight:700;letter-spacing:.02em}
-.topbar-date{font-family:'DM Mono',monospace;font-size:11px;color:var(--text3)}
-.topbar-logo{width:32px;height:32px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#000;font-family:'DM Mono',monospace;flex-shrink:0}
-.content{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding-bottom:calc(var(--safe-bot) + 90px)}
-.nav{position:absolute;bottom:0;left:0;right:0;background:var(--bg2);border-top:1px solid var(--border);display:flex;padding-bottom:var(--safe-bot);flex-shrink:0;z-index:10}
-.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 4px;border:none;background:transparent;cursor:pointer;color:var(--text3);transition:color .15s}
-.nav-btn.active{color:var(--accent)}
-.nav-btn svg{width:22px;height:22px;stroke-width:1.8}
-.nav-btn span{font-size:10px;font-family:'DM Mono',monospace}
-.page{display:none;padding:16px}
-.page.active{display:block}
-.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:12px}
-.card-title{font-size:12px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px;display:flex;align-items:center;gap:8px}
-.metrics{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
-.met{background:var(--bg3);border-radius:12px;padding:14px 12px;border:1px solid var(--border)}
-.met .val{font-family:'DM Mono',monospace;font-size:24px;font-weight:500;line-height:1}
-.met .unit{font-size:11px;color:var(--text3);margin-left:2px}
-.met .lbl{font-size:11px;color:var(--text2);margin-top:5px}
-.met .sub{font-size:10px;color:var(--text3);margin-top:2px}
-.met.accent .val{color:var(--accent)}
-.met.warn .val{color:var(--warn)}
-.met.blue .val{color:var(--accent2)}
-.met.red .val{color:var(--accent3)}
-.met.purple .val{color:var(--purple)}
-.progbar{height:6px;background:var(--bg4);border-radius:3px;overflow:hidden;margin-top:6px}
-.progfill{height:100%;border-radius:3px;transition:width .5s cubic-bezier(.4,0,.2,1)}
-.big-input-wrap{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:12px;text-align:center}
-.big-input{background:transparent;border:none;outline:none;font-family:'DM Mono',monospace;font-size:52px;font-weight:500;color:var(--accent);width:100%;text-align:center;-moz-appearance:textfield}
-.big-input::-webkit-outer-spin-button,.big-input::-webkit-inner-spin-button{-webkit-appearance:none}
-.big-input::placeholder{color:var(--text3)}
-.big-input-label{font-size:12px;color:var(--text3);margin-bottom:8px;font-family:'DM Mono',monospace}
-.big-input-unit{font-size:16px;color:var(--text3);margin-top:4px}
-.btn{width:100%;padding:16px;border-radius:12px;border:none;font-family:'Syne',sans-serif;font-size:15px;font-weight:600;cursor:pointer;transition:transform .1s,opacity .1s}
-.btn:active{transform:scale(0.97);opacity:.85}
-.btn-primary{background:var(--accent);color:#000}
-.btn-secondary{background:var(--bg3);color:var(--text);border:1px solid var(--border);margin-top:8px}
-.badge{display:inline-block;font-size:10px;padding:2px 8px;border-radius:20px;font-family:'DM Mono',monospace;font-weight:500}
-.badge-green{background:rgba(0,229,160,.15);color:var(--accent)}
-.badge-blue{background:rgba(0,184,255,.15);color:var(--accent2)}
-.badge-red{background:rgba(255,107,107,.15);color:var(--accent3)}
-.badge-warn{background:rgba(255,179,71,.15);color:var(--warn)}
-.badge-purple{background:rgba(176,133,245,.15);color:var(--purple)}
-.table{width:100%;border-collapse:collapse;font-size:13px}
-.table th{text-align:left;padding:7px 8px;color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--border)}
-.table td{padding:8px 8px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:top}
-.table tr:last-child td{border-bottom:none}
-.sec-hdr{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);margin:16px 0 8px;padding:0 2px}
-.alert-item{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--border)}
-.alert-item:last-child{border-bottom:none}
-.alert-time{font-family:'DM Mono',monospace;font-size:12px;color:var(--accent);min-width:52px;font-weight:500;padding-top:2px}
-.alert-body .title{font-size:13px;color:var(--text);font-weight:600}
-.alert-body .why{font-size:11px;color:var(--text3);margin-top:2px}
-.chk-item{display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);cursor:pointer}
-.chk-item:last-child{border-bottom:none}
-.chk-box{width:22px;height:22px;border-radius:6px;border:1.5px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .15s}
-.chk-box.done{background:var(--accent);border-color:var(--accent)}
-.chk-label{font-size:13px;color:var(--text);line-height:1.4}
-.chk-label.done{color:var(--text3);text-decoration:line-through}
-.chk-sub{font-family:'DM Mono',monospace;font-size:11px;color:var(--accent2);margin-top:2px}
-.phase-tabs{display:flex;gap:6px;margin-bottom:12px}
-.ptab{flex:1;padding:8px 4px;border-radius:10px;border:1px solid var(--border);background:var(--bg3);text-align:center;cursor:pointer;font-size:11px;font-weight:600;color:var(--text3);transition:all .15s;font-family:'DM Mono',monospace}
-.ptab.active{background:var(--accent);color:#000;border-color:var(--accent)}
-.train-selector{display:flex;gap:8px;overflow-x:auto;padding-bottom:8px;margin-bottom:12px;scrollbar-width:none}
-.train-selector::-webkit-scrollbar{display:none}
-.train-card{flex-shrink:0;padding:10px 16px;border-radius:10px;border:1px solid var(--border);background:var(--bg3);cursor:pointer;font-size:13px;font-weight:600;color:var(--text3);transition:all .15s;white-space:nowrap}
-.train-card.active{background:var(--accent2);color:#000;border-color:var(--accent2)}
-.hist-item{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border)}
-.hist-item:last-child{border-bottom:none}
-.hist-date{font-family:'DM Mono',monospace;font-size:12px;color:var(--text3)}
-.hist-weight{font-family:'DM Mono',monospace;font-size:18px;color:var(--text);font-weight:500}
-.hist-delta{font-family:'DM Mono',monospace;font-size:12px}
-.imc-track{height:10px;border-radius:5px;display:flex;overflow:hidden;margin:10px 0}
-.toast{position:fixed;top:calc(var(--safe-top) + 70px);left:50%;transform:translateX(-50%) translateY(-20px);background:var(--bg3);border:1px solid var(--accent);color:var(--accent);padding:10px 20px;border-radius:10px;font-size:13px;font-weight:600;opacity:0;transition:all .3s;z-index:999;white-space:nowrap;pointer-events:none}
+/* TOP */
+.topbar{padding:calc(var(--st) + 14px) 18px 12px;background:var(--bg);border-bottom:1px solid var(--br);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;z-index:10}
+.tt{font-size:15px;font-weight:700}
+.td{font-family:'DM Mono',monospace;font-size:10px;color:var(--t3)}
+.tlogo{width:30px;height:30px;background:var(--a);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#000;font-family:'DM Mono',monospace}
+/* SCROLL */
+.content{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding-bottom:calc(var(--sb) + 85px)}
+/* NAV */
+.nav{position:absolute;bottom:0;left:0;right:0;background:var(--bg2);border-top:1px solid var(--br);display:flex;padding-bottom:var(--sb);z-index:10}
+.nb{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:9px 2px;border:none;background:transparent;cursor:pointer;color:var(--t3);transition:color .15s}
+.nb.act{color:var(--a)}
+.nb svg{width:20px;height:20px;stroke-width:1.8}
+.nb span{font-size:9px;font-family:'DM Mono',monospace}
+/* PAGE */
+.page{display:none;padding:14px}
+.page.act{display:block}
+/* CARD */
+.card{background:var(--bg2);border:1px solid var(--br);border-radius:var(--r);padding:14px;margin-bottom:10px}
+.ct{font-size:11px;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+/* METRICS */
+.m2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.m4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px;margin-bottom:10px}
+.met{background:var(--bg3);border-radius:10px;padding:12px 10px;border:1px solid var(--br)}
+.mv{font-family:'DM Mono',monospace;font-size:22px;font-weight:500;line-height:1}
+.mu{font-size:10px;color:var(--t3);margin-left:1px}
+.ml{font-size:10px;color:var(--t2);margin-top:4px}
+.ms{font-size:10px;color:var(--t3);margin-top:1px}
+.ca .mv{color:var(--a)}.cb .mv{color:var(--a2)}.cw .mv{color:var(--aw)}.cr .mv{color:var(--a3)}.cp .mv{color:var(--ap)}
+/* PROGRESS */
+.pb{height:5px;background:var(--bg4);border-radius:3px;overflow:hidden;margin-top:5px}
+.pf{height:100%;border-radius:3px;transition:width .5s}
+/* BIG INPUT */
+.biw{background:var(--bg3);border:1px solid var(--br);border-radius:var(--r);padding:18px;margin-bottom:10px;text-align:center}
+.bip{background:transparent;border:none;outline:none;font-family:'DM Mono',monospace;font-size:50px;font-weight:500;color:var(--a);width:100%;text-align:center;-moz-appearance:textfield}
+.bip::-webkit-outer-spin-button,.bip::-webkit-inner-spin-button{-webkit-appearance:none}
+.bip::placeholder{color:var(--t3)}
+.bil{font-size:11px;color:var(--t3);margin-bottom:6px;font-family:'DM Mono',monospace}
+.biu{font-size:14px;color:var(--t3);margin-top:3px}
+/* BUTTONS */
+.btn{width:100%;padding:14px;border-radius:12px;border:none;font-family:'Syne',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:transform .1s}
+.btn:active{transform:scale(.97)}
+.bp{background:var(--a);color:#000}
+.bs{background:var(--bg3);color:var(--t);border:1px solid var(--br);margin-top:6px}
+/* BADGE */
+.badge{display:inline-block;font-size:10px;padding:2px 7px;border-radius:20px;font-family:'DM Mono',monospace;font-weight:500}
+.bg{background:rgba(0,229,160,.12);color:var(--a)}
+.bb{background:rgba(0,184,255,.12);color:var(--a2)}
+.br2{background:rgba(255,107,107,.12);color:var(--a3)}
+.bw{background:rgba(255,179,71,.12);color:var(--aw)}
+.bpp{background:rgba(176,133,245,.12);color:var(--ap)}
+/* TABLE */
+.tbl{width:100%;border-collapse:collapse;font-size:12px}
+.tbl th{text-align:left;padding:6px 6px;color:var(--t3);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--br)}
+.tbl td{padding:7px 6px;border-bottom:1px solid var(--br);color:var(--t);vertical-align:top}
+.tbl tr:last-child td{border-bottom:none}
+/* SECTION HDR */
+.sh{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--t3);margin:14px 0 7px;padding:0 2px}
+/* IMC BAR */
+.imcbar{height:10px;border-radius:5px;display:flex;overflow:hidden;margin:8px 0;position:relative}
+/* ALERT */
+.ali{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-bottom:1px solid var(--br)}
+.ali:last-child{border-bottom:none}
+.alt{font-family:'DM Mono',monospace;font-size:11px;color:var(--a);min-width:50px;font-weight:500;padding-top:2px;flex-shrink:0}
+.aln .ti{font-size:13px;color:var(--t);font-weight:600}
+.aln .sw{font-size:11px;color:var(--t3);margin-top:2px}
+/* CHECKLIST */
+.chi{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid var(--br);cursor:pointer}
+.chi:last-child{border-bottom:none}
+.chb{width:20px;height:20px;border-radius:6px;border:1.5px solid var(--br);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.chb.dn{background:var(--a);border-color:var(--a)}
+.chl{font-size:13px;color:var(--t);line-height:1.4}
+.chl.dn{color:var(--t3);text-decoration:line-through}
+.chs{font-family:'DM Mono',monospace;font-size:10px;color:var(--a2);margin-top:1px}
+.chn{font-size:11px;color:var(--t3);margin-top:1px}
+/* PHASE TABS */
+.ptabs{display:flex;gap:5px;margin-bottom:10px}
+.pt{flex:1;padding:7px 3px;border-radius:8px;border:1px solid var(--br);background:var(--bg3);text-align:center;cursor:pointer;font-size:10px;font-weight:600;color:var(--t3);transition:all .15s;font-family:'DM Mono',monospace}
+.pt.act{background:var(--a);color:#000;border-color:var(--a)}
+/* TRAIN SELECTOR */
+.tsel{display:flex;gap:7px;overflow-x:auto;padding-bottom:7px;margin-bottom:10px;scrollbar-width:none}
+.tsel::-webkit-scrollbar{display:none}
+.tc{flex-shrink:0;padding:8px 14px;border-radius:10px;border:1px solid var(--br);background:var(--bg3);cursor:pointer;font-size:12px;font-weight:600;color:var(--t3);transition:all .15s;white-space:nowrap}
+.tc.act{background:var(--a2);color:#000;border-color:var(--a2)}
+/* TAB PILLS */
+.tpills{display:flex;gap:5px;margin-bottom:10px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.tpills::-webkit-scrollbar{display:none}
+.tpill{flex-shrink:0;padding:6px 12px;border-radius:20px;border:1px solid var(--br);background:var(--bg3);cursor:pointer;font-size:11px;font-weight:600;color:var(--t3);transition:all .15s;white-space:nowrap}
+.tpill.act{background:var(--a);color:#000;border-color:var(--a)}
+/* HIST */
+.hi{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--br)}
+.hi:last-child{border-bottom:none}
+.hd{font-family:'DM Mono',monospace;font-size:11px;color:var(--t3)}
+.hw{font-family:'DM Mono',monospace;font-size:17px;color:var(--t);font-weight:500}
+.hdl{font-family:'DM Mono',monospace;font-size:11px}
+/* MEAL */
+.mr{padding:9px 0;border-bottom:1px solid var(--br)}
+.mr:last-child{border-bottom:none}
+.mtime{font-family:'DM Mono',monospace;font-size:10px;color:var(--a);margin-bottom:2px}
+.mname{font-size:13px;font-weight:600;color:var(--t)}
+.mdesc{font-size:11px;color:var(--t3);margin-top:2px;line-height:1.5}
+.mkcal{font-family:'DM Mono',monospace;font-size:11px;color:var(--aw);margin-top:3px}
+/* AVOID */
+.avi{display:flex;align-items:flex-start;gap:8px;padding:7px 0;border-bottom:1px solid var(--br);font-size:12px;color:var(--t3)}
+.avi:last-child{border-bottom:none}
+/* MACRO BAR */
+.mbw{margin-bottom:8px}
+.mbl{display:flex;justify-content:space-between;font-size:11px;margin-bottom:2px}
+.mbn{color:var(--t2)}.mbv{font-family:'DM Mono',monospace;color:var(--t3)}
+/* SUPP */
+.si{display:flex;justify-content:space-between;align-items:flex-start;padding:9px 0;border-bottom:1px solid var(--br)}
+.si:last-child{border-bottom:none}
+.sn{font-size:12px;color:var(--t);font-weight:600}
+.sd{font-size:10px;color:var(--t3);margin-top:2px}
+.sdose{font-family:'DM Mono',monospace;font-size:11px;color:var(--a2);text-align:right;flex-shrink:0;margin-left:8px;padding-top:2px}
+/* TOAST */
+.toast{position:fixed;top:calc(var(--st) + 66px);left:50%;transform:translateX(-50%) translateY(-16px);background:var(--bg3);border:1px solid var(--a);color:var(--a);padding:9px 18px;border-radius:10px;font-size:12px;font-weight:600;opacity:0;transition:all .3s;z-index:999;white-space:nowrap;pointer-events:none}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-.day-type-pill{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-family:'DM Mono',monospace;font-weight:500}
-.pill-train{background:rgba(0,184,255,.15);color:var(--accent2)}
-.pill-swim{background:rgba(176,133,245,.15);color:var(--purple)}
-.pill-rest{background:rgba(90,90,114,.2);color:var(--text3)}
-.pill-refeed{background:rgba(255,179,71,.15);color:var(--warn)}
-.meal-row{padding:10px 0;border-bottom:1px solid var(--border)}
-.meal-row:last-child{border-bottom:none}
-.meal-time{font-family:'DM Mono',monospace;font-size:11px;color:var(--accent);margin-bottom:3px}
-.meal-name{font-size:14px;font-weight:600;color:var(--text)}
-.meal-desc{font-size:12px;color:var(--text3);margin-top:3px;line-height:1.5}
-.meal-kcal{font-family:'DM Mono',monospace;font-size:12px;color:var(--warn);margin-top:4px}
-.macro-bar-wrap{margin-bottom:10px}
-.macro-row-label{display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px}
-.macro-name{color:var(--text2)}
-.macro-val{font-family:'DM Mono',monospace;color:var(--text3)}
-.avoid-item{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--border);font-size:13px;color:var(--text3)}
-.avoid-item:last-child{border-bottom:none}
-.avoid-icon{font-size:14px;flex-shrink:0}
-.tab-row{display:flex;gap:6px;margin-bottom:12px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
-.tab-row::-webkit-scrollbar{display:none}
-.tab-pill{flex-shrink:0;padding:7px 14px;border-radius:20px;border:1px solid var(--border);background:var(--bg3);cursor:pointer;font-size:12px;font-weight:600;color:var(--text3);transition:all .15s;white-space:nowrap}
-.tab-pill.active{background:var(--accent);color:#000;border-color:var(--accent)}
-.supp-item{display:flex;justify-content:space-between;align-items:flex-start;padding:9px 0;border-bottom:1px solid var(--border)}
-.supp-item:last-child{border-bottom:none}
-.supp-name{font-size:13px;color:var(--text);font-weight:600}
-.supp-detail{font-size:11px;color:var(--text3);margin-top:2px}
-.supp-dose{font-family:'DM Mono',monospace;font-size:12px;color:var(--accent2);text-align:right;flex-shrink:0;margin-left:8px}
+/* RESP BREATH */
+.bcirc{width:120px;height:120px;border-radius:50%;border:3px solid var(--a);display:flex;align-items:center;justify-content:center;flex-direction:column;margin:16px auto;transition:transform 1s,border-color 1s;background:rgba(0,229,160,.06)}
+.bcirc.expand{transform:scale(1.3);border-color:var(--a2);background:rgba(0,184,255,.08)}
+.bcirc.hold{border-color:var(--ap);background:rgba(176,133,245,.08)}
 </style>
 </head>
 <body>
 <div id="app">
   <div class="topbar">
-    <div>
-      <div class="topbar-title">Leo Saúde 💪</div>
-      <div class="topbar-date" id="topdate"></div>
-    </div>
-    <div class="topbar-logo">L</div>
+    <div><div class="tt">Leo Saúde 💪</div><div class="td" id="topdate"></div></div>
+    <div class="tlogo">L</div>
   </div>
   <div class="content" id="content"></div>
   <nav class="nav">
-    <button class="nav-btn active" onclick="goPage('home')" id="nav-home">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-      <span>Início</span>
+    <button class="nb act" onclick="go('home')" id="nv-home">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>Início</span>
     </button>
-    <button class="nav-btn" onclick="goPage('log')" id="nav-log">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-      <span>Registrar</span>
+    <button class="nb" onclick="go('log')" id="nv-log">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg><span>Registrar</span>
     </button>
-    <button class="nav-btn" onclick="goPage('treino')" id="nav-treino">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6.5 6.5h11M6.5 17.5h11M4 12h16M2 9l2 3-2 3M22 9l-2 3 2 3"/></svg>
-      <span>Treino</span>
+    <button class="nb" onclick="go('treino')" id="nv-treino">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6.5 6.5h11M6.5 17.5h11M4 12h16M2 9l2 3-2 3M22 9l-2 3 2 3"/></svg><span>Treino</span>
     </button>
-    <button class="nav-btn" onclick="goPage('nutri')" id="nav-nutri">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2a7 7 0 0 1 7 7c0 5-7 13-7 13S5 14 5 9a7 7 0 0 1 7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
-      <span>Nutrição</span>
+    <button class="nb" onclick="go('nutri')" id="nv-nutri">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2a7 7 0 0 1 7 7c0 5-7 13-7 13S5 14 5 9a7 7 0 0 1 7-7z"/><circle cx="12" cy="9" r="2.5"/></svg><span>Nutrição</span>
     </button>
-    <button class="nav-btn" onclick="goPage('alertas')" id="nav-alertas">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-      <span>Alertas</span>
+    <button class="nb" onclick="go('mais')" id="nv-mais">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg><span>Mais</span>
     </button>
   </nav>
 </div>
 <div class="toast" id="toast"></div>
 
 <script>
-// ============ CONSTANTS ============
-const PESO_INICIAL = 94;
-const ALTURA = 1.79;
-const PESO_META = 78; // meta realista baseada no plano nutricional (TMB Mifflin-St Jeor)
-const DATA_INICIO = '2026-05-18';
+// ======= CONSTANTS =======
+const PI=94, AL=1.79, PM=78, DI='2026-05-18';
+const TMB=1897, TDEE=2466;
 
-// ============ STATE ============
-let state = {logs:[],phase:0,currentTreino:'A',nutriTab:'treino',selEnergia:0,selSono:0};
-function loadState(){try{const s=localStorage.getItem('leo_v3');if(s)state={...state,...JSON.parse(s)}}catch(e){}}
-function saveState(){localStorage.setItem('leo_v3',JSON.stringify(state))}
-loadState();
+// ======= STATE =======
+let S={logs:[],ph:0,tr:'A',nt:'treino',st:'alertas',sE:0,sS:0};
+function ls(){try{const s=localStorage.getItem('lv4');if(s)S={...S,...JSON.parse(s)}}catch(e){}}
+function ss(){localStorage.setItem('lv4',JSON.stringify(S))}
+ls();
 
-// ============ HELPERS ============
-function todayStr(){return new Date().toISOString().slice(0,10)}
-function fmtDate(d){const dt=new Date(d+'T12:00:00');return dt.toLocaleDateString('pt-BR',{day:'2-digit',month:'short'})}
-function imc(p){return (p/(ALTURA*ALTURA)).toFixed(1)}
-function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200)}
-function getLastLog(){return state.logs.length?state.logs[state.logs.length-1]:null}
-function getLastPeso(){const l=getLastLog();return l?l.peso:PESO_INICIAL}
-function weekNum(){
-  const start=new Date(DATA_INICIO);const now=new Date();
-  return Math.min(12,Math.max(1,Math.ceil((now-start)/(7*24*3600*1000))));
-}
-function getDayType(){
-  // 0=dom,1=seg,2=ter,3=qua,4=qui,5=sex,6=sab
-  const d=new Date().getDay();
-  const map={0:'rest',1:'treino',2:'natacao',3:'treino',4:'rest',5:'treino',6:'refeed_natacao'};
-  return map[d]||'treino';
-}
-function getDayKcal(){
-  const t=getDayType();
-  if(t==='rest')return{kcal:1800,label:'Descanso',color:'var(--text3)'};
-  if(t==='refeed_natacao')return{kcal:2260,label:'Refeed (Sábado)',color:'var(--warn)'};
-  return{kcal:1966,label:'Treino/Natação',color:'var(--accent)'};
-}
+// ======= HELPERS =======
+function td(){return new Date().toISOString().slice(0,10)}
+function fd(d){return new Date(d+'T12:00:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'short'})}
+function imc(p){return (p/(AL*AL)).toFixed(1)}
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200)}
+function lp(){const l=S.logs.length?S.logs[S.logs.length-1]:null;return l?l.peso:PI}
+function wk(){return Math.min(12,Math.max(1,Math.ceil((new Date()-new Date(DI))/(7*864e5))))}
+function dayT(){const d=new Date().getDay();return{0:'rest',1:'treino',2:'natacao',3:'musculacao',4:'mobilidade',5:'treino',6:'refeed'}[d]}
+function dayKcal(){const t=dayT();if(t==='rest')return{k:1800,l:'Descanso',c:'var(--t3)'};if(t==='refeed')return{k:2260,l:'Refeed (Sábado)',c:'var(--aw)'};if(t==='mobilidade')return{k:1800,l:'Descanso / Mobilidade',c:'var(--t3)'};return{k:1966,l:'Treino / Natação',c:'var(--a)'}}
 
-// ============ NAV ============
-let curPage='home';
-function goPage(p){
-  curPage=p;
-  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
-  document.getElementById('nav-'+p).classList.add('active');
-  render();
-}
+// ======= NAV =======
+let CP='home';
+function go(p){CP=p;document.querySelectorAll('.nb').forEach(b=>b.classList.remove('act'));document.getElementById('nv-'+p).classList.add('act');render()}
 
-// ============ RENDER ============
+// ======= RENDER =======
 function render(){
-  document.getElementById('topdate').textContent=new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long'});
+  document.getElementById('topdate').textContent=new Date().toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'short'});
   const c=document.getElementById('content');
-  if(curPage==='home')c.innerHTML=renderHome();
-  else if(curPage==='log')c.innerHTML=renderLog();
-  else if(curPage==='treino')c.innerHTML=renderTreino();
-  else if(curPage==='nutri')c.innerHTML=renderNutri();
-  else if(curPage==='alertas')c.innerHTML=renderAlertas();
-  attachEvents();
+  if(CP==='home')c.innerHTML=rHome();
+  else if(CP==='log')c.innerHTML=rLog();
+  else if(CP==='treino')c.innerHTML=rTreino();
+  else if(CP==='nutri')c.innerHTML=rNutri();
+  else if(CP==='mais')c.innerHTML=rMais();
+  attachEv();
 }
 
-// ============ HOME ============
-function renderHome(){
-  const peso=getLastPeso();
-  const imcVal=parseFloat(imc(peso));
-  const perdido=Math.round((PESO_INICIAL-peso)*10)/10;
-  const totalMeta=PESO_INICIAL-PESO_META;
-  const pct=Math.min(100,Math.round((Math.max(0,perdido)/totalMeta)*100));
-  const sem=weekNum();
-  const semPct=Math.round((sem/12)*100);
-  const imcPct=Math.min(100,Math.max(0,((imcVal-16)/(40-16))*100));
-  const dayInfo=getDayKcal();
-  const logs=state.logs.slice(-5).reverse();
-
-  return `<div class="page active">
-    <div class="metrics">
-      <div class="met accent">
-        <div class="val">${peso.toFixed(1)}<span class="unit">kg</span></div>
-        <div class="lbl">Peso atual</div>
-        <div class="sub">Meta: ${PESO_META} kg</div>
-        <div class="progbar"><div class="progfill" style="width:${100-pct}%;background:var(--accent)"></div></div>
-      </div>
-      <div class="met ${imcVal>=30?'red':imcVal>=25?'warn':'accent'}">
-        <div class="val">${imcVal}</div>
-        <div class="lbl">IMC atual</div>
-        <div class="sub">${imcVal>=30?'Obesidade':imcVal>=25?'Sobrepeso':'Normal'} → meta &lt;25</div>
-      </div>
-      <div class="met ${perdido>0?'accent':''}">
-        <div class="val">${perdido>=0?perdido.toFixed(1):0}<span class="unit">kg</span></div>
-        <div class="lbl">Perdido</div>
-        <div class="sub">${pct}% da meta</div>
-      </div>
-      <div class="met blue">
-        <div class="val">${Math.max(0,(peso-PESO_META)).toFixed(1)}<span class="unit">kg</span></div>
-        <div class="lbl">Para a meta</div>
-        <div class="sub">Semana ${sem}/12</div>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-title">Progresso do programa</div>
-      <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text3);margin-bottom:4px"><span>${PESO_INICIAL} kg → ${PESO_META} kg</span><span>${pct}% concluído</span></div>
-      <div class="progbar" style="height:10px"><div class="progfill" style="width:${pct}%;background:linear-gradient(90deg,var(--accent2),var(--accent))"></div></div>
-      <div style="margin-top:10px;display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-bottom:3px"><span>Semana ${sem} de 12</span><span>${semPct}%</span></div>
-      <div class="progbar"><div class="progfill" style="width:${semPct}%;background:var(--accent2)"></div></div>
-    </div>
-
-    <div class="card">
-      <div class="card-title">IMC — escala visual</div>
-      <div style="position:relative">
-        <div class="imc-track">
-          <div style="flex:2;background:#00b8ff;opacity:.7"></div>
-          <div style="flex:3;background:#00e5a0;opacity:.8"></div>
-          <div style="flex:2.5;background:#ffb347;opacity:.85"></div>
-          <div style="flex:2.5;background:#ff6b6b;opacity:.8"></div>
-        </div>
-        <div style="position:absolute;top:0;height:10px;width:100%">
-          <div style="position:absolute;top:-3px;width:4px;height:16px;background:var(--text);border-radius:2px;left:${imcPct}%;transform:translateX(-50%)"></div>
-        </div>
-      </div>
-      <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text3);margin-top:4px">
-        <span>Baixo</span><span style="color:var(--accent)">Normal</span><span style="color:var(--warn)">Sobrepeso ← você</span><span style="color:var(--accent3)">Obeso</span>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-title">Hoje — ${new Date().toLocaleDateString('pt-BR',{weekday:'long'})}</div>
-      <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)">
-        <span style="font-size:13px;color:var(--text2)">Tipo de dia</span>
-        <span class="badge ${dayInfo.label.includes('Refeed')?'badge-warn':dayInfo.label.includes('Descanso')?'':dayInfo.label.includes('Natação')?'badge-blue':'badge-green'}">${dayInfo.label}</span>
-      </div>
-      <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)">
-        <span style="font-size:13px;color:var(--text2)">Meta calórica do dia</span>
-        <span style="font-family:'DM Mono',monospace;font-size:14px;color:${dayInfo.color};font-weight:500">${dayInfo.kcal} kcal</span>
-      </div>
-      <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0">
-        <span style="font-size:13px;color:var(--text2)">Água mínima</span>
-        <span style="font-family:'DM Mono',monospace;font-size:14px;color:var(--accent2)">3,5 L</span>
-      </div>
-    </div>
-
-    ${renderDayAlerts()}
-
-    ${logs.length>0?`<div class="card">
-      <div class="card-title">Histórico recente</div>
-      ${logs.map((l,i)=>{
-        const allR=state.logs.slice().reverse();
-        const prev=allR[i+1]?allR[i+1].peso:PESO_INICIAL;
-        const d=Math.round((l.peso-prev)*10)/10;
-        return`<div class="hist-item">
-          <div><div class="hist-date">${fmtDate(l.date)}</div>
-          ${l.energia?`<div style="font-size:11px;color:var(--text3)">E:${l.energia}/10 S:${l.sono||'—'}/10</div>`:''}
-          </div>
-          <div style="text-align:right">
-            <div class="hist-weight">${l.peso.toFixed(1)} kg</div>
-            <div class="hist-delta" style="color:${d<0?'var(--accent)':d>0?'var(--accent3)':'var(--text3)'}">${d>0?'+':''}${d} kg</div>
-          </div>
-        </div>`}).join('')}
-    </div>`:''}
-  </div>`;
-}
-
-function renderDayAlerts(){
+// ======= HOME =======
+function rHome(){
+  const peso=lp(), iv=parseFloat(imc(peso));
+  const perd=Math.max(0,Math.round((PI-peso)*10)/10);
+  const pct=Math.min(100,Math.round(perd/(PI-PM)*100));
+  const sem=wk(), sp=Math.round(sem/12*100);
+  const ip=Math.min(98,Math.max(2,((iv-16)/(40-16))*100));
+  const di=dayKcal();
+  const logs=S.logs.slice(-5).reverse();
   const h=new Date().getHours();
-  const alerts=[
-    {h:6,t:'06:00',title:'500ml de água',why:'Hidratação + Gota'},
-    {h:7,t:'07:00',title:'Café da manhã proteico',why:'3 ovos + pão integral + fruta (~380 kcal)'},
-    {h:10,t:'10:00',title:'Pausa ativa 8 min + 300ml água',why:'Lombar, postura, hidratação'},
-    {h:13,t:'13:00',title:'Almoço completo',why:'150g proteína + carbo + salada'},
-    {h:15,t:'15:00',title:'2ª pausa ativa + 300ml água',why:'Circulação, concentração'},
-    {h:19,t:'19:30',title:'Jantar leve',why:'Proteína + batata doce + legumes'},
-    {h:21,t:'21:00',title:'Telas modo noite',why:'Melatonina protegida'},
-    {h:22,t:'22:00',title:'Magnésio + dormir',why:'Recuperação muscular e sono'},
+
+  // day alerts
+  const alls=[
+    {h:6,t:'06:00',ti:'💧 500ml água em jejum',w:'Hidratação + Gota'},
+    {h:7,t:'07:00',ti:'🥚 Café da manhã proteico',w:'3 ovos + pão integral + fruta (~380 kcal)'},
+    {h:7,t:'07:30',ti:'💊 Vit D3 (2.000UI) + Vit C (500mg)',w:'Com alimento, absorção ideal'},
+    {h:10,t:'10:00',ti:'🧘 Pausa ativa 8 min',w:'Lombar, postura — a cada 50min no trabalho'},
+    {h:10,t:'10:05',ti:'💧 300ml água',w:'Hidratação contínua — Gota'},
+    {h:13,t:'13:00',ti:'🥗 Almoço completo',w:'Não pular — base da dieta'},
+    {h:14,t:'14:00',ti:'☕ Última cafeína',w:'Meia-vida 6h — após esse horário prejudica sono'},
+    {h:15,t:'15:00',ti:'🧘 2ª pausa ativa',w:'Circulação, concentração'},
+    {h:19,t:'19:30',ti:'🍽️ Jantar leve e proteico',w:'Anabolismo noturno'},
+    {h:21,t:'21:00',ti:'📵 Telas modo noite',w:'Melatonina protegida'},
+    {h:21,t:'21:30',ti:'🛁 Banho morno 10 min',w:'Queda de temp. corporal → sono fácil'},
+    {h:22,t:'22:00',ti:'💊 Magnésio 300mg + respiração 4-7-8',w:'Parassimpático, relaxamento muscular'},
+    {h:22,t:'22:30',ti:'🌙 Luzes apagadas — dormir',w:'Meta: 7h30 (23:00 → 06:30)'},
   ];
-  const proximos=alerts.filter(a=>a.h>=h-1).slice(0,4);
-  if(!proximos.length)return`<div class="card"><div class="card-title">Alertas</div><div style="font-size:13px;color:var(--text3);text-align:center;padding:8px 0">Todos os alertas do dia concluídos 🎉</div></div>`;
-  return`<div class="card">
-    <div class="card-title">Próximos alertas</div>
-    ${proximos.map(a=>`<div style="display:flex;justify-content:space-between;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--border)">
-      <div><div style="font-size:13px;color:${a.h<h?'var(--text3)':'var(--text)'};${a.h<h?'text-decoration:line-through':''}">${a.title}</div>
-      <div style="font-size:11px;color:var(--text3)">${a.why}</div></div>
-      <div style="font-family:'DM Mono',monospace;font-size:12px;color:${a.h<=h?'var(--accent)':'var(--warn)'};flex-shrink:0;margin-left:8px">${a.t}</div>
-    </div>`).join('')}
+  const prox=alls.filter(a=>a.h>=h-1).slice(0,4);
+
+  return`<div class="page act">
+  <div class="m2">
+    <div class="met ca"><div class="mv">${peso.toFixed(1)}<span class="mu">kg</span></div><div class="ml">Peso atual</div><div class="ms">Meta: ${PM} kg</div><div class="pb"><div class="pf" style="width:${100-pct}%;background:var(--a)"></div></div></div>
+    <div class="met ${iv>=30?'cr':iv>=25?'cw':'ca'}"><div class="mv">${iv}</div><div class="ml">IMC</div><div class="ms">${iv>=30?'Obesidade':iv>=25?'Sobrepeso':'Normal'} → meta &lt;25</div></div>
+    <div class="met ca"><div class="mv">${perd.toFixed(1)}<span class="mu">kg</span></div><div class="ml">Perdido</div><div class="ms">${pct}% da meta</div></div>
+    <div class="met cb"><div class="mv">${Math.max(0,peso-PM).toFixed(1)}<span class="mu">kg</span></div><div class="ml">Faltam</div><div class="ms">Sem ${sem}/12</div></div>
+  </div>
+
+  <div class="card">
+    <div class="ct">Progresso — 12 semanas</div>
+    <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--t3);margin-bottom:3px"><span>${PI} kg → ${PM} kg</span><span>${pct}%</span></div>
+    <div class="pb" style="height:9px"><div class="pf" style="width:${pct}%;background:linear-gradient(90deg,var(--a2),var(--a))"></div></div>
+    <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--t3);margin:8px 0 3px"><span>Semana ${sem} de 12</span><span>${sp}%</span></div>
+    <div class="pb"><div class="pf" style="width:${sp}%;background:var(--a2)"></div></div>
+  </div>
+
+  <div class="card">
+    <div class="ct">IMC — escala</div>
+    <div class="imcbar">
+      <div style="flex:2;background:#00b8ff;opacity:.65"></div>
+      <div style="flex:3;background:#00e5a0;opacity:.75"></div>
+      <div style="flex:2.5;background:#ffb347;opacity:.8"></div>
+      <div style="flex:2.5;background:#ff6b6b;opacity:.75"></div>
+      <div style="position:absolute;top:-3px;width:4px;height:16px;background:var(--t);border-radius:2px;left:${ip}%;transform:translateX(-50%)"></div>
+    </div>
+    <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--t3)"><span>Baixo</span><span style="color:var(--a)">Normal</span><span style="color:var(--aw)">Sobrepeso←</span><span style="color:var(--a3)">Obeso</span></div>
+  </div>
+
+  <div class="card">
+    <div class="ct">Hoje — ${new Date().toLocaleDateString('pt-BR',{weekday:'long'})}</div>
+    <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--br)"><span style="font-size:12px;color:var(--t2)">Tipo de dia</span><span class="badge ${di.l.includes('Refeed')?'bw':di.l.includes('Descanso')?'bpp':'bg'}">${di.l}</span></div>
+    <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--br)"><span style="font-size:12px;color:var(--t2)">Meta calórica</span><span style="font-family:'DM Mono',monospace;font-size:13px;color:${di.c}">${di.k} kcal</span></div>
+    <div style="display:flex;justify-content:space-between;padding:7px 0"><span style="font-size:12px;color:var(--t2)">Água mínima</span><span style="font-family:'DM Mono',monospace;font-size:13px;color:var(--a2)">3,5 L</span></div>
+  </div>
+
+  <div class="card">
+    <div class="ct">Próximos alertas</div>
+    ${prox.length?prox.map(a=>`<div style="display:flex;justify-content:space-between;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--br)">
+      <div><div style="font-size:12px;color:${a.h<h?'var(--t3)':'var(--t)'};${a.h<h?'text-decoration:line-through':''}">${a.ti}</div><div style="font-size:10px;color:var(--t3)">${a.w}</div></div>
+      <div style="font-family:'DM Mono',monospace;font-size:11px;color:${a.h<=h?'var(--a)':'var(--aw)'};flex-shrink:0;margin-left:8px">${a.t}</div>
+    </div>`).join(''):`<div style="font-size:12px;color:var(--t3);text-align:center;padding:8px">Dia concluído 🎉</div>`}
+  </div>
+
+  ${logs.length?`<div class="card"><div class="ct">Histórico recente</div>
+    ${logs.map((l,i)=>{const p2=S.logs.slice().reverse()[i+1]?S.logs.slice().reverse()[i+1].peso:PI;const d=Math.round((l.peso-p2)*10)/10;return`<div class="hi"><div><div class="hd">${fd(l.date)}</div>${l.energia?`<div style="font-size:10px;color:var(--t3)">E:${l.energia}/10 · S:${l.sono||'—'}/10</div>`:''}</div><div style="text-align:right"><div class="hw">${l.peso.toFixed(1)} kg</div><div class="hdl" style="color:${d<0?'var(--a)':d>0?'var(--a3)':'var(--t3)'}">${d>0?'+':''}${d} kg</div></div></div>`}).join('')}
+  </div>`:''}
   </div>`;
 }
 
-// ============ LOG ============
-function renderLog(){
-  const today=todayStr();
-  const todayLog=state.logs.find(l=>l.date===today);
-  return`<div class="page active">
-    <div class="big-input-wrap">
-      <div class="big-input-label">PESO DE HOJE (kg)</div>
-      <input class="big-input" type="number" id="inp-peso" placeholder="${getLastPeso().toFixed(1)}" step="0.1" value="${todayLog?todayLog.peso:''}"/>
-      <div class="big-input-unit">quilogramas</div>
-    </div>
-    <div class="card">
-      <div class="card-title">Energia hoje (1–10)</div>
-      <div style="display:flex;gap:5px;flex-wrap:wrap">${[1,2,3,4,5,6,7,8,9,10].map(n=>`<button onclick="selectN('energia',${n})" id="en${n}" style="width:34px;height:34px;border-radius:8px;border:1px solid var(--border);background:var(--bg3);color:var(--text);font-size:13px;cursor:pointer;font-family:'DM Mono',monospace;transition:all .15s">${n}</button>`).join('')}</div>
-    </div>
-    <div class="card">
-      <div class="card-title">Qualidade do sono (1–10)</div>
-      <div style="display:flex;gap:5px;flex-wrap:wrap">${[1,2,3,4,5,6,7,8,9,10].map(n=>`<button onclick="selectN('sono',${n})" id="sn${n}" style="width:34px;height:34px;border-radius:8px;border:1px solid var(--border);background:var(--bg3);color:var(--text);font-size:13px;cursor:pointer;font-family:'DM Mono',monospace;transition:all .15s">${n}</button>`).join('')}</div>
-    </div>
-    <div class="card">
-      <div class="card-title">Cintura — opcional (cm)</div>
-      <input type="number" id="inp-cintura" placeholder="ex: 98" style="width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px;font-size:16px;color:var(--text);font-family:'DM Mono',monospace;outline:none" value="${todayLog&&todayLog.cintura?todayLog.cintura:''}"/>
-    </div>
-    <button class="btn btn-primary" onclick="saveLog()">Salvar ✓</button>
-    <button class="btn btn-secondary" onclick="goPage('home')">← Voltar</button>
-    ${state.logs.length>0?`<div class="sec-hdr">Histórico completo</div>
-    <div class="card">${state.logs.slice().reverse().map((l,i,arr)=>{
-      const prev=arr[i+1]?arr[i+1].peso:PESO_INICIAL;
-      const d=Math.round((l.peso-prev)*10)/10;
-      return`<div class="hist-item">
-        <div><div class="hist-date">${fmtDate(l.date)}</div>
-        <div style="font-size:11px;color:var(--text3)">IMC: ${imc(l.peso)}${l.energia?' · E:'+l.energia+'/10':''}${l.sono?' · S:'+l.sono+'/10':''}</div></div>
-        <div style="text-align:right">
-          <div class="hist-weight">${l.peso.toFixed(1)} kg</div>
-          <div class="hist-delta" style="color:${d<0?'var(--accent)':d>0?'var(--accent3)':'var(--text3)'}">${d>0?'+':''}${d} kg</div>
-        </div>
-      </div>`}).join('')}</div>`:''}
+// ======= LOG =======
+function rLog(){
+  const tl=S.logs.find(l=>l.date===td());
+  return`<div class="page act">
+  <div class="biw">
+    <div class="bil">PESO DE HOJE (kg)</div>
+    <input class="bip" type="number" id="ip" placeholder="${lp().toFixed(1)}" step="0.1" value="${tl?tl.peso:''}"/>
+    <div class="biu">quilogramas</div>
+  </div>
+  <div class="card">
+    <div class="ct">Energia hoje (1–10)</div>
+    <div style="display:flex;gap:4px;flex-wrap:wrap">${[1,2,3,4,5,6,7,8,9,10].map(n=>`<button onclick="sN('sE',${n})" id="en${n}" style="width:32px;height:32px;border-radius:7px;border:1px solid var(--br);background:var(--bg3);color:var(--t);font-size:12px;cursor:pointer;font-family:'DM Mono',monospace;transition:all .15s">${n}</button>`).join('')}</div>
+  </div>
+  <div class="card">
+    <div class="ct">Qualidade do sono (1–10)</div>
+    <div style="display:flex;gap:4px;flex-wrap:wrap">${[1,2,3,4,5,6,7,8,9,10].map(n=>`<button onclick="sN('sS',${n})" id="sn${n}" style="width:32px;height:32px;border-radius:7px;border:1px solid var(--br);background:var(--bg3);color:var(--t);font-size:12px;cursor:pointer;font-family:'DM Mono',monospace;transition:all .15s">${n}</button>`).join('')}</div>
+  </div>
+  <div class="card">
+    <div class="ct">Cintura (cm) — opcional</div>
+    <input type="number" id="ic" placeholder="ex: 98" style="width:100%;background:var(--bg3);border:1px solid var(--br);border-radius:8px;padding:10px;font-size:15px;color:var(--t);font-family:'DM Mono',monospace;outline:none" value="${tl&&tl.cintura?tl.cintura:''}"/>
+  </div>
+  <button class="btn bp" onclick="saveL()">Salvar ✓</button>
+  <button class="btn bs" onclick="go('home')">← Voltar</button>
+  ${S.logs.length?`<div class="sh">Histórico completo</div>
+  <div class="card">${S.logs.slice().reverse().map((l,i,arr)=>{const p2=arr[i+1]?arr[i+1].peso:PI;const d=Math.round((l.peso-p2)*10)/10;return`<div class="hi"><div><div class="hd">${fd(l.date)}</div><div style="font-size:10px;color:var(--t3)">IMC:${imc(l.peso)}${l.energia?' E:'+l.energia:''}${l.sono?' S:'+l.sono:''}</div></div><div style="text-align:right"><div class="hw">${l.peso.toFixed(1)} kg</div><div class="hdl" style="color:${d<0?'var(--a)':d>0?'var(--a3)':'var(--t3)'}">${d>0?'+':''}${d} kg</div></div></div>`}).join('')}</div>`:''}
   </div>`;
 }
 
-function selectN(type,n){
-  state[type==='energia'?'selEnergia':'selSono']=n;
-  const prefix=type==='energia'?'en':'sn';
-  const color=type==='energia'?'var(--accent)':'var(--accent2)';
-  [1,2,3,4,5,6,7,8,9,10].forEach(i=>{
-    const b=document.getElementById(prefix+i);
-    if(b){b.style.background=i<=n?color:'var(--bg3)';b.style.color=i<=n?'#000':'var(--text)'}
-  });
+function sN(key,n){S[key]=n;const pre=key==='sE'?'en':'sn';const col=key==='sE'?'var(--a)':'var(--a2)';[1,2,3,4,5,6,7,8,9,10].forEach(i=>{const b=document.getElementById(pre+i);if(b){b.style.background=i<=n?col:'var(--bg3)';b.style.color=i<=n?'#000':'var(--t)'}});}
+function saveL(){
+  const p=parseFloat(document.getElementById('ip').value);
+  if(!p||p<40||p>300){toast('⚠ Peso inválido');return}
+  const e={date:td(),peso:p,cintura:parseFloat(document.getElementById('ic').value)||0,energia:S.sE||0,sono:S.sS||0};
+  const idx=S.logs.findIndex(l=>l.date===td());
+  if(idx>=0)S.logs[idx]=e;else S.logs.push(e);
+  S.logs.sort((a,b)=>a.date.localeCompare(b.date));
+  S.sE=0;S.sS=0;ss();toast('✓ Registrado!');setTimeout(()=>go('home'),800);
 }
 
-function saveLog(){
-  const pesoEl=document.getElementById('inp-peso');
-  const cintEl=document.getElementById('inp-cintura');
-  const peso=parseFloat(pesoEl.value);
-  if(!peso||peso<40||peso>250){toast('⚠ Peso inválido');return}
-  const today=todayStr();
-  const entry={date:today,peso,cintura:parseFloat(cintEl.value)||0,energia:state.selEnergia||0,sono:state.selSono||0};
-  const idx=state.logs.findIndex(l=>l.date===today);
-  if(idx>=0)state.logs[idx]=entry;else state.logs.push(entry);
-  state.logs.sort((a,b)=>a.date.localeCompare(b.date));
-  state.selEnergia=0;state.selSono=0;
-  saveState();
-  toast('✓ Registrado!');
-  setTimeout(()=>goPage('home'),800);
-}
-
-// ============ TREINO ============
-const TREINOS={
-  A:{nome:'Musculação A',sub:'Superiores — Push/Pull',badge:'badge-blue',dur:'45 min',exs:[
-    {n:'Supino c/ halteres',s:'3×10–12',note:'Escápula retraída, cotovelo 45°'},
-    {n:'Remada curvada',s:'3×10–12',note:'Core ativado, lombar neutra'},
-    {n:'Desenvolvimento ombro',s:'3×10',note:'Amplitude controlada'},
-    {n:'Rosca direta',s:'2×12',note:'Sem balanço do tronco'},
-    {n:'Tríceps pulley',s:'2×12',note:'Cotovelo fixo ao lado do corpo'},
-    {n:'Prancha frontal',s:'3×30–45s',note:'Respiração contínua, sem queda de quadril'},
-    {n:'Bird-dog',s:'3×10 lados',note:'Estabilização lombar — PRIORITÁRIO'},
+// ======= TREINO =======
+const TR={
+  A:{n:'Musculação A',s:'Push + Core · SEG',b:'bb',d:'45 min',ex:[
+    {n:'Supino c/ halteres',s:'3×10–12',nt:'Escápula retraída, cotovelo 45°'},
+    {n:'Desenvolvimento ombro',s:'3×10',nt:'Amplitude controlada, sentado'},
+    {n:'Crucifixo máquina',s:'3×15',nt:'Fase 1 → halteres Fase 2'},
+    {n:'Elevação lateral',s:'3×15',nt:'Peso leve, sem balanço do tronco'},
+    {n:'Facepull (cabo)',s:'3×15',nt:'🔑 Postura + manguito rotador'},
+    {n:'Tríceps pulley',s:'2×12',nt:'Cotovelo fixo ao lado'},
+    {n:'Prancha frontal',s:'3×30–45s',nt:'Respiração contínua, sem queda de quadril'},
+    {n:'Bird-dog',s:'2×8 lados',nt:'🔑 Estabilização lombar — SEMPRE antes dos compostos'},
   ]},
-  B:{nome:'Musculação B',sub:'Inferiores — Glúteo/Posterior',badge:'badge-green',dur:'45 min',exs:[
-    {n:'Agachamento livre (moderado)',s:'3×10',note:'Sem barra pesada nas 4 primeiras semanas'},
-    {n:'Leg press 45°',s:'3×12',note:'Pés na largura dos ombros, joelho alinhado'},
-    {n:'Cadeira extensora',s:'2×12',note:'Amplitude total, sem travar o joelho'},
-    {n:'Flexão femoral',s:'2×12',note:'Isquiotibiais — importante p/ lombar'},
-    {n:'Elevação pélvica (glúteo)',s:'3×15',note:'Topo: contrair glúteo 1s'},
-    {n:'Panturrilha em pé',s:'3×15',note:'Tornozelo — atenção à Gota, amplitude total'},
-    {n:'Dead bug',s:'2×8 lados',note:'Core — não deixar lombar sair do chão'},
+  B:{n:'Musculação B',s:'Pull + Core · QUI',b:'bg',d:'45 min',ex:[
+    {n:'Remada baixa cabo',s:'3×12',nt:'🔑 Lombar neutra, escápula no final'},
+    {n:'Pulldown barra larga',s:'3×12',nt:'Puxar até o queixo, colocar peito para fora'},
+    {n:'Remada unilateral halter',s:'3×12',nt:'Apoio no banco, costas retas'},
+    {n:'Rosca direta barra EZ',s:'3×12',nt:'Sem balanço, cotovelo fixo'},
+    {n:'Rosca martelo',s:'2×12',nt:'Fase 2 em diante'},
+    {n:'Dead bug',s:'3×8 lados',nt:'🔑 Lombar anti-extensão — não levantar do chão'},
+    {n:'Prancha lateral',s:'3×30s cada',nt:'Quadril elevado, corpo reto'},
   ]},
-  C:{nome:'Musculação C',sub:'Full Body — Compostos',badge:'badge-warn',dur:'45 min',exs:[
-    {n:'Terra romeno (RDL)',s:'3×10',note:'Joelho leve, quadril para trás, lombar neutra'},
-    {n:'Pulldown (polia alta)',s:'3×12',note:'Costas largas, não usar momentum'},
-    {n:'Agachamento goblet',s:'3×12',note:'Halter no peito, postura ereta'},
-    {n:'Supino inclinado',s:'2×10',note:'30–45° inclinação'},
-    {n:'Abdômen bicicleta',s:'3×20',note:'Sem puxar o pescoço'},
-    {n:'World\'s greatest stretch',s:'3×5 lados',note:'Mobilidade full body — não pular'},
+  C:{n:'Musculação C',s:'Legs + Glúteo · SEX',b:'bw',d:'45 min',ex:[
+    {n:'Agachamento goblet (halter)',s:'3×12',nt:'Aprende o padrão, costas retas, quadril fundo'},
+    {n:'Leg press 45°',s:'3×15',nt:'Pés paralelos largos, joelho alinhado'},
+    {n:'Mesa flexora',s:'3×15',nt:'🔑 Isquio fraco → lombar sobrecarregada'},
+    {n:'Hip thrust / Glute bridge',s:'3×15',nt:'🔑 Glúteo protege lombar — top: segurar 1s'},
+    {n:'Cadeira extensora',s:'3×15',nt:'Finalização quadríceps'},
+    {n:'Stiff / RDL halteres',s:'3×10',nt:'Fase 2 em diante — cadeia posterior'},
+    {n:'Panturrilha em pé',s:'3×20',nt:'Amplitude total — mobilidade tornozelo (Gota)'},
   ]},
-  NAT:{nome:'Natação',sub:'Aeróbico + recuperação ativa',badge:'badge-blue',dur:'40 min',exs:[
-    {n:'Aquecimento crawl',s:'200m',note:'Ritmo confortável, técnica'},
-    {n:'Séries principais',s:'4–8×100m',note:'Fase 1: 4×, Fase 2: 6×, Fase 3: 8×'},
-    {n:'Variação de estilos',s:'200m',note:'Costas, peito — não bruços se lombar doer'},
-    {n:'Volta calma',s:'200m',note:'Recuperação ativa, respiração'},
+  NAT:{n:'Natação',s:'TER + SAB · Aeróbico',b:'bb',d:'40 min',ex:[
+    {n:'Aquecimento — crawl',s:'200m',nt:'Ritmo confortável, técnica'},
+    {n:'Séries principais crawl',s:'Fase1:4×100m · Fase2:6×100m · Fase3:8×100m',nt:'30s descanso entre séries'},
+    {n:'Variação de estilos',s:'200m',nt:'Costas, peito — evite bruços se lombar doer'},
+    {n:'Sprints (Fase 3)',s:'8×25m',nt:'Velocidade máxima + 20s descanso — adicionar semana 9'},
+    {n:'Volta calma',s:'200m',nt:'Costas, respiração, desaceleração'},
   ]},
-  MOB:{nome:'Mobilidade',sub:'Quinta-feira — 20 min',badge:'badge-green',dur:'20 min',exs:[
-    {n:'Cat-cow',s:'2×10 reps',note:'Respiração sincronizada'},
-    {n:'Dead bug',s:'2×8 lados',note:'Core antiextensão'},
-    {n:'90/90 hip rotation',s:'2×10 lados',note:'Quadril — fundamental p/ lombar'},
-    {n:'Pigeon pose',s:'60s cada lado',note:'Glúteo/piriformis — tensão típica de quem senta 8h'},
-    {n:'Thoracic extension',s:'2 min',note:'Rolo de espuma ou toalha enrolada'},
-    {n:"World's greatest stretch",s:'5× cada lado',note:'Full body'},
-    {n:'Respiração diafragmática',s:'5 min',note:'Finalização — parassimpático'},
+  MOB:{n:'Mobilidade',s:'QUI · 20–25 min',b:'bg',d:'25 min',ex:[
+    {n:'Cat-cow (gato-vaca)',s:'2×10 lentas',nt:'Respiração sincronizada — abre e fecha a coluna'},
+    {n:'Hip 90/90 rotation',s:'2×45s cada lado',nt:'🔑 Quadril — 8h sentado encurta rotadores'},
+    {n:'Pigeon pose modificado',s:'2×45s cada lado',nt:'Glúteo/piriforme — tensão crônica do sedentarismo'},
+    {n:'Couch stretch (iliopsoas)',s:'2×45s cada lado',nt:'🔑 Psoas encurtado = dor lombar garantida'},
+    {n:"World's greatest stretch",s:'3×5 cada lado',nt:'Quadril + torácica + isquio — full body'},
+    {n:'Dead bug',s:'2×8 lados',nt:'Core anti-extensão lombar'},
+    {n:'Bird-dog',s:'2×8 lados',nt:'Estabilidade lombar + core'},
+    {n:'Círculos de tornozelo',s:'2×15 cada sentido',nt:'🔑 Mobilidade tornozelo — prevenção crise Gota'},
+    {n:'Mobilização torácica (rolo)',s:'2×30s em 3 pontos',nt:'Postura, abertura de peito'},
+  ]},
+  BCI:{n:'Bicicleta',s:'SAB ou opcional QUA',b:'bpp',d:'40–50 min',ex:[
+    {n:'Aquecimento',s:'5 min',nt:'Resistência baixa'},
+    {n:'Ritmo constante (rua)',s:'35–40 min a 18–22 km/h',nt:'Conversacional — consegue falar frases completas'},
+    {n:'Intervalos (Fase 2)',s:'4×5 min resistência alta',nt:'Com 3 min recuperação entre cada'},
+    {n:'HIIT (Fase 3)',s:'8×30s sprint + 90s leve',nt:'FC alvo: 75–85% FCmax (~140–160 bpm)'},
+    {n:'Desaquecimento',s:'5 min',nt:'Resistência baixa — não parar abruptamente'},
+    {n:'⚠ Em crise de Gota',s:'Ergométrica em casa',nt:'Zero impacto no tornozelo — substitui a rua'},
   ]},
 };
 
-const SEMANA_TREINO=[
-  {dia:'Seg',tipo:'A',label:'Musculação A',cls:'badge-blue'},
-  {dia:'Ter',tipo:'NAT',label:'Natação',cls:'badge-blue'},
-  {dia:'Qua',tipo:'B',label:'Musculação B',cls:'badge-green'},
-  {dia:'Qui',tipo:'MOB',label:'Mobilidade',cls:'badge-green'},
-  {dia:'Sex',tipo:'C',label:'Musculação C',cls:'badge-warn'},
-  {dia:'Sáb',tipo:'NAT',label:'Natação',cls:'badge-blue'},
-  {dia:'Dom',tipo:'REST',label:'Descanso',cls:''},
+const SEMANA=[
+  {d:'Seg',t:'A',l:'Musculação A',c:'bb'},{d:'Ter',t:'NAT',l:'Natação',c:'bb'},
+  {d:'Qua',t:'BCI',l:'Bicicleta*',c:'bpp'},{d:'Qui',t:'MOB',l:'Mobilidade',c:'bg'},
+  {d:'Sex',t:'C',l:'Musculação C',c:'bw'},{d:'Sáb',t:'NAT',l:'Natação + Bici',c:'bb'},
+  {d:'Dom',t:'REST',l:'Descanso',c:''},
 ];
 
-function renderTreino(){
-  const t=TREINOS[state.currentTreino];
-  const todayKey=todayStr()+'_ex';
-  const doneSet=new Set(JSON.parse(localStorage.getItem(todayKey)||'[]'));
-  const doneCount=t.exs.filter((_,i)=>doneSet.has(state.currentTreino+'_'+i)).length;
-
-  return`<div class="page active">
-    <div class="train-selector">
-      ${Object.keys(TREINOS).map(k=>`<div class="train-card ${state.currentTreino===k?'active':''}" onclick="selectTreino('${k}')">${TREINOS[k].nome.split(' ')[0]+' '+TREINOS[k].nome.split(' ')[1]}</div>`).join('')}
-    </div>
-
-    <div class="card">
-      <div class="card-title">${t.nome} <span class="badge ${t.badge}">${t.dur}</span></div>
-      <div style="font-size:12px;color:var(--text3);margin-bottom:10px">${t.sub}</div>
-      ${t.exs.length>0?`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-        <span style="font-size:12px;color:var(--text3)">${doneCount}/${t.exs.length} exercícios</span>
-        <div class="progbar" style="width:60%;margin-top:0"><div class="progfill" style="width:${Math.round(doneCount/t.exs.length*100)}%;background:var(--accent)"></div></div>
-      </div>`:''}
-      ${t.exs.map((e,i)=>{
-        const done=doneSet.has(state.currentTreino+'_'+i);
-        return`<div class="chk-item" onclick="toggleEx(${i},'${state.currentTreino}')">
-          <div class="chk-box ${done?'done':''}">${done?'<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>':''}</div>
-          <div>
-            <div class="chk-label ${done?'done':''}">${e.n}</div>
-            <div class="chk-sub">${e.s}</div>
-            ${e.note?`<div style="font-size:11px;color:var(--text3);margin-top:1px">${e.note}</div>`:''}
-          </div>
-        </div>`}).join('')}
-    </div>
-
-    <div class="card">
-      <div class="card-title">Semana</div>
-      <table class="table">
-        <thead><tr><th>Dia</th><th>Treino</th><th>Fase atual</th></tr></thead>
-        <tbody>${SEMANA_TREINO.map(s=>`<tr>
-          <td style="font-family:'DM Mono',monospace;font-size:12px;color:var(--accent)">${s.dia}</td>
-          <td>${s.tipo==='REST'?`<span style="color:var(--text3)">Descanso 🛌</span>`:`<span class="badge ${s.cls}">${s.label}</span>`}</td>
-          <td style="font-size:11px;color:var(--text3)">${s.tipo==='REST'?'—':['Técnica','Progressão','Intensif.'][state.phase]}</td>
-        </tr>`).join('')}</tbody>
-      </table>
-    </div>
-
-    <div class="card">
-      <div class="card-title">Fase do programa</div>
-      <div class="phase-tabs">
-        <div class="ptab ${state.phase===0?'active':''}" onclick="setPhase(0)">1 · Adaptação</div>
-        <div class="ptab ${state.phase===1?'active':''}" onclick="setPhase(1)">2 · Progressão</div>
-        <div class="ptab ${state.phase===2?'active':''}" onclick="setPhase(2)">3 · Intensif.</div>
-      </div>
-      <div style="font-size:13px;color:var(--text2);line-height:1.6">
-        ${['<strong>Sem 1–4:</strong> Técnica perfeita antes de qualquer carga. Aprender o padrão de movimento. Foco total em bird-dog e prancha para proteger a lombar.','<strong>Sem 5–8:</strong> Aumentar carga progressivamente (+5% por semana). Volume maior. Natação: mais 2 séries. Supersets leves no treino C.','<strong>Sem 9–12:</strong> Supersets em A, B e C para maximizar gasto calórico. Natação 3x semana se possível. Intensidade aumentada, tempo mantido em 45 min.'][state.phase]}
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-title" style="color:var(--accent3)">⚠ Regras lombar — sempre</div>
-      <div style="font-size:13px;color:var(--text3);line-height:1.8">
-        ✕ Sem carga axial pesada (barra nas costas) antes da semana 5<br>
-        ✕ Nunca arredondar a lombar em remada ou terra<br>
-        ✓ Bird-dog e prancha ANTES de qualquer composto<br>
-        ✓ Dor lombar >4/10: parar e substituir por variação mais segura<br>
-        ✓ Aquecimento 5 min obrigatório em todo treino
-      </div>
-    </div>
+function rTreino(){
+  const t=TR[S.tr];
+  const tk=td()+'_ex';
+  const done=new Set(JSON.parse(localStorage.getItem(tk)||'[]'));
+  const dc=t.ex.filter((_,i)=>done.has(S.tr+'_'+i)).length;
+  return`<div class="page act">
+  <div class="tsel">${Object.keys(TR).map(k=>`<div class="tc ${S.tr===k?'act':''}" onclick="setTr('${k}')">${TR[k].n.split(' ').slice(0,2).join(' ')}</div>`).join('')}</div>
+  <div class="card">
+    <div class="ct">${t.n} <span class="badge ${t.b}">${t.d}</span></div>
+    <div style="font-size:11px;color:var(--t3);margin-bottom:8px">${t.s}</div>
+    ${t.ex.length?`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><span style="font-size:11px;color:var(--t3)">${dc}/${t.ex.length} concluídos</span><div class="pb" style="width:55%;margin-top:0"><div class="pf" style="width:${Math.round(dc/t.ex.length*100)}%;background:var(--a)"></div></div></div>`:''}
+    ${t.ex.map((e,i)=>{const dn=done.has(S.tr+'_'+i);return`<div class="chi" onclick="togEx(${i},'${S.tr}')"><div class="chb ${dn?'dn':''}">${dn?'<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>':''}</div><div><div class="chl ${dn?'dn':''}">${e.n}</div><div class="chs">${e.s}</div>${e.nt?`<div class="chn">${e.nt}</div>`:''}</div></div>`}).join('')}
+  </div>
+  <div class="card">
+    <div class="ct">Estrutura semanal</div>
+    <table class="tbl"><thead><tr><th>Dia</th><th>Atividade</th><th>Fase</th></tr></thead><tbody>
+    ${SEMANA.map(s=>`<tr><td style="font-family:'DM Mono',monospace;font-size:11px;color:var(--a)">${s.d}</td><td>${s.t==='REST'?`<span style="color:var(--t3)">Descanso 🛌</span>`:`<span class="badge ${s.c}">${s.l}</span>`}</td><td style="font-size:10px;color:var(--t3)">${s.t==='REST'?'—':['Téc.','Prog.','Int.'][S.ph]}</td></tr>`).join('')}
+    </tbody></table>
+    <div style="font-size:10px;color:var(--t3);margin-top:8px">*QUA: ergométrica 20 min em casa, opcional. Em crise de Gota: substituir rua pela ergom.</div>
+  </div>
+  <div class="card">
+    <div class="ct">Fase do programa</div>
+    <div class="ptabs"><div class="pt ${S.ph===0?'act':''}" onclick="setPh(0)">1·Adaptação</div><div class="pt ${S.ph===1?'act':''}" onclick="setPh(1)">2·Progressão</div><div class="pt ${S.ph===2?'act':''}" onclick="setPh(2)">3·Intensif.</div></div>
+    <div style="font-size:12px;color:var(--t2);line-height:1.7">${['<strong>Sem 1–4 · Adaptação:</strong> Técnica perfeita antes de qualquer carga. 3 séries, 12–15 reps, 60–65% da carga. Descanso 60–75s. Bird-dog e prancha ANTES de compostos.','<strong>Sem 5–8 · Progressão:</strong> 4 séries, 8–12 reps, 70–75%. Substituir agachamento goblet por livre (se técnica consolidada). Supersets leves. Iniciar creatina.','<strong>Sem 9–12 · Intensificação:</strong> 4–5 séries, 6–10 reps, 77–83%. Drop set na última série. Natação 3x se possível. HIIT na bicicleta.'][S.ph]}</div>
+  </div>
+  <div class="card">
+    <div class="ct" style="color:var(--a3)">⚠ Regras lombar — inegociáveis</div>
+    <div style="font-size:12px;color:var(--t3);line-height:1.9">✕ Sem barra pesada nas costas antes da semana 5<br>✕ Nunca arredondar lombar em remada, terra ou agacho<br>✕ Sem exercício com dor lombar >4/10<br>✓ Bird-dog e prancha SEMPRE antes dos compostos<br>✓ Aquecimento 5 min obrigatório em cada sessão<br>✓ Dor irradiando para a perna → parar, consultar fisio</div>
+  </div>
   </div>`;
 }
+function setTr(k){S.tr=k;ss();render()}
+function setPh(n){S.ph=n;ss();render()}
+function togEx(i,t){const k=td()+'_ex';const d=new Set(JSON.parse(localStorage.getItem(k)||'[]'));const key=t+'_'+i;if(d.has(key))d.delete(key);else d.add(key);localStorage.setItem(k,JSON.stringify([...d]));render()}
 
-function selectTreino(k){state.currentTreino=k;saveState();render()}
-function setPhase(n){state.phase=n;saveState();render()}
-function toggleEx(i,tipo){
-  const k=todayStr()+'_ex';
-  const done=new Set(JSON.parse(localStorage.getItem(k)||'[]'));
-  const key=tipo+'_'+i;
-  if(done.has(key))done.delete(key);else done.add(key);
-  localStorage.setItem(k,JSON.stringify([...done]));
-  render();
-}
-
-// ============ NUTRIÇÃO ============
-const NUTRI_DATA={
-  treino:{
-    label:'Treino / Natação',kcal:1966,
-    meals:[
-      {t:'07:00',n:'Café da manhã',d:'3 ovos mexidos + 2 fatias pão integral + 1 fruta (laranja ou maçã)',k:380,p:25,c:40,g:12},
-      {t:'10:00',n:'Lanche 1',d:'1 iogurte grego (0%) + punhado de nozes (20g)',k:200,p:18,c:10,g:8},
-      {t:'13:00',n:'Almoço',d:'150g frango grelhado + 4 col arroz integral + salada à vontade + 1 col azeite',k:550,p:42,c:58,g:12},
-      {t:'16:00',n:'Pré-treino',d:'1 banana + 1 col sopa pasta de amendoim',k:180,p:5,c:30,g:8},
-      {t:'19:30',n:'Jantar / Pós-treino',d:'150g peixe branco ou frango + 150g batata doce + legumes refogados (brócolis, cenoura)',k:480,p:42,c:45,g:8},
-      {t:'21:30',n:'Ceia (opcional)',d:'1 copo leite desnatado ou iogurte simples',k:110,p:10,c:12,g:2},
-    ],
-    macros:{p:170,c:197,g:55},
-  },
-  rest:{
-    label:'Descanso',kcal:1800,
-    meals:[
-      {t:'07:00',n:'Café da manhã',d:'2 ovos mexidos + 1 fatia pão integral + 1 fruta',k:300,p:18,c:28,g:10},
-      {t:'10:00',n:'Lanche 1',d:'Iogurte grego (0%) + 1 fruta pequena',k:150,p:15,c:15,g:2},
-      {t:'13:00',n:'Almoço',d:'130g frango/peixe + 3 col arroz integral + salada + azeite',k:480,p:36,c:48,g:12},
-      {t:'16:00',n:'Lanche 2',d:'30g queijo cottage + pepino/cenoura crua',k:100,p:10,c:5,g:3},
-      {t:'19:30',n:'Jantar',d:'130g frango + 100g batata doce + salada verde',k:420,p:36,c:35,g:8},
-      {t:'21:30',n:'Ceia',d:'1 copo leite desnatado',k:90,p:9,c:10,g:1},
-    ],
-    macros:{p:150,c:160,g:47},
-  },
-  refeed:{
-    label:'Refeed — Sábado',kcal:2260,
-    meals:[
-      {t:'07:00',n:'Café da manhã',d:'4 ovos mexidos + 3 fatias pão integral + 1 banana',k:480,p:30,c:55,g:14},
-      {t:'10:00',n:'Lanche 1',d:'Iogurte grego + aveia (30g) + mel (1 col)',k:250,p:18,c:35,g:5},
-      {t:'13:00',n:'Almoço',d:'150g frango + arroz integral (5 col) + feijão (1 concha) + salada',k:620,p:45,c:80,g:10},
-      {t:'16:00',n:'Lanche 2',d:'1 banana + 200ml suco laranja natural',k:180,p:3,c:42,g:1},
-      {t:'19:30',n:'Jantar',d:'150g peixe + batata doce (200g) + legumes',k:520,p:40,c:58,g:8},
-      {t:'21:30',n:'Ceia',d:'Iogurte grego + 1 fruta',k:150,p:14,c:18,g:2},
-    ],
-    macros:{p:170,c:295,g:45},
-    note:'Carboidratos aumentados para repor glicogênio muscular e evitar adaptação metabólica. Use carbos limpos — sem açúcar refinado, sem álcool.',
-  },
+// ======= NUTRIÇÃO =======
+const ND={
+  treino:{l:'Treino / Natação',k:1966,def:500,p:170,c:197,g:55,meals:[
+    {t:'07:00',n:'Café da manhã',d:'Omelete 3 ovos + espinafre + 2 fatias pão integral + laranja',k:380,p:25,c:42,g:12},
+    {t:'10:00',n:'Lanche 1',d:'1 iogurte grego 0% + 20g nozes',k:200,p:18,c:10,g:9},
+    {t:'13:00',n:'Almoço',d:'150g frango grelhado + 4 col arroz integral + salada à vontade + 1 col azeite',k:550,p:42,c:58,g:13},
+    {t:'16:00',n:'Pré-treino',d:'1 banana + 1 col pasta amendoim (20g)',k:195,p:6,c:30,g:8},
+    {t:'19:30',n:'Jantar/Pós-treino',d:'150g salmão assado + 150g batata doce + brócolis + abobrinha refogados',k:480,p:42,c:45,g:13},
+    {t:'21:30',n:'Ceia',d:'150g iogurte grego + cerejas ou morangos (50g)',k:135,p:15,c:12,g:2},
+  ]},
+  rest:{l:'Descanso',k:1800,def:650,p:155,c:160,g:60,meals:[
+    {t:'07:30',n:'Café da manhã',d:'2 ovos mexidos + 1/3 abacate + 2 fatias pão integral + chá verde',k:390,p:18,c:28,g:18},
+    {t:'10:00',n:'Lanche 1',d:'150g queijo cottage + pepino + tomate + 80g mirtilos',k:190,p:20,c:16,g:4},
+    {t:'13:00',n:'Almoço',d:'130g frango/peixe + 3 col arroz integral + salada grande + azeite',k:480,p:36,c:46,g:12},
+    {t:'16:00',n:'Lanche 2',d:'Iogurte grego 0% + 1 fruta pequena',k:150,p:15,c:15,g:2},
+    {t:'19:30',n:'Jantar',d:'130g frango + legumes refogados + 1 col azeite — sem batata doce',k:390,p:36,c:12,g:13},
+    {t:'21:30',n:'Ceia',d:'250ml leite morno desnatado + cúrcuma + pimenta preta (golden milk)',k:110,p:9,c:12,g:1},
+  ]},
+  refeed:{l:'Refeed — Sábado',k:2260,def:200,p:170,c:295,g:50,note:'Carboidratos aumentados para repor glicogênio e evitar adaptação metabólica. Usar carbos LIMPOS — sem açúcar refinado, sem álcool.',meals:[
+    {t:'08:00',n:'Café reforçado',d:'80g aveia + 200ml leite integral + 1 banana + mel 15g + 2 ovos mexidos',k:620,p:25,c:95,g:12},
+    {t:'10:00',n:'Lanche 1',d:'Iogurte grego + aveia 30g + mel',k:250,p:18,c:35,g:5},
+    {t:'13:00',n:'Almoço em família',d:'200g frango + 5 col arroz branco + 1 concha feijão + salada à vontade',k:720,p:52,c:100,g:10},
+    {t:'16:00',n:'Lanche 2',d:'Vitamina: banana + morango + whey + leite + torrada integral',k:340,p:30,c:45,g:5},
+    {t:'19:30',n:'Jantar',d:'150g salmão + 100g macarrão integral ao azeite + brócolis no vapor',k:520,p:38,c:62,g:14},
+    {t:'21:30',n:'Ceia',d:'Iogurte grego + frutas vermelhas',k:150,p:14,c:18,g:2},
+  ]},
 };
 
 const SUPLS=[
-  {n:'Whey Protein Isolate',dose:'30g',when:'Pós-treino (ou no lanche se não treinou)',why:'Atingir meta proteica sem elevar purinas (WPI tem baixíssima purina)'},
-  {n:'Omega-3 EPA+DHA',dose:'2–3g/dia',when:'Com almoço',why:'Anti-inflamatório — reduz risco de crise de gota e inflamação muscular'},
-  {n:'Vitamina C',dose:'500mg/dia',when:'Com café da manhã',why:'Reduz ácido úrico sérico — evidência direta para gota'},
-  {n:'Vitamina D3 + K2',dose:'2.000 UI D3 + 100mcg K2',when:'Com almoço (gordura)',why:'Função muscular, imunidade, absorção de cálcio'},
-  {n:'Magnésio glicinato',dose:'300–400mg',when:'30 min antes de dormir',why:'Qualidade do sono, recuperação muscular, reduz câimbras'},
-  {n:'Creatina (fase 2)',dose:'3–5g/dia',when:'Qualquer horário, com água',why:'Força e massa magra — iniciar na semana 5 após adaptação. Aumentar hidratação.'},
+  {n:'1. Whey Protein Isolate',w:'Pós-treino (ou lanche)',d:'30g / ~120 kcal',why:'Atingir meta proteica sem elevar purinas — WPI tem purina mínima'},
+  {n:'2. Omega-3 EPA+DHA',w:'Com o almoço',d:'2–3g/dia',why:'Anti-inflamatório — reduz risco crise Gota + inflamação muscular'},
+  {n:'3. Vitamina C',w:'Com café da manhã',d:'500mg/dia',why:'Reduz ácido úrico sérico — evidência direta para Gota'},
+  {n:'4. Vitamina D3 + K2',w:'Com almoço (com gordura)',d:'2.000UI D3 + 100mcg K2',why:'Função muscular, imunidade, absorção de cálcio'},
+  {n:'5. Magnésio Glicinato',w:'30 min antes de dormir',d:'300–400mg',why:'Qualidade do sono, recuperação muscular, câimbras'},
+  {n:'6. Creatina — Fase 2',w:'Qualquer horário, com água',d:'3–5g/dia',why:'⚠ Iniciar semana 5. Aumentar água para 4L/dia ao usar'},
+  {n:'7. Ashwagandha KSM-66 (opcional)',w:'Com jantar',d:'600mg/dia',why:'Reduz cortisol crônico — essencial com sua rotina intensa Disney+Forex+Família'},
 ];
 
-function renderNutri(){
-  const dt=getDayType();
-  const tab=state.nutriTab||'treino';
-  const d=NUTRI_DATA[tab];
+function rNutri(){
+  const t=S.nt||'treino';
+  const d=ND[t];
   const totalP=d.meals.reduce((a,m)=>a+m.p,0);
   const totalC=d.meals.reduce((a,m)=>a+m.c,0);
   const totalG=d.meals.reduce((a,m)=>a+m.g,0);
   const totalK=d.meals.reduce((a,m)=>a+m.k,0);
-
-  return`<div class="page active">
-    <div class="metrics">
-      <div class="met accent"><div class="val">${d.kcal}<span class="unit">kcal</span></div><div class="lbl">${d.label}</div><div class="sub">déficit ~${2350-d.kcal} kcal</div></div>
-      <div class="met blue"><div class="val">${d.macros.p}<span class="unit">g</span></div><div class="lbl">Proteína</div><div class="sub">1,6g/kg — seguro p/ Gota</div></div>
-      <div class="met warn"><div class="val">3,5<span class="unit">L</span></div><div class="lbl">Água/dia</div><div class="sub">Mínimo absoluto</div></div>
-      <div class="met purple"><div class="val">${d.macros.c}<span class="unit">g</span></div><div class="lbl">Carboidratos</div><div class="sub">${d.macros.g}g gordura</div></div>
-    </div>
-
-    <div class="tab-row">
-      <div class="tab-pill ${tab==='treino'?'active':''}" onclick="setNutriTab('treino')">Treino/Natação</div>
-      <div class="tab-pill ${tab==='rest'?'active':''}" onclick="setNutriTab('rest')">Descanso</div>
-      <div class="tab-pill ${tab==='refeed'?'active':''}" onclick="setNutriTab('refeed')">Refeed (Sáb)</div>
-      <div class="tab-pill ${tab==='supl'?'active':''}" onclick="setNutriTab('supl')">Suplementos</div>
-      <div class="tab-pill ${tab==='gota'?'active':''}" onclick="setNutriTab('gota')">Gota</div>
-    </div>
-
-    ${tab==='supl'?`<div class="card">
-      <div class="card-title">Stack de suplementação</div>
-      ${SUPLS.map((s,i)=>`<div class="supp-item">
-        <div>
-          <div class="supp-name">${i+1}. ${s.n}</div>
-          <div class="supp-detail">${s.when}</div>
-          <div class="supp-detail" style="margin-top:2px">${s.why}</div>
-        </div>
-        <div class="supp-dose">${s.dose}</div>
-      </div>`).join('')}
-      <div style="font-size:11px;color:var(--text3);margin-top:10px;padding-top:10px;border-top:1px solid var(--border)">⚠ Creatina (#6): iniciar na semana 5. Aumentar água para 4L/dia quando usar. Consulte médico antes de suplementar.</div>
-    </div>`:tab==='gota'?`
-    <div class="card">
-      <div class="card-title" style="color:var(--accent3)">Evitar — alto teor de purina</div>
-      ${['Vísceras: fígado, rim, miolo, coração','Frutos do mar: camarão, mexilhão, ostra','Sardinha, arenque, anchovas (frequente)','Atum enlatado em excesso','Álcool — especialmente cerveja (INIMIGO Nº1)','Bebidas açucaradas e frutose industrial','Feijão, lentilha, ervilha (moderação)'].map(i=>`<div class="avoid-item"><span class="avoid-icon" style="color:var(--accent3)">✕</span>${i}</div>`).join('')}
-    </div>
-    <div class="card">
-      <div class="card-title" style="color:var(--accent)">Favoráveis — anti-inflamatório + baixa purina</div>
-      ${['Frango (peito) e peru — ok em quantidade moderada','Ovos — sem restrição para gota','Queijo cottage e laticínios desnatados','Cerejas e frutas vermelhas — reduzem ácido úrico','Café (até 3x/dia — efeito protetor documentado)','Vitamina C (500mg/dia) — reduz uricemia','3,5L+ de água/dia — diluição e excreção do ácido úrico','Azeite extra virgem — anti-inflamatório'].map(i=>`<div class="avoid-item"><span class="avoid-icon" style="color:var(--accent)">✓</span>${i}</div>`).join('')}
-    </div>
-    <div class="card">
-      <div class="card-title" style="color:var(--warn)">Protocolo em caso de crise</div>
-      <div style="font-size:13px;color:var(--text3);line-height:1.8">
-        1. Hidratação intensa: 4L+ de água no dia<br>
-        2. Gelo local por 20 min, 3–4x ao dia<br>
-        3. Parar treino de pernas — nadar pode continuar<br>
-        4. Anti-inflamatório conforme prescrição médica<br>
-        5. Eliminar completamente purinas por 48–72h<br>
-        6. Consultar médico se dor não ceder em 24h
-      </div>
-    </div>`:`
-    <div class="card">
-      <div class="card-title">${d.label} — ${totalK} kcal total</div>
-      ${d.note?`<div style="font-size:12px;color:var(--warn);margin-bottom:10px;padding:8px;background:rgba(255,179,71,.08);border-radius:8px;border:1px solid rgba(255,179,71,.2)">${d.note}</div>`:''}
-      ${d.meals.map(m=>`<div class="meal-row">
-        <div class="meal-time">${m.t}</div>
-        <div class="meal-name">${m.n} <span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--warn)">${m.k} kcal</span></div>
-        <div class="meal-desc">${m.d}</div>
-        <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text3);margin-top:3px">P:${m.p}g · C:${m.c}g · G:${m.g}g</div>
-      </div>`).join('')}
-    </div>
-    <div class="card">
-      <div class="card-title">Macros do dia</div>
-      <div class="macro-bar-wrap"><div class="macro-row-label"><span class="macro-name">Proteína</span><span class="macro-val">${totalP}g · ${Math.round(totalP*4)} kcal</span></div><div class="progbar"><div class="progfill" style="width:${Math.round(totalP*4/totalK*100)}%;background:var(--accent)"></div></div></div>
-      <div class="macro-bar-wrap"><div class="macro-row-label"><span class="macro-name">Carboidrato</span><span class="macro-val">${totalC}g · ${Math.round(totalC*4)} kcal</span></div><div class="progbar"><div class="progfill" style="width:${Math.round(totalC*4/totalK*100)}%;background:var(--accent2)"></div></div></div>
-      <div class="macro-bar-wrap"><div class="macro-row-label"><span class="macro-name">Gordura</span><span class="macro-val">${totalG}g · ${Math.round(totalG*9)} kcal</span></div><div class="progbar"><div class="progfill" style="width:${Math.round(totalG*9/totalK*100)}%;background:var(--warn)"></div></div></div>
-    </div>`}
+  return`<div class="page act">
+  <div class="m2">
+    <div class="met ca"><div class="mv">${d.k}<span class="mu">kcal</span></div><div class="ml">${d.l}</div><div class="ms">déficit ~${d.def} kcal</div></div>
+    <div class="met cb"><div class="mv">${d.p}<span class="mu">g</span></div><div class="ml">Proteína</div><div class="ms">1,6g/kg — Gota safe</div></div>
+    <div class="met cw"><div class="mv">3,5<span class="mu">L</span></div><div class="ml">Água/dia</div><div class="ms">mínimo absoluto</div></div>
+    <div class="met cp"><div class="mv">${d.c}<span class="mu">g</span></div><div class="ml">Carboidratos</div><div class="ms">${d.g}g gordura</div></div>
+  </div>
+  <div class="tpills">
+    <div class="tpill ${t==='treino'?'act':''}" onclick="setNt('treino')">Treino/Natação</div>
+    <div class="tpill ${t==='rest'?'act':''}" onclick="setNt('rest')">Descanso</div>
+    <div class="tpill ${t==='refeed'?'act':''}" onclick="setNt('refeed')">Refeed Sáb</div>
+    <div class="tpill ${t==='supl'?'act':''}" onclick="setNt('supl')">Suplementos</div>
+    <div class="tpill ${t==='gota'?'act':''}" onclick="setNt('gota')">Gota</div>
+  </div>
+  ${t==='supl'?`<div class="card"><div class="ct">Stack de suplementação (prioridade)</div>
+    ${SUPLS.map(s=>`<div class="si"><div><div class="sn">${s.n}</div><div class="sd">${s.w}</div><div class="sd" style="margin-top:1px;color:var(--t3)">${s.why}</div></div><div class="sdose">${s.d}</div></div>`).join('')}
+  </div>`:t==='gota'?`
+  <div class="card"><div class="ct" style="color:var(--a3)">Evitar — alto teor de purina</div>
+    ${['Vísceras: fígado, rim, miolo, coração','Frutos do mar: camarão, mexilhão, ostra','Sardinha, arenque, anchovas (em excesso)','Álcool — especialmente cerveja (INIMIGO Nº1)','Bebidas açucaradas / frutose industrial','Atum enlatado frequente'].map(i=>`<div class="avi"><span style="color:var(--a3);flex-shrink:0">✕</span>${i}</div>`).join('')}
+  </div>
+  <div class="card"><div class="ct" style="color:var(--a)">Favoráveis — anti-inflamatório</div>
+    ${['Frango (peito), ovos, queijo cottage','Cerejas e frutas vermelhas — reduzem ácido úrico','Café (até 3x/dia — efeito protetor documentado)','Vitamina C 500mg/dia — reduz uricemia (evidência forte)','3,5L+ água/dia — dilui e excreta o ácido úrico','Laticínios desnatados — iogurte grego, leite','Azeite extra virgem — anti-inflamatório'].map(i=>`<div class="avi"><span style="color:var(--a);flex-shrink:0">✓</span>${i}</div>`).join('')}
+  </div>
+  <div class="card"><div class="ct" style="color:var(--aw)">Protocolo em crise de Gota</div>
+    <div style="font-size:12px;color:var(--t3);line-height:1.9">1. Hidratação: 4L+ de água no dia<br>2. Gelo local 20 min, 3–4x ao dia<br>3. Parar treino de pernas — natação pode continuar<br>4. Trocar bicicleta rua pela ergométrica em casa<br>5. Anti-inflamatório conforme prescrição médica<br>6. Eliminar purinas por 48–72h<br>7. Consultar médico se dor não ceder em 24h</div>
+  </div>`:
+  `<div class="card"><div class="ct">${d.l} — ${totalK} kcal</div>
+    ${d.note?`<div style="font-size:11px;color:var(--aw);padding:8px;background:rgba(255,179,71,.07);border-radius:8px;border:1px solid rgba(255,179,71,.2);margin-bottom:10px;line-height:1.5">${d.note}</div>`:''}
+    ${d.meals.map(m=>`<div class="mr"><div class="mtime">${m.t}</div><div class="mname">${m.n} <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--aw)">${m.k} kcal</span></div><div class="mdesc">${m.d}</div><div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--t3);margin-top:2px">P:${m.p}g · C:${m.c}g · G:${m.g}g</div></div>`).join('')}
+  </div>
+  <div class="card"><div class="ct">Macros do dia</div>
+    ${[['Proteína',totalP,4,'var(--a)'],['Carboidrato',totalC,4,'var(--a2)'],['Gordura',totalG,9,'var(--aw)']].map(([n,v,cal,col])=>`<div class="mbw"><div class="mbl"><span class="mbn">${n}</span><span class="mbv">${v}g · ${Math.round(v*cal)} kcal</span></div><div class="pb"><div class="pf" style="width:${Math.round(v*cal/totalK*100)}%;background:${col}"></div></div></div>`).join('')}
+  </div>`}
   </div>`;
 }
+function setNt(t){S.nt=t;ss();render()}
 
-function setNutriTab(t){state.nutriTab=t;saveState();render()}
+// ======= MAIS (Sono + Mobilidade + Alertas + Revisão) =======
+function rMais(){
+  const st=S.st||'alertas';
+  return`<div class="page act">
+  <div class="tpills">
+    <div class="tpill ${st==='alertas'?'act':''}" onclick="setSt('alertas')">Alertas</div>
+    <div class="tpill ${st==='sono'?'act':''}" onclick="setSt('sono')">Sono</div>
+    <div class="tpill ${st==='mob'?'act':''}" onclick="setSt('mob')">Mobilidade</div>
+    <div class="tpill ${st==='rev'?'act':''}" onclick="setSt('rev')">Revisão 4 sem</div>
+    <div class="tpill ${st==='breath'?'act':''}" onclick="setSt('breath')">Respiração</div>
+  </div>
+  ${st==='alertas'?rAlertas():st==='sono'?rSono():st==='mob'?rMob():st==='rev'?rRev():rBreath()}
+  </div>`;
+}
+function setSt(t){S.st=t;ss();render()}
 
-// ============ ALERTAS ============
-function renderAlertas(){
+function rAlertas(){
   const cats=[
-    {cat:'☀️ Manhã',items:[
-      {t:'06:00',title:'Acordar + luz natural',why:'Sincroniza circadiano, ativa serotonina'},
-      {t:'06:05',title:'500ml água em jejum',why:'Reidratação + suporte ao ácido úrico'},
-      {t:'07:00',title:'Café da manhã proteico',why:'3 ovos + pão integral — 380 kcal'},
-      {t:'07:30',title:'Vitamina D3 (2.000 UI) + Vitamina C (500mg)',why:'Com alimento, absorção ideal'},
+    {t:'☀️ Manhã',items:[
+      {h:'06:00',ti:'Acordar + luz natural 5 min',w:'Ancora ritmo circadiano, serotonina'},
+      {h:'06:05',ti:'500ml água em jejum',w:'Reidratação + suporte ao ácido úrico (Gota)'},
+      {h:'06:10',ti:'5 min alongamento leve — lombar',w:'Cat-cow + hip flexor antes de qualquer coisa'},
+      {h:'07:00',ti:'Café da manhã proteico',w:'~380 kcal, 25g proteína'},
+      {h:'07:30',ti:'Vit D3 (2.000UI) + Vit C (500mg)',w:'Com alimento, absorção máxima'},
     ]},
-    {cat:'💼 Trabalho (Disney NOC)',items:[
-      {t:'10:00',title:'Pausa ativa — 8 min',why:'Lombar, postura, quebrar sedentarismo'},
-      {t:'10:05',title:'300ml de água',why:'Gota — hidratação contínua'},
-      {t:'12:30',title:'Almoço — não pular!',why:'Base da dieta — afeta treino e sono'},
-      {t:'14:00',title:'Última cafeína do dia',why:'Meia-vida 6h → não tomar após isso'},
-      {t:'15:00',title:'2ª pausa ativa + 300ml água',why:'Circulação, concentração'},
+    {t:'💼 Trabalho (Disney NOC)',items:[
+      {h:'50min',ti:'Pausa ativa — 2–3 min em pé',w:'Configurar alarme recorrente a cada 50 min'},
+      {h:'10:00',ti:'Pausa ativa 8 min (maior)',w:'Cat-cow + air squat + hip flexor'},
+      {h:'10:05',ti:'300ml água',w:'Gota — hidratação contínua'},
+      {h:'13:00',ti:'Almoço — não pular!',w:'Base da dieta, afeta treino e sono'},
+      {h:'14:00',ti:'Última cafeína',w:'Meia-vida 6h — após prejudica sono'},
+      {h:'15:00',ti:'2ª pausa ativa 8 min',w:'Circulação, lombar, concentração'},
+      {h:'15:30',ti:'300ml água',w:'Rumo à meta 3,5L'},
     ]},
-    {cat:'🏋️ Treino',items:[
-      {t:'Pré',title:'Banana + pasta amendoim (30 min antes)',why:'Energia sustentada sem pico de insulina'},
-      {t:'Início',title:'Aquecimento 5 min — OBRIGATÓRIO',why:'Reduz risco de lesão, prepara articulações'},
-      {t:'Durante',title:'500ml água no treino',why:'Performance + prevenção câimbras (Gota)'},
-      {t:'Pós',title:'Whey 30g ou jantar proteico em 60 min',why:'Síntese proteica máxima'},
+    {t:'🏋️ Treino',items:[
+      {h:'Pré',ti:'Banana + pasta amendoim (30 min antes)',w:'Glicogênio + gordura = energia sustentada'},
+      {h:'Início',ti:'Aquecimento 5 min — OBRIGATÓRIO',w:'Reduz lesão, prepara articulações'},
+      {h:'Durante',ti:'500ml água no treino',w:'Performance + prevenção câimbras (Gota)'},
+      {h:'Pós',ti:'Whey 30g ou refeição proteica em 60 min',w:'Síntese proteica máxima'},
     ]},
-    {cat:'🌙 Noite',items:[
-      {t:'19:30',title:'Jantar leve e proteico',why:'Anabolismo noturno, digestão antes de dormir'},
-      {t:'21:00',title:'Telas → modo noite ou desligar',why:'Luz azul suprime melatonina'},
-      {t:'21:30',title:'Banho morno 10 min',why:'Queda de temperatura corporal = sono fácil'},
-      {t:'22:00',title:'Magnésio 300mg + 5 min respiração',why:'Parassimpático, relaxamento muscular'},
-      {t:'22:30',title:'Luzes apagadas — dormir',why:'7–8h mínimo para recuperação'},
+    {t:'🌙 Noite',items:[
+      {h:'19:30',ti:'Jantar leve e proteico',w:'Última janela anabólica'},
+      {h:'21:00',ti:'Telas modo noite / desligar',w:'Luz azul suprime melatonina em até 50%'},
+      {h:'21:30',ti:'Banho morno 10 min',w:'Queda de temp. corporal → sono fácil'},
+      {h:'22:00',ti:'Magnésio 300mg + respiração 4-7-8',w:'Parassimpático, relaxamento muscular'},
+      {h:'22:30',ti:'Luzes apagadas — dormir',w:'Meta: 7h30 (23:00 → 06:30)'},
     ]},
-    {cat:'📅 Semanal / Mensal',items:[
-      {t:'Seg',title:'Pesar em jejum — registrar no app',why:'Mesmo dia, mesma hora, após urinar'},
-      {t:'Dom',title:'Registrar semana — energia, sono, treinos',why:'Identificar padrões, ajustar plano'},
-      {t:'4 sem',title:'Revisão completa do plano',why:'Ajuste de carga, calorias, progressão'},
-      {t:'Mensal',title:'Medir circunferência abdominal',why:'Indicador de gordura visceral'},
-      {t:'12 sem',title:'Exames: ácido úrico, glicemia, colesterol',why:'Revisão clínica com médico'},
+    {t:'📅 Semanal / Mensal',items:[
+      {h:'2ª feira',ti:'Pesar em jejum — registrar no app',w:'Mesmo dia, mesma hora, após urinar'},
+      {h:'Domingo',ti:'Registrar semana — energia, sono, treinos',w:'Identificar padrões, ajustar plano'},
+      {h:'4 sem',ti:'Revisão completa do plano',w:'Carga, calorias, progressão — ver aba Revisão'},
+      {h:'Mensal',ti:'Medir circunferência abdominal',w:'Melhor indicador de gordura visceral'},
+      {h:'12 sem',ti:'Exames: ácido úrico, glicemia, colesterol',w:'Revisão clínica com médico'},
     ]},
   ];
-  return`<div class="page active">
-    <div style="font-size:12px;color:var(--text3);margin-bottom:12px">Configure esses horários no app de Relógio ou Lembretes do iPhone.</div>
-    ${cats.map(cat=>`<div class="card">
-      <div class="card-title">${cat.cat}</div>
-      ${cat.items.map(a=>`<div class="alert-item">
-        <div class="alert-time">${a.t}</div>
-        <div class="alert-body"><div class="title">${a.title}</div><div class="why">${a.why}</div></div>
-      </div>`).join('')}
-    </div>`).join('')}
+  return cats.map(c=>`<div class="card"><div class="ct">${c.t}</div>${c.items.map(a=>`<div class="ali"><div class="alt">${a.h}</div><div class="aln"><div class="ti">${a.ti}</div><div class="sw">${a.w}</div></div></div>`).join('')}</div>`).join('');
+}
+
+function rSono(){
+  return`
+  <div class="card"><div class="ct">Metas de sono</div>
+    <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--br)"><span style="font-size:12px;color:var(--t2)">Hora de dormir</span><span style="font-family:'DM Mono',monospace;font-size:12px;color:var(--a)">23:00</span></div>
+    <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--br)"><span style="font-size:12px;color:var(--t2)">Hora de acordar</span><span style="font-family:'DM Mono',monospace;font-size:12px;color:var(--a)">06:30</span></div>
+    <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--br)"><span style="font-size:12px;color:var(--t2)">Duração total</span><span style="font-family:'DM Mono',monospace;font-size:12px;color:var(--a)">7h 30min</span></div>
+    <div style="display:flex;justify-content:space-between;padding:7px 0"><span style="font-size:12px;color:var(--t2)">Variação máxima</span><span style="font-family:'DM Mono',monospace;font-size:12px;color:var(--aw)">±30 min</span></div>
+    <div style="font-size:11px;color:var(--t3);margin-top:8px;line-height:1.6">Sono profundo (N3) libera GH — essencial para queima de gordura. REM regula cortisol. Dormir mal aumenta grelina (fome) e reduz leptina (saciedade).</div>
+  </div>
+  <div class="card"><div class="ct">Rotina noturna</div>
+    ${[['21:00','Última refeição leve','Digestão eleva temp. corporal e atrasa sono'],['21:30','Night Shift em todos os dispositivos','Luz azul suprime melatonina em até 50%'],['22:00','Encerrar trades e telas estimulantes','Sem verificar posições, redes ou notícias'],['22:15','Banho morno 10–15 min','A queda de temp. pós-banho induz o sono'],['22:30','Respiração 4-7-8 ou meditação guiada','Parassimpático ativo — ver aba Respiração'],['23:00','Luzes apagadas — dormir','Consistência de horário > duração']].map(([h,ti,w])=>`<div class="ali"><div class="alt">${h}</div><div class="aln"><div class="ti">${ti}</div><div class="sw">${w}</div></div></div>`).join('')}
+  </div>
+  <div class="card"><div class="ct">Higiene do sono</div>
+    <div style="font-size:12px;color:var(--t3);line-height:1.9">✓ Quarto: 18–20°C ideal<br>✓ Escuridão total — blackout ou máscara<br>✓ Sem celular na cama — modo avião ou fora<br>✓ Sem cafeína após 14:00<br>✓ Horário fixo mesmo fim de semana<br>✕ Trades/trabalho na cama<br>✕ Discussões ou estresse próximo de dormir</div>
+  </div>
+  <div class="card"><div class="ct">Rotina matinal de ativação</div>
+    ${[['06:30','Luz natural — janela ou 5 min fora','Ancora ritmo circadiano'],['06:35','500ml água + pitada de sal ou eletrólito','Reidratação, Gota'],['06:45','Mobilidade 10 min — lombar + quadril','Cat-cow + couch stretch + bird-dog'],['07:00','Café da manhã proteico','30g+ proteína antes do trabalho'],['07:15','Então: celular, trades, e-mail','Não antes — cortisol matinal deve ser aproveitado']].map(([h,ti,w])=>`<div class="ali"><div class="alt">${h}</div><div class="aln"><div class="ti">${ti}</div><div class="sw">${w}</div></div></div>`).join('')}
   </div>`;
 }
 
-// ============ EVENTS ============
-function attachEvents(){
-  if(curPage==='log'){
-    const today=todayStr();
-    const tl=state.logs.find(l=>l.date===today);
-    if(tl){
-      if(tl.energia)selectN('energia',tl.energia);
-      if(tl.sono)selectN('sono',tl.sono);
-    } else {
-      if(state.selEnergia)selectN('energia',state.selEnergia);
-      if(state.selSono)selectN('sono',state.selSono);
-    }
+function rMob(){
+  return`
+  <div class="card"><div class="ct">Pausa ativa — a cada 50 min de trabalho (2–3 min)</div>
+    <table class="tbl"><thead><tr><th>Exercício</th><th>Tempo</th><th>Como</th></tr></thead><tbody>
+    ${[['Círculos de pescoço','30s','Sentado — devagar'],['Retração escapular','10 reps','Sentado — apertar costas'],['Inclinação pélvica','30s','Sentado — lombar frente/trás'],['Air squat (5 reps)','30s','Em pé — agachar e levantar'],['Lunge isométrico (hip flexor)','30s cada','Em pé — psoas encurtado'],['Respiração diafragmática','5 resp.','Qualquer posição']].map(([e,t,c])=>`<tr><td>${e}</td><td style="color:var(--a2);font-family:'DM Mono',monospace">${t}</td><td style="color:var(--t3)">${c}</td></tr>`).join('')}
+    </tbody></table>
+    <div style="font-size:11px;color:var(--t3);margin-top:8px">Estudo NIOSH 2019: pausas ativas a cada 50 min reduzem dor lombar em 30–40% em trabalhadores sedentários.</div>
+  </div>
+  <div class="card"><div class="ct">Protocolo Quinta — 20–25 min</div>
+    <table class="tbl"><thead><tr><th>#</th><th>Exercício</th><th>Volume</th></tr></thead><tbody>
+    ${[['1','Cat-cow','2×10 lentas'],['2','Hip 90/90 rotation','2×45s cada lado'],['3','Pigeon pose modificado','2×45s cada lado'],['4','Couch stretch (iliopsoas)','2×45s cada lado'],["5","World's greatest stretch",'3×5 cada lado'],['6','Deadbug','2×8 lados'],['7','Bird-dog','2×8 lados'],['8','Círculos tornozelo','2×15 cada sentido'],['9','Mobilização torácica (rolo)','2×30s em 3 pontos']].map(([n,e,v])=>`<tr><td style="color:var(--a);font-family:'DM Mono',monospace">${n}</td><td>${e}</td><td style="color:var(--a2);font-family:'DM Mono',monospace;font-size:10px">${v}</td></tr>`).join('')}
+    </tbody></table>
+  </div>
+  <div class="card"><div class="ct">Sessão extra Quarta — 30 min (se disponível)</div>
+    <table class="tbl"><thead><tr><th>Bloco</th><th>Exercício</th><th>Volume</th></tr></thead><tbody>
+    <tr><td rowspan="3" style="color:var(--a)">Quadril<br>10min</td><td>90/90 hip stretch</td><td style="font-family:'DM Mono',monospace;font-size:10px">2 min cada lado</td></tr>
+    <tr><td>Afundo isométrico c/ rotação</td><td style="font-family:'DM Mono',monospace;font-size:10px">3×30s cada</td></tr>
+    <tr><td>Pigeon pose</td><td style="font-family:'DM Mono',monospace;font-size:10px">2 min cada lado</td></tr>
+    <tr><td rowspan="3" style="color:var(--a2)">Lombar<br>10min</td><td>Cat-cow</td><td style="font-family:'DM Mono',monospace;font-size:10px">3×10 lentas</td></tr>
+    <tr><td>Child's pose</td><td style="font-family:'DM Mono',monospace;font-size:10px">2 min</td></tr>
+    <tr><td>Ponte glútea hold 3s</td><td style="font-family:'DM Mono',monospace;font-size:10px">3×12</td></tr>
+    <tr><td rowspan="3" style="color:var(--aw)">Tornozelo<br>10min</td><td>Dorsiflexão ativa</td><td style="font-family:'DM Mono',monospace;font-size:10px">2×10 cada</td></tr>
+    <tr><td>Panturrilha meia ponta lenta</td><td style="font-family:'DM Mono',monospace;font-size:10px">2×15</td></tr>
+    <tr><td>Círculos de tornozelo</td><td style="font-family:'DM Mono',monospace;font-size:10px">30s cada</td></tr>
+    </tbody></table>
+  </div>
+  <div class="card"><div class="ct" style="color:var(--a3)">Sinais de alerta — pare e avalie</div>
+    <div style="font-size:12px;color:var(--t3);line-height:1.9">🔴 Dor irradiando para a perna (ciática) → parar exercícios, fisioterapeuta<br>🔴 Tornozelo inchado e quente → crise de Gota, protocolo de crise<br>🟡 Dor lombar >4/10 → reduzir carga 20%, substituir por variante mais segura<br>🟡 Câimbra no tornozelo → hidratação insuficiente, potássio baixo<br>🟢 Desconforto muscular pós-treino → normal, mobilidade e sono resolvem</div>
+  </div>`;
+}
+
+function rRev(){
+  return`
+  <div class="card"><div class="ct">Checklist — revisão a cada 4 semanas</div>
+    <table class="tbl"><thead><tr><th>Pergunta</th><th>Sim</th><th>Não → Ação</th></tr></thead><tbody>
+    ${[['Perdi ≥1,5 kg no mês?','Mantém plano','-100 kcal/dia ou +1 sessão natação'],['Energia ≥7/10 na maioria dos dias?','Pode intensificar','Revisar sono e calorias — possível déficit excessivo'],['Completou ≥80% dos treinos?','Avança para próxima fase','Identificar o bloqueio — ajustar agenda'],['Dor lombar estável ou melhorou?','Avança nos exercícios','Consultar fisioterapeuta'],['Sem crise de Gota?','Mantém dieta','Checar hidratação e purinas — reduzir proteína animal'],['Sono ≥7h na maioria das noites?','Mantém rotina','Revisar luz azul, cafeína, horário de treino']].map(([q,s,n])=>`<tr><td style="font-size:11px">${q}</td><td style="font-size:10px;color:var(--a)">${s}</td><td style="font-size:10px;color:var(--aw)">${n}</td></tr>`).join('')}
+    </tbody></table>
+  </div>
+  <div class="card"><div class="ct">O que medir — métricas semanais/mensais</div>
+    <table class="tbl"><thead><tr><th>Métrica</th><th>Freq.</th><th>Meta 12sem</th></tr></thead><tbody>
+    ${[['Peso corporal','1x/semana (Seg, jejum)','80–82 kg'],['Circunf. abdominal','1x/mês','Reduzir ≥5 cm'],['IMC','1x/mês','<27 em 12 sem'],['Energia 1–10','Diária (no app)','≥7 consistente'],['Qualidade sono 1–10','Diária (no app)','≥7'],['Dor lombar 0–10','Semanal','≤2'],['Passos/dia','Diária','8.000–10.000'],['Ácido úrico','A cada 12 sem','Dentro do normal — médico']].map(([m,f,g])=>`<tr><td style="font-size:11px">${m}</td><td style="font-size:10px;color:var(--a2)">${f}</td><td style="font-size:10px;color:var(--a)">${g}</td></tr>`).join('')}
+    </tbody></table>
+  </div>
+  <div class="card"><div class="ct">Diagnóstico inicial — referência</div>
+    <table class="tbl"><tbody>
+    <tr><td style="color:var(--t2)">Peso inicial</td><td style="font-family:'DM Mono',monospace;color:var(--a)">${PI} kg</td></tr>
+    <tr><td style="color:var(--t2)">IMC inicial</td><td style="font-family:'DM Mono',monospace;color:var(--aw)">${imc(PI)} — Sobrepeso</td></tr>
+    <tr><td style="color:var(--t2)">TMB (Mifflin-St Jeor)</td><td style="font-family:'DM Mono',monospace;color:var(--t)">${TMB} kcal</td></tr>
+    <tr><td style="color:var(--t2)">TDEE (fator atividade)</td><td style="font-family:'DM Mono',monospace;color:var(--t)">${TDEE} kcal</td></tr>
+    <tr><td style="color:var(--t2)">Meta peso</td><td style="font-family:'DM Mono',monospace;color:var(--a)">${PM} kg (IMC ~24,3)</td></tr>
+    <tr><td style="color:var(--t2)">Perda esperada/semana</td><td style="font-family:'DM Mono',monospace;color:var(--a)">0,4–0,5 kg</td></tr>
+    <tr><td style="color:var(--t2)">Início do programa</td><td style="font-family:'DM Mono',monospace;color:var(--t)">18/05/2026</td></tr>
+    </tbody></table>
+  </div>`;
+}
+
+let bTimer=null,bStep=0;
+function rBreath(){
+  return`
+  <div class="card"><div class="ct">Técnica 4-7-8 — antes de dormir</div>
+    <div style="font-size:12px;color:var(--t3);margin-bottom:14px;line-height:1.6">Ativa o sistema nervoso parassimpático, reduz cortisol, prepara para o sono. Usar também após sessões difíceis de trade ou stress.</div>
+    <div class="bcirc" id="bcirc"><div id="bstate" style="font-size:13px;font-weight:600;color:var(--a)">Pronto</div><div id="bcount" style="font-family:'DM Mono',monospace;font-size:22px;margin-top:4px;color:var(--t)">4-7-8</div></div>
+    <div style="text-align:center;font-size:11px;color:var(--t3);margin-bottom:14px" id="blbl">4s inspirar · 7s prender · 8s expirar</div>
+    <div style="display:flex;gap:8px">
+      <button onclick="startBreath()" style="flex:1;padding:12px;border-radius:10px;border:none;background:var(--a);color:#000;font-family:'Syne',sans-serif;font-size:13px;font-weight:600;cursor:pointer">Iniciar ▶</button>
+      <button onclick="stopBreath()" style="flex:1;padding:12px;border-radius:10px;border:1px solid var(--br);background:var(--bg3);color:var(--t);font-family:'Syne',sans-serif;font-size:13px;font-weight:600;cursor:pointer">Parar ■</button>
+    </div>
+  </div>
+  <div class="card"><div class="ct">Por que funciona</div>
+    <div style="font-size:12px;color:var(--t3);line-height:1.8">• A expiração longa (8s) ativa o nervo vago<br>• O nervo vago reduz FC e pressão arterial<br>• Cortisol cai, melatonina começa a subir<br>• 4 ciclos = ~2 min — mínimo eficaz<br>• Usar também em momentos de estresse agudo (pós-trade negativo, etc.)</div>
+  </div>`;
+}
+
+function startBreath(){
+  clearTimeout(bTimer);bStep=0;
+  const steps=[{t:'Inspirar',d:4000,c:'expand'},{t:'Prender',d:7000,c:'hold'},{t:'Expirar',d:8000,c:''}];
+  let sec=0,cur=0;
+  function tick(){
+    const s=steps[cur];
+    const c=document.getElementById('bcirc');
+    const bs=document.getElementById('bstate');
+    const bc=document.getElementById('bcount');
+    if(!c)return;
+    c.className='bcirc '+(s.c||'');
+    bs.textContent=s.t;
+    const rem=Math.ceil((s.d-sec*1000)/1000);
+    bc.textContent=rem+'s';
+    sec++;
+    if(sec*1000>=s.d){sec=0;cur=(cur+1)%3;}
+    bTimer=setTimeout(tick,1000);
+  }
+  tick();
+}
+function stopBreath(){
+  clearTimeout(bTimer);
+  const c=document.getElementById('bcirc');const bs=document.getElementById('bstate');const bc=document.getElementById('bcount');
+  if(c){c.className='bcirc';bs.textContent='Pronto';bc.textContent='4-7-8';}
+}
+
+// ======= ATTACH EVENTS =======
+function attachEv(){
+  if(CP==='log'){
+    const tl=S.logs.find(l=>l.date===td());
+    if(tl){if(tl.energia)sN('sE',tl.energia);if(tl.sono)sN('sS',tl.sono);}
+    else{if(S.sE)sN('sE',S.sE);if(S.sS)sN('sS',S.sS);}
   }
 }
 
-// ============ INIT ============
+// ======= INIT =======
 render();
-setInterval(()=>{document.getElementById('topdate').textContent=new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long'})},60000);
+setInterval(()=>{const el=document.getElementById('topdate');if(el)el.textContent=new Date().toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'short'})},60000);
 </script>
 </body>
 </html>
