@@ -6,153 +6,158 @@
 <meta name="theme-color" content="#0b0b10"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
-<meta name="apple-mobile-web-app-title" content="Leo Saúde"/>
+<meta name="apple-mobile-web-app-title" content="Leo Saude"/>
 <link rel="manifest" href="manifest.json"/>
-<title>Leo Saúde</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700&display=swap" rel="stylesheet"/>
+<title>Leo Saude</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700&family=Bebas+Neue&display=swap" rel="stylesheet"/>
 <style>
 :root{
   --bg:#0b0b10;--bg2:#14141c;--bg3:#1e1e2a;--bg4:#272735;
   --a:#00e5a0;--a2:#00b8ff;--a3:#ff6b6b;--aw:#ffb347;--ap:#b085f5;
   --t:#f0f0f8;--t2:#8888a8;--t3:#55556a;--br:#28283a;
   --r:14px;--st:env(safe-area-inset-top,0px);--sb:env(safe-area-inset-bottom,0px);
+  --green:#b5e550;--orange:#ff6b35;--red:#ff4d4d;--yellow:#ffc93c;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;background:var(--bg);color:var(--t);font-family:'Syne',sans-serif;overflow:hidden}
-#app{display:flex;flex-direction:column;height:100dvh;max-width:430px;margin:0 auto;position:relative}
-/* TOP */
-.topbar{padding:calc(var(--st) + 14px) 18px 12px;background:var(--bg);border-bottom:1px solid var(--br);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;z-index:10}
-.tt{font-size:15px;font-weight:700}
-.td{font-family:'DM Mono',monospace;font-size:10px;color:var(--t3)}
+#app{display:flex;flex-direction:column;height:100dvh;max-width:480px;margin:0 auto;position:relative}
+.topbar{padding:calc(var(--st)+14px) 18px 12px;background:var(--bg);border-bottom:1px solid var(--br);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;z-index:10}
+.tt{font-size:15px;font-weight:700}.td{font-family:'DM Mono',monospace;font-size:10px;color:var(--t3)}
 .tlogo{width:30px;height:30px;background:var(--a);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#000;font-family:'DM Mono',monospace}
-/* SCROLL */
-.content{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding-bottom:calc(var(--sb) + 85px)}
-/* NAV */
+.content{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding-bottom:calc(var(--sb)+85px)}
 .nav{position:absolute;bottom:0;left:0;right:0;background:var(--bg2);border-top:1px solid var(--br);display:flex;padding-bottom:var(--sb);z-index:10}
 .nb{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:9px 2px;border:none;background:transparent;cursor:pointer;color:var(--t3);transition:color .15s}
-.nb.act{color:var(--a)}
-.nb svg{width:20px;height:20px;stroke-width:1.8}
-.nb span{font-size:9px;font-family:'DM Mono',monospace}
-/* PAGE */
-.page{display:none;padding:14px}
-.page.act{display:block}
-/* CARD */
+.nb.act{color:var(--a)}.nb svg{width:20px;height:20px;stroke-width:1.8}.nb span{font-size:9px;font-family:'DM Mono',monospace}
+.page{display:none;padding:14px}.page.act{display:block}
 .card{background:var(--bg2);border:1px solid var(--br);border-radius:var(--r);padding:14px;margin-bottom:10px}
 .ct{font-size:11px;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;display:flex;align-items:center;gap:6px}
-/* METRICS */
 .m2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
 .m4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px;margin-bottom:10px}
 .met{background:var(--bg3);border-radius:10px;padding:12px 10px;border:1px solid var(--br)}
 .mv{font-family:'DM Mono',monospace;font-size:22px;font-weight:500;line-height:1}
-.mu{font-size:10px;color:var(--t3);margin-left:1px}
-.ml{font-size:10px;color:var(--t2);margin-top:4px}
-.ms{font-size:10px;color:var(--t3);margin-top:1px}
+.mu{font-size:10px;color:var(--t3);margin-left:1px}.ml{font-size:10px;color:var(--t2);margin-top:4px}.ms{font-size:10px;color:var(--t3);margin-top:1px}
 .ca .mv{color:var(--a)}.cb .mv{color:var(--a2)}.cw .mv{color:var(--aw)}.cr .mv{color:var(--a3)}.cp .mv{color:var(--ap)}
-/* PROGRESS */
 .pb{height:5px;background:var(--bg4);border-radius:3px;overflow:hidden;margin-top:5px}
 .pf{height:100%;border-radius:3px;transition:width .5s}
-/* BIG INPUT */
 .biw{background:var(--bg3);border:1px solid var(--br);border-radius:var(--r);padding:18px;margin-bottom:10px;text-align:center}
 .bip{background:transparent;border:none;outline:none;font-family:'DM Mono',monospace;font-size:50px;font-weight:500;color:var(--a);width:100%;text-align:center;-moz-appearance:textfield}
 .bip::-webkit-outer-spin-button,.bip::-webkit-inner-spin-button{-webkit-appearance:none}
-.bip::placeholder{color:var(--t3)}
-.bil{font-size:11px;color:var(--t3);margin-bottom:6px;font-family:'DM Mono',monospace}
-.biu{font-size:14px;color:var(--t3);margin-top:3px}
-/* BUTTONS */
+.bip::placeholder{color:var(--t3)}.bil{font-size:11px;color:var(--t3);margin-bottom:6px;font-family:'DM Mono',monospace}.biu{font-size:14px;color:var(--t3);margin-top:3px}
 .btn{width:100%;padding:14px;border-radius:12px;border:none;font-family:'Syne',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:transform .1s}
-.btn:active{transform:scale(.97)}
-.bp{background:var(--a);color:#000}
-.bs{background:var(--bg3);color:var(--t);border:1px solid var(--br);margin-top:6px}
-/* BADGE */
+.btn:active{transform:scale(.97)}.bp{background:var(--a);color:#000}.bs{background:var(--bg3);color:var(--t);border:1px solid var(--br);margin-top:6px}
 .badge{display:inline-block;font-size:10px;padding:2px 7px;border-radius:20px;font-family:'DM Mono',monospace;font-weight:500}
-.bg{background:rgba(0,229,160,.12);color:var(--a)}
-.bb{background:rgba(0,184,255,.12);color:var(--a2)}
-.br2{background:rgba(255,107,107,.12);color:var(--a3)}
-.bw{background:rgba(255,179,71,.12);color:var(--aw)}
-.bpp{background:rgba(176,133,245,.12);color:var(--ap)}
-/* TABLE */
+.bg{background:rgba(0,229,160,.12);color:var(--a)}.bb{background:rgba(0,184,255,.12);color:var(--a2)}.br2{background:rgba(255,107,107,.12);color:var(--a3)}.bw{background:rgba(255,179,71,.12);color:var(--aw)}.bpp{background:rgba(176,133,245,.12);color:var(--ap)}
 .tbl{width:100%;border-collapse:collapse;font-size:12px}
-.tbl th{text-align:left;padding:6px 6px;color:var(--t3);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--br)}
+.tbl th{text-align:left;padding:6px;color:var(--t3);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--br)}
 .tbl td{padding:7px 6px;border-bottom:1px solid var(--br);color:var(--t);vertical-align:top}
 .tbl tr:last-child td{border-bottom:none}
-/* SECTION HDR */
 .sh{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--t3);margin:14px 0 7px;padding:0 2px}
-/* IMC BAR */
 .imcbar{height:10px;border-radius:5px;display:flex;overflow:hidden;margin:8px 0;position:relative}
-/* ALERT */
 .ali{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-bottom:1px solid var(--br)}
 .ali:last-child{border-bottom:none}
 .alt{font-family:'DM Mono',monospace;font-size:11px;color:var(--a);min-width:50px;font-weight:500;padding-top:2px;flex-shrink:0}
-.aln .ti{font-size:13px;color:var(--t);font-weight:600}
-.aln .sw{font-size:11px;color:var(--t3);margin-top:2px}
-/* CHECKLIST */
+.aln .ti{font-size:13px;color:var(--t);font-weight:600}.aln .sw{font-size:11px;color:var(--t3);margin-top:2px}
 .chi{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid var(--br);cursor:pointer}
 .chi:last-child{border-bottom:none}
 .chb{width:20px;height:20px;border-radius:6px;border:1.5px solid var(--br);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .15s}
-.chb.dn{background:var(--a);border-color:var(--a)}
-.chl{font-size:13px;color:var(--t);line-height:1.4}
-.chl.dn{color:var(--t3);text-decoration:line-through}
-.chs{font-family:'DM Mono',monospace;font-size:10px;color:var(--a2);margin-top:1px}
-.chn{font-size:11px;color:var(--t3);margin-top:1px}
-/* PHASE TABS */
+.chb.dn{background:var(--a);border-color:var(--a)}.chl{font-size:13px;color:var(--t);line-height:1.4}.chl.dn{color:var(--t3);text-decoration:line-through}
+.chs{font-family:'DM Mono',monospace;font-size:10px;color:var(--a2);margin-top:1px}.chn{font-size:11px;color:var(--t3);margin-top:1px}
 .ptabs{display:flex;gap:5px;margin-bottom:10px}
 .pt{flex:1;padding:7px 3px;border-radius:8px;border:1px solid var(--br);background:var(--bg3);text-align:center;cursor:pointer;font-size:10px;font-weight:600;color:var(--t3);transition:all .15s;font-family:'DM Mono',monospace}
 .pt.act{background:var(--a);color:#000;border-color:var(--a)}
-/* TRAIN SELECTOR */
 .tsel{display:flex;gap:7px;overflow-x:auto;padding-bottom:7px;margin-bottom:10px;scrollbar-width:none}
 .tsel::-webkit-scrollbar{display:none}
 .tc{flex-shrink:0;padding:8px 14px;border-radius:10px;border:1px solid var(--br);background:var(--bg3);cursor:pointer;font-size:12px;font-weight:600;color:var(--t3);transition:all .15s;white-space:nowrap}
 .tc.act{background:var(--a2);color:#000;border-color:var(--a2)}
-/* TAB PILLS */
 .tpills{display:flex;gap:5px;margin-bottom:10px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
 .tpills::-webkit-scrollbar{display:none}
 .tpill{flex-shrink:0;padding:6px 12px;border-radius:20px;border:1px solid var(--br);background:var(--bg3);cursor:pointer;font-size:11px;font-weight:600;color:var(--t3);transition:all .15s;white-space:nowrap}
 .tpill.act{background:var(--a);color:#000;border-color:var(--a)}
-/* HIST */
 .hi{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--br)}
 .hi:last-child{border-bottom:none}
-.hd{font-family:'DM Mono',monospace;font-size:11px;color:var(--t3)}
-.hw{font-family:'DM Mono',monospace;font-size:17px;color:var(--t);font-weight:500}
-.hdl{font-family:'DM Mono',monospace;font-size:11px}
-/* MEAL */
-.mr{padding:9px 0;border-bottom:1px solid var(--br)}
-.mr:last-child{border-bottom:none}
+.hd{font-family:'DM Mono',monospace;font-size:11px;color:var(--t3)}.hw{font-family:'DM Mono',monospace;font-size:17px;color:var(--t);font-weight:500}.hdl{font-family:'DM Mono',monospace;font-size:11px}
+.mr{padding:9px 0;border-bottom:1px solid var(--br)}.mr:last-child{border-bottom:none}
 .mtime{font-family:'DM Mono',monospace;font-size:10px;color:var(--a);margin-bottom:2px}
-.mname{font-size:13px;font-weight:600;color:var(--t)}
-.mdesc{font-size:11px;color:var(--t3);margin-top:2px;line-height:1.5}
-.mkcal{font-family:'DM Mono',monospace;font-size:11px;color:var(--aw);margin-top:3px}
-/* AVOID */
-.avi{display:flex;align-items:flex-start;gap:8px;padding:7px 0;border-bottom:1px solid var(--br);font-size:12px;color:var(--t3)}
-.avi:last-child{border-bottom:none}
-/* MACRO BAR */
-.mbw{margin-bottom:8px}
-.mbl{display:flex;justify-content:space-between;font-size:11px;margin-bottom:2px}
-.mbn{color:var(--t2)}.mbv{font-family:'DM Mono',monospace;color:var(--t3)}
-/* SUPP */
-.si{display:flex;justify-content:space-between;align-items:flex-start;padding:9px 0;border-bottom:1px solid var(--br)}
-.si:last-child{border-bottom:none}
-.sn{font-size:12px;color:var(--t);font-weight:600}
-.sd{font-size:10px;color:var(--t3);margin-top:2px}
-.sdose{font-family:'DM Mono',monospace;font-size:11px;color:var(--a2);text-align:right;flex-shrink:0;margin-left:8px;padding-top:2px}
-/* TOAST */
-.toast{position:fixed;top:calc(var(--st) + 66px);left:50%;transform:translateX(-50%) translateY(-16px);background:var(--bg3);border:1px solid var(--a);color:var(--a);padding:9px 18px;border-radius:10px;font-size:12px;font-weight:600;opacity:0;transition:all .3s;z-index:999;white-space:nowrap;pointer-events:none}
+.mname{font-size:13px;font-weight:600;color:var(--t)}.mdesc{font-size:11px;color:var(--t3);margin-top:2px;line-height:1.5}.mkcal{font-family:'DM Mono',monospace;font-size:11px;color:var(--aw);margin-top:3px}
+.avi{display:flex;align-items:flex-start;gap:8px;padding:7px 0;border-bottom:1px solid var(--br);font-size:12px;color:var(--t3)}.avi:last-child{border-bottom:none}
+.mbw{margin-bottom:8px}.mbl{display:flex;justify-content:space-between;font-size:11px;margin-bottom:2px}.mbn{color:var(--t2)}.mbv{font-family:'DM Mono',monospace;color:var(--t3)}
+.si{display:flex;justify-content:space-between;align-items:flex-start;padding:9px 0;border-bottom:1px solid var(--br)}.si:last-child{border-bottom:none}
+.sn{font-size:12px;color:var(--t);font-weight:600}.sd{font-size:10px;color:var(--t3);margin-top:2px}.sdose{font-family:'DM Mono',monospace;font-size:11px;color:var(--a2);text-align:right;flex-shrink:0;margin-left:8px;padding-top:2px}
+.toast{position:fixed;top:calc(var(--st)+66px);left:50%;transform:translateX(-50%) translateY(-16px);background:var(--bg3);border:1px solid var(--a);color:var(--a);padding:9px 18px;border-radius:10px;font-size:12px;font-weight:600;opacity:0;transition:all .3s;z-index:999;white-space:nowrap;pointer-events:none}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-/* RESP BREATH */
 .bcirc{width:120px;height:120px;border-radius:50%;border:3px solid var(--a);display:flex;align-items:center;justify-content:center;flex-direction:column;margin:16px auto;transition:transform 1s,border-color 1s;background:rgba(0,229,160,.06)}
-.bcirc.expand{transform:scale(1.3);border-color:var(--a2);background:rgba(0,184,255,.08)}
-.bcirc.hold{border-color:var(--ap);background:rgba(176,133,245,.08)}
+.bcirc.expand{transform:scale(1.3);border-color:var(--a2);background:rgba(0,184,255,.08)}.bcirc.hold{border-color:var(--ap);background:rgba(176,133,245,.08)}
+/* TREINO DINAMICO STYLES */
+.pain-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px}
+.pain-item{display:flex;align-items:center;gap:8px;background:var(--bg3);border:1px solid var(--br);border-radius:8px;padding:8px 10px;cursor:pointer;transition:all .2s}
+.pain-item.checked{border-color:var(--a3);background:rgba(255,107,107,.07)}
+.pain-dot{font-size:14px;flex-shrink:0}
+.pain-name{font-size:11px;font-weight:600;flex:1;line-height:1.2}
+.pain-check{width:16px;height:16px;border-radius:4px;border:1.5px solid var(--t3);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:9px;transition:all .2s}
+.pain-item.checked .pain-check{background:var(--a3);border-color:var(--a3);color:#fff}
+.day-sel{display:flex;gap:5px;overflow-x:auto;padding-bottom:6px;margin-bottom:12px;scrollbar-width:none}
+.day-sel::-webkit-scrollbar{display:none}
+.dsb{flex-shrink:0;padding:6px 10px;border-radius:8px;border:1px solid var(--br);background:var(--bg3);color:var(--t3);font-family:'DM Mono',monospace;font-size:10px;font-weight:600;cursor:pointer;text-align:center;line-height:1.4;transition:all .2s}
+.dsb.act{background:rgba(0,229,160,.12);border-color:var(--a);color:var(--a)}
+.dsb.rest-d.act{background:rgba(85,85,106,.15);border-color:var(--t3);color:var(--t)}
+.status-row{display:flex;align-items:center;gap:12px;background:var(--bg3);border:1px solid var(--br);border-radius:10px;padding:12px 14px;margin-bottom:12px}
+.sr-main{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--a);line-height:1}
+.sr-main.red{color:var(--a3)}.sr-main.yellow{color:var(--aw)}
+.sr-sub{font-size:10px;color:var(--t3);margin-top:2px}
+.comp-bar{height:4px;background:var(--bg4);border-radius:2px;overflow:hidden;margin-bottom:3px}
+.comp-fill{height:100%;background:linear-gradient(90deg,var(--a),#d4ff7a);border-radius:2px;transition:width .4s}
+.comp-txt{display:flex;justify-content:space-between;font-size:10px;color:var(--t3);margin-bottom:10px}
+.ex-card{background:var(--bg3);border:1px solid var(--br);border-radius:10px;overflow:hidden;margin-bottom:7px}
+.ex-card.blocked{opacity:.3;border-color:rgba(255,107,107,.2)}
+.ex-card.substituted{border-color:rgba(255,179,71,.25)}
+.ex-hdr{display:flex;align-items:center;gap:10px;padding:10px 12px;cursor:pointer}
+.ex-hdr:active{background:rgba(255,255,255,.02)}
+.ex-num{width:26px;height:26px;border-radius:6px;background:rgba(0,229,160,.1);color:var(--a);font-family:'DM Mono',monospace;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ex-card.blocked .ex-num{background:rgba(255,107,107,.1);color:var(--a3)}
+.ex-card.substituted .ex-num{background:rgba(255,179,71,.1);color:var(--aw)}
+.ex-inf{flex:1;min-width:0}
+.ex-nm{font-weight:600;font-size:12px;line-height:1.2}
+.ex-card.blocked .ex-nm{text-decoration:line-through;color:var(--t3)}
+.ex-mt{display:flex;gap:6px;margin-top:3px;align-items:center;flex-wrap:wrap}
+.ex-sets{font-size:10px;color:var(--t3)}
+.ex-tag{font-size:9px;font-weight:700;letter-spacing:.5px;padding:1px 6px;border-radius:20px;text-transform:uppercase}
+.tg-g{background:rgba(0,229,160,.12);color:var(--a)}.tg-r{background:rgba(255,107,107,.12);color:var(--a3)}.tg-y{background:rgba(255,179,71,.12);color:var(--aw)}
+.ex-arr{font-size:10px;color:var(--t3);transition:transform .2s;flex-shrink:0}.ex-arr.open{transform:rotate(180deg)}
+.ex-body{display:none;border-top:1px solid var(--br)}.ex-body.open{display:block}
+.ex-svg{padding:12px;text-align:center;background:rgba(0,0,0,.2)}
+.ex-svg svg{max-width:240px;width:100%;border-radius:6px}
+.ex-tip{font-size:11px;color:var(--t3);margin-top:6px;line-height:1.5}
+.ex-reason{padding:7px 12px 8px;font-size:10px;color:var(--a3)}
+.ex-sub-r{padding:7px 12px 8px;font-size:10px;color:var(--aw)}
+.ex-done-btn{margin:8px 12px 10px;padding:9px;background:rgba(0,229,160,.1);border:1px solid rgba(0,229,160,.2);color:var(--a);border-radius:8px;cursor:pointer;font-family:'Syne',sans-serif;font-size:12px;font-weight:600;width:calc(100% - 24px);transition:all .2s}
+.ex-done-btn.done{background:rgba(0,229,160,.2);border-color:var(--a)}
+.save-sess-btn{width:100%;margin-top:10px;padding:12px;background:rgba(0,229,160,.12);border:1px solid var(--a);color:var(--a);border-radius:10px;cursor:pointer;font-family:'Syne',sans-serif;font-size:13px;font-weight:700}
+.ws-strip{border-radius:8px;padding:9px 12px;margin-bottom:10px;border-left:3px solid;font-size:11px;display:flex;gap:8px}
+.ws-r{background:rgba(255,107,107,.08);border-color:var(--a3)}
+.ws-g{background:rgba(0,229,160,.08);border-color:var(--a)}
+.ws-y{background:rgba(255,179,71,.08);border-color:var(--aw)}
+/* HIST */
+.hc{background:var(--bg3);border:1px solid var(--br);border-radius:10px;padding:14px;margin-bottom:8px}
+.hc-date{font-family:'DM Mono',monospace;font-size:13px;color:var(--a);margin-bottom:2px}
+.hc-type{font-size:10px;color:var(--t3);margin-bottom:8px}
+.hbadge{font-size:10px;padding:2px 8px;border-radius:20px;font-weight:600;display:inline-block;margin:2px}
+.hb-ok{background:rgba(0,229,160,.12);color:var(--a)}.hb-pain{background:rgba(255,179,71,.12);color:var(--aw)}
+.h3grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+.h3c{background:var(--bg3);border:1px solid var(--br);border-radius:10px;padding:12px;text-align:center}
+.h3v{font-family:'DM Mono',monospace;font-size:24px;color:var(--aw)}
+.h3l{font-size:10px;color:var(--t3);margin-top:2px}
 </style>
 </head>
 <body>
 <div id="app">
   <div class="topbar">
-    <div><div class="tt">Leo Saúde 💪</div><div class="td" id="topdate"></div></div>
+    <div><div class="tt">Leo Saude 💪</div><div class="td" id="topdate"></div></div>
     <div class="tlogo">L</div>
   </div>
   <div class="content" id="content"></div>
   <nav class="nav">
     <button class="nb act" onclick="go('home')" id="nv-home">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>Início</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>Inicio</span>
     </button>
     <button class="nb" onclick="go('log')" id="nv-log">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg><span>Registrar</span>
@@ -161,7 +166,7 @@ html,body{height:100%;background:var(--bg);color:var(--t);font-family:'Syne',san
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6.5 6.5h11M6.5 17.5h11M4 12h16M2 9l2 3-2 3M22 9l-2 3 2 3"/></svg><span>Treino</span>
     </button>
     <button class="nb" onclick="go('nutri')" id="nv-nutri">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2a7 7 0 0 1 7 7c0 5-7 13-7 13S5 14 5 9a7 7 0 0 1 7-7z"/><circle cx="12" cy="9" r="2.5"/></svg><span>Nutrição</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2a7 7 0 0 1 7 7c0 5-7 13-7 13S5 14 5 9a7 7 0 0 1 7-7z"/><circle cx="12" cy="9" r="2.5"/></svg><span>Nutricao</span>
     </button>
     <button class="nb" onclick="go('mais')" id="nv-mais">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg><span>Mais</span>
@@ -169,81 +174,76 @@ html,body{height:100%;background:var(--bg);color:var(--t);font-family:'Syne',san
   </nav>
 </div>
 <div class="toast" id="toast"></div>
-
 <script>
-// ======= CONSTANTS =======
-const PI=94, AL=1.79, PM=78, DI='2026-05-18';
-const TMB=1897, TDEE=2466;
+// ===== CONSTANTS =====
+const PI=94,AL=1.79,PM=78,DI='2026-05-18';
+const TMB=1897,TDEE=2466;
 
-// ======= STATE =======
+// ===== STATE =====
 let S={logs:[],ph:0,tr:'A',nt:'treino',st:'alertas',sE:0,sS:0};
-function ls(){try{const s=localStorage.getItem('lv4');if(s)S={...S,...JSON.parse(s)}}catch(e){}}
-function ss(){localStorage.setItem('lv4',JSON.stringify(S))}
+function ls(){try{const s=localStorage.getItem('lv5');if(s)S={...S,...JSON.parse(s)}}catch(e){}}
+function ss(){localStorage.setItem('lv5',JSON.stringify(S))}
 ls();
 
-// ======= HELPERS =======
+// ===== TREINO DINAMICO STATE =====
+let activePain=new Set(),selDay=new Date().getDay(),doneEx=new Set(),openCards=new Set();
+
+// ===== HELPERS =====
 function td(){return new Date().toISOString().slice(0,10)}
 function fd(d){return new Date(d+'T12:00:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'short'})}
-function imc(p){return (p/(AL*AL)).toFixed(1)}
+function imc(p){return(p/(AL*AL)).toFixed(1)}
 function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200)}
 function lp(){const l=S.logs.length?S.logs[S.logs.length-1]:null;return l?l.peso:PI}
 function wk(){return Math.min(12,Math.max(1,Math.ceil((new Date()-new Date(DI))/(7*864e5))))}
-function dayT(){const d=new Date().getDay();return{0:'rest',1:'treino',2:'natacao',3:'rest',4:'treino',5:'treino',6:'bicicleta'}[d]}
-function dayKcal(){const t=dayT();if(t==='rest')return{k:1750,l:'Descanso',c:'var(--t3)'};if(t==='bicicleta')return{k:1900,l:'Bicicleta (Sábado)',c:'var(--ap)'};return{k:1950,l:'Treino / Natação',c:'var(--a)'}}
+function dayT(){const d=new Date().getDay();return{0:'rest',1:'A',2:'BIKE',3:'rest',4:'B',5:'C',6:'BIKE'}[d]}
+function dayKcal(){const t=dayT();if(t==='rest')return{k:1750,l:'Descanso',c:'var(--t3)'};if(t==='BIKE')return{k:1900,l:'Bicicleta',c:'var(--ap)'};return{k:1950,l:'Treino',c:'var(--a)'}}
 
-// ======= NAV =======
+// ===== NAV =====
 let CP='home';
 function go(p){CP=p;document.querySelectorAll('.nb').forEach(b=>b.classList.remove('act'));document.getElementById('nv-'+p).classList.add('act');render()}
 
-// ======= RENDER =======
+// ===== RENDER =====
 function render(){
   document.getElementById('topdate').textContent=new Date().toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'short'});
   const c=document.getElementById('content');
   if(CP==='home')c.innerHTML=rHome();
   else if(CP==='log')c.innerHTML=rLog();
-  else if(CP==='treino')c.innerHTML=rTreino();
+  else if(CP==='treino')c.innerHTML=rTreinoDin();
   else if(CP==='nutri')c.innerHTML=rNutri();
   else if(CP==='mais')c.innerHTML=rMais();
   attachEv();
 }
 
-// ======= HOME =======
+// ===== HOME =====
 function rHome(){
-  const peso=lp(), iv=parseFloat(imc(peso));
+  const peso=lp(),iv=parseFloat(imc(peso));
   const perd=Math.max(0,Math.round((PI-peso)*10)/10);
   const pct=Math.min(100,Math.round(perd/(PI-PM)*100));
-  const sem=wk(), sp=Math.round(sem/12*100);
+  const sem=wk(),sp=Math.round(sem/12*100);
   const ip=Math.min(98,Math.max(2,((iv-16)/(40-16))*100));
   const di=dayKcal();
   const logs=S.logs.slice(-5).reverse();
   const h=new Date().getHours();
-
-  // day alerts
   const alls=[
-    {h:6,t:'06:00',ti:'💧 500ml água em jejum',w:'Hidratação + Gota'},
-    {h:7,t:'07:00',ti:'🥚 Café da manhã proteico',w:'3 ovos + pão integral + fruta (~380 kcal)'},
-    {h:7,t:'07:30',ti:'💊 Vit D3 (2.000UI) + Vit C (500mg)',w:'Com alimento, absorção ideal'},
-    {h:10,t:'10:00',ti:'🧘 Pausa ativa 8 min',w:'Lombar, postura — a cada 50min no trabalho'},
-    {h:10,t:'10:05',ti:'💧 300ml água',w:'Hidratação contínua — Gota'},
-    {h:13,t:'13:00',ti:'🥗 Almoço completo',w:'Não pular — base da dieta'},
-    {h:14,t:'14:00',ti:'☕ Última cafeína',w:'Meia-vida 6h — após esse horário prejudica sono'},
-    {h:15,t:'15:00',ti:'🧘 2ª pausa ativa',w:'Circulação, concentração'},
+    {h:6,t:'06:00',ti:'💧 500ml agua em jejum',w:'Hidratacao + Gota'},
+    {h:7,t:'07:00',ti:'🥚 Cafe da manha proteico',w:'3 ovos + pao integral + fruta (~380 kcal)'},
+    {h:7,t:'07:30',ti:'💊 Vit D3 + Vit C',w:'Com alimento, absorcao ideal'},
+    {h:10,t:'10:00',ti:'🧘 Pausa ativa 8 min',w:'Lombar, postura — a cada 50min'},
+    {h:13,t:'13:00',ti:'🥗 Almoco completo',w:'Nao pular — base da dieta'},
+    {h:14,t:'14:00',ti:'☕ Ultima cafeina',w:'Meia-vida 6h — apos prejudica sono'},
     {h:19,t:'19:30',ti:'🍽️ Jantar leve e proteico',w:'Anabolismo noturno'},
     {h:21,t:'21:00',ti:'📵 Telas modo noite',w:'Melatonina protegida'},
-    {h:21,t:'21:30',ti:'🛁 Banho morno 10 min',w:'Queda de temp. corporal → sono fácil'},
-    {h:22,t:'22:00',ti:'💊 Magnésio 300mg + respiração 4-7-8',w:'Parassimpático, relaxamento muscular'},
-    {h:22,t:'22:30',ti:'🌙 Luzes apagadas — dormir',w:'Meta: 7h30 (23:00 → 06:30)'},
+    {h:22,t:'22:00',ti:'💊 Magnesio 300mg + respir. 4-7-8',w:'Relaxamento muscular'},
+    {h:22,t:'22:30',ti:'🌙 Luzes apagadas — dormir',w:'Meta: 7h30'},
   ];
   const prox=alls.filter(a=>a.h>=h-1).slice(0,4);
-
   return`<div class="page act">
   <div class="m2">
     <div class="met ca"><div class="mv">${peso.toFixed(1)}<span class="mu">kg</span></div><div class="ml">Peso atual</div><div class="ms">Meta: ${PM} kg</div><div class="pb"><div class="pf" style="width:${100-pct}%;background:var(--a)"></div></div></div>
     <div class="met ${iv>=30?'cr':iv>=25?'cw':'ca'}"><div class="mv">${iv}</div><div class="ml">IMC</div><div class="ms">${iv>=30?'Obesidade':iv>=25?'Sobrepeso':'Normal'} → meta &lt;25</div></div>
     <div class="met ca"><div class="mv">${perd.toFixed(1)}<span class="mu">kg</span></div><div class="ml">Perdido</div><div class="ms">${pct}% da meta</div></div>
-    <div class="met cb"><div class="mv">${Math.max(0,peso-PM).toFixed(1)}<span class="mu">kg</span></div><div class="ml">Faltam</div><div class="ms">Sem ${sem}/12</div></div>
+    <div class="met cb"><div class="mv">${Math.max(0,peso-PM).toFixed(1)}<span class="mu">kg</span></div><div class="ml">Faltam</div><div class="ms">Sem ${wk()}/12</div></div>
   </div>
-
   <div class="card">
     <div class="ct">Progresso — 12 semanas</div>
     <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--t3);margin-bottom:3px"><span>${PI} kg → ${PM} kg</span><span>${pct}%</span></div>
@@ -251,9 +251,7 @@ function rHome(){
     <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--t3);margin:8px 0 3px"><span>Semana ${sem} de 12</span><span>${sp}%</span></div>
     <div class="pb"><div class="pf" style="width:${sp}%;background:var(--a2)"></div></div>
   </div>
-
-  <div class="card">
-    <div class="ct">IMC — escala</div>
+  <div class="card"><div class="ct">IMC — escala</div>
     <div class="imcbar">
       <div style="flex:2;background:#00b8ff;opacity:.65"></div>
       <div style="flex:3;background:#00e5a0;opacity:.75"></div>
@@ -263,60 +261,50 @@ function rHome(){
     </div>
     <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--t3)"><span>Baixo</span><span style="color:var(--a)">Normal</span><span style="color:var(--aw)">Sobrepeso←</span><span style="color:var(--a3)">Obeso</span></div>
   </div>
-
-  <div class="card">
-    <div class="ct">Hoje — ${new Date().toLocaleDateString('pt-BR',{weekday:'long'})}</div>
-    <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--br)"><span style="font-size:12px;color:var(--t2)">Tipo de dia</span><span class="badge ${di.l.includes('Refeed')?'bw':di.l.includes('Descanso')?'bpp':'bg'}">${di.l}</span></div>
-    <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--br)"><span style="font-size:12px;color:var(--t2)">Meta calórica</span><span style="font-family:'DM Mono',monospace;font-size:13px;color:${di.c}">${di.k} kcal</span></div>
-    <div style="display:flex;justify-content:space-between;padding:7px 0"><span style="font-size:12px;color:var(--t2)">Água mínima</span><span style="font-family:'DM Mono',monospace;font-size:13px;color:var(--a2)">3,5 L</span></div>
+  <div class="card"><div class="ct">Hoje — treino dinamico</div>
+    <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--br)"><span style="font-size:12px;color:var(--t2)">Tipo de dia</span><span class="badge bg">${dayT()=='rest'?'Descanso':dayT()==='BIKE'?'Bicicleta':'Musculacao '+dayT()}</span></div>
+    <div style="display:flex;justify-content:space-between;padding:7px 0"><span style="font-size:12px;color:var(--t2)">Meta calorica</span><span style="font-family:'DM Mono',monospace;font-size:13px;color:${dayKcal().c}">${dayKcal().k} kcal</span></div>
+    <button onclick="go('treino')" style="margin-top:8px;padding:10px;width:100%;border-radius:8px;border:none;background:var(--a);color:#000;font-family:'Syne',sans-serif;font-size:12px;font-weight:700;cursor:pointer">Abrir Treino do Dia →</button>
   </div>
-
-  <div class="card">
-    <div class="ct">Próximos alertas</div>
+  <div class="card"><div class="ct">Proximos alertas</div>
     ${prox.length?prox.map(a=>`<div style="display:flex;justify-content:space-between;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--br)">
       <div><div style="font-size:12px;color:${a.h<h?'var(--t3)':'var(--t)'};${a.h<h?'text-decoration:line-through':''}">${a.ti}</div><div style="font-size:10px;color:var(--t3)">${a.w}</div></div>
       <div style="font-family:'DM Mono',monospace;font-size:11px;color:${a.h<=h?'var(--a)':'var(--aw)'};flex-shrink:0;margin-left:8px">${a.t}</div>
-    </div>`).join(''):`<div style="font-size:12px;color:var(--t3);text-align:center;padding:8px">Dia concluído 🎉</div>`}
+    </div>`).join(''):`<div style="font-size:12px;color:var(--t3);text-align:center;padding:8px">Dia concluido 🎉</div>`}
   </div>
-
-  ${logs.length?`<div class="card"><div class="ct">Histórico recente</div>
-    ${logs.map((l,i)=>{const p2=S.logs.slice().reverse()[i+1]?S.logs.slice().reverse()[i+1].peso:PI;const d=Math.round((l.peso-p2)*10)/10;return`<div class="hi"><div><div class="hd">${fd(l.date)}</div>${l.energia?`<div style="font-size:10px;color:var(--t3)">E:${l.energia}/10 · S:${l.sono||'—'}/10</div>`:''}</div><div style="text-align:right"><div class="hw">${l.peso.toFixed(1)} kg</div><div class="hdl" style="color:${d<0?'var(--a)':d>0?'var(--a3)':'var(--t3)'}">${d>0?'+':''}${d} kg</div></div></div>`}).join('')}
+  ${logs.length?`<div class="card"><div class="ct">Historico recente</div>
+    ${logs.map((l,i)=>{const p2=S.logs.slice().reverse()[i+1]?S.logs.slice().reverse()[i+1].peso:PI;const d=Math.round((l.peso-p2)*10)/10;return`<div class="hi"><div><div class="hd">${fd(l.date)}</div>${l.energia?`<div style="font-size:10px;color:var(--t3)">E:${l.energia}/10 · S:${l.sono||'—'}/10</div>`:''}</div><div style="text-align:right"><div class="hw">${l.peso.toFixed(1)} kg</div><div class="hdl" style="color:${d<0?'var(--a)':d>0?'var(--a3)':'var(--t3)'}">${d>0?'+':''} ${d} kg</div></div></div>`}).join('')}
   </div>`:''}
   </div>`;
 }
 
-// ======= LOG =======
+// ===== LOG =====
 function rLog(){
   const tl=S.logs.find(l=>l.date===td());
   return`<div class="page act">
-  <div class="biw">
-    <div class="bil">PESO DE HOJE (kg)</div>
+  <div class="biw"><div class="bil">PESO DE HOJE (kg)</div>
     <input class="bip" type="number" id="ip" placeholder="${lp().toFixed(1)}" step="0.1" value="${tl?tl.peso:''}"/>
     <div class="biu">quilogramas</div>
   </div>
-  <div class="card">
-    <div class="ct">Energia hoje (1–10)</div>
+  <div class="card"><div class="ct">Energia hoje (1-10)</div>
     <div style="display:flex;gap:4px;flex-wrap:wrap">${[1,2,3,4,5,6,7,8,9,10].map(n=>`<button onclick="sN('sE',${n})" id="en${n}" style="width:32px;height:32px;border-radius:7px;border:1px solid var(--br);background:var(--bg3);color:var(--t);font-size:12px;cursor:pointer;font-family:'DM Mono',monospace;transition:all .15s">${n}</button>`).join('')}</div>
   </div>
-  <div class="card">
-    <div class="ct">Qualidade do sono (1–10)</div>
+  <div class="card"><div class="ct">Qualidade do sono (1-10)</div>
     <div style="display:flex;gap:4px;flex-wrap:wrap">${[1,2,3,4,5,6,7,8,9,10].map(n=>`<button onclick="sN('sS',${n})" id="sn${n}" style="width:32px;height:32px;border-radius:7px;border:1px solid var(--br);background:var(--bg3);color:var(--t);font-size:12px;cursor:pointer;font-family:'DM Mono',monospace;transition:all .15s">${n}</button>`).join('')}</div>
   </div>
-  <div class="card">
-    <div class="ct">Cintura (cm) — opcional</div>
+  <div class="card"><div class="ct">Cintura (cm) — opcional</div>
     <input type="number" id="ic" placeholder="ex: 98" style="width:100%;background:var(--bg3);border:1px solid var(--br);border-radius:8px;padding:10px;font-size:15px;color:var(--t);font-family:'DM Mono',monospace;outline:none" value="${tl&&tl.cintura?tl.cintura:''}"/>
   </div>
   <button class="btn bp" onclick="saveL()">Salvar ✓</button>
   <button class="btn bs" onclick="go('home')">← Voltar</button>
-  ${S.logs.length?`<div class="sh">Histórico completo</div>
-  <div class="card">${S.logs.slice().reverse().map((l,i,arr)=>{const p2=arr[i+1]?arr[i+1].peso:PI;const d=Math.round((l.peso-p2)*10)/10;return`<div class="hi"><div><div class="hd">${fd(l.date)}</div><div style="font-size:10px;color:var(--t3)">IMC:${imc(l.peso)}${l.energia?' E:'+l.energia:''}${l.sono?' S:'+l.sono:''}</div></div><div style="text-align:right"><div class="hw">${l.peso.toFixed(1)} kg</div><div class="hdl" style="color:${d<0?'var(--a)':d>0?'var(--a3)':'var(--t3)'}">${d>0?'+':''}${d} kg</div></div></div>`}).join('')}</div>`:''}
+  ${S.logs.length?`<div class="sh">Historico completo</div>
+  <div class="card">${S.logs.slice().reverse().map((l,i,arr)=>{const p2=arr[i+1]?arr[i+1].peso:PI;const d=Math.round((l.peso-p2)*10)/10;return`<div class="hi"><div><div class="hd">${fd(l.date)}</div><div style="font-size:10px;color:var(--t3)">IMC:${imc(l.peso)}${l.energia?' E:'+l.energia:''}${l.sono?' S:'+l.sono:''}</div></div><div style="text-align:right"><div class="hw">${l.peso.toFixed(1)} kg</div><div class="hdl" style="color:${d<0?'var(--a)':d>0?'var(--a3)':'var(--t3)'}">${d>0?'+':''} ${d} kg</div></div></div>`}).join('')}</div>`:''}
   </div>`;
 }
-
 function sN(key,n){S[key]=n;const pre=key==='sE'?'en':'sn';const col=key==='sE'?'var(--a)':'var(--a2)';[1,2,3,4,5,6,7,8,9,10].forEach(i=>{const b=document.getElementById(pre+i);if(b){b.style.background=i<=n?col:'var(--bg3)';b.style.color=i<=n?'#000':'var(--t)'}});}
 function saveL(){
   const p=parseFloat(document.getElementById('ip').value);
-  if(!p||p<40||p>300){toast('⚠ Peso inválido');return}
+  if(!p||p<40||p>300){toast('⚠ Peso invalido');return}
   const e={date:td(),peso:p,cintura:parseFloat(document.getElementById('ic').value)||0,energia:S.sE||0,sono:S.sS||0};
   const idx=S.logs.findIndex(l=>l.date===td());
   if(idx>=0)S.logs[idx]=e;else S.logs.push(e);
@@ -324,110 +312,205 @@ function saveL(){
   S.sE=0;S.sS=0;ss();toast('✓ Registrado!');setTimeout(()=>go('home'),800);
 }
 
-// ======= TREINO =======
-const TR={
-  A:{n:'Musculação A',s:'Push + Core · SEG',b:'bb',d:'45 min',ex:[
-    {n:'Supino c/ halteres',s:'3×10–12',nt:'Escápula retraída, cotovelo 45°'},
-    {n:'Desenvolvimento ombro',s:'3×10',nt:'Amplitude controlada, sentado'},
-    {n:'Crucifixo máquina',s:'3×15',nt:'Fase 1 → halteres Fase 2'},
-    {n:'Elevação lateral',s:'3×15',nt:'Peso leve, sem balanço do tronco'},
-    {n:'Facepull (cabo)',s:'3×15',nt:'🔑 Postura + manguito rotador'},
-    {n:'Tríceps pulley',s:'2×12',nt:'Cotovelo fixo ao lado'},
-    {n:'Prancha frontal',s:'3×30–45s',nt:'Respiração contínua, sem queda de quadril'},
-    {n:'Bird-dog',s:'2×8 lados',nt:'🔑 Estabilização lombar — SEMPRE antes dos compostos'},
-  ]},
-  B:{n:'Musculação B',s:'Pull + Core · QUI',b:'bg',d:'45 min',ex:[
-    {n:'Remada baixa cabo',s:'3×12',nt:'🔑 Lombar neutra, escápula no final'},
-    {n:'Pulldown barra larga',s:'3×12',nt:'Puxar até o queixo, colocar peito para fora'},
-    {n:'Remada unilateral halter',s:'3×12',nt:'Apoio no banco, costas retas'},
-    {n:'Rosca direta barra EZ',s:'3×12',nt:'Sem balanço, cotovelo fixo'},
-    {n:'Rosca martelo',s:'2×12',nt:'Fase 2 em diante'},
-    {n:'Dead bug',s:'3×8 lados',nt:'🔑 Lombar anti-extensão — não levantar do chão'},
-    {n:'Prancha lateral',s:'3×30s cada',nt:'Quadril elevado, corpo reto'},
-  ]},
-  C:{n:'Musculação C',s:'Legs + Glúteo · SEX',b:'bw',d:'45 min',ex:[
-    {n:'Agachamento goblet (halter)',s:'3×12',nt:'Aprende o padrão, costas retas, quadril fundo'},
-    {n:'Leg press 45°',s:'3×15',nt:'Pés paralelos largos, joelho alinhado'},
-    {n:'Mesa flexora',s:'3×15',nt:'🔑 Isquio fraco → lombar sobrecarregada'},
-    {n:'Hip thrust / Glute bridge',s:'3×15',nt:'🔑 Glúteo protege lombar — top: segurar 1s'},
-    {n:'Cadeira extensora',s:'3×15',nt:'Finalização quadríceps'},
-    {n:'Stiff / RDL halteres',s:'3×10',nt:'Fase 2 em diante — cadeia posterior'},
-    {n:'Panturrilha em pé',s:'3×20',nt:'Amplitude total — mobilidade tornozelo (Gota)'},
-  ]},
-  NAT:{n:'Natação',s:'TER + SAB · Aeróbico',b:'bb',d:'40 min',ex:[
-    {n:'Aquecimento — crawl',s:'200m',nt:'Ritmo confortável, técnica'},
-    {n:'Séries principais crawl',s:'Fase1:4×100m · Fase2:6×100m · Fase3:8×100m',nt:'30s descanso entre séries'},
-    {n:'Variação de estilos',s:'200m',nt:'Costas, peito — evite bruços se lombar doer'},
-    {n:'Sprints (Fase 3)',s:'8×25m',nt:'Velocidade máxima + 20s descanso — adicionar semana 9'},
-    {n:'Volta calma',s:'200m',nt:'Costas, respiração, desaceleração'},
-  ]},
-  MOB:{n:'Mobilidade',s:'QUI · 20–25 min',b:'bg',d:'25 min',ex:[
-    {n:'Cat-cow (gato-vaca)',s:'2×10 lentas',nt:'Respiração sincronizada — abre e fecha a coluna'},
-    {n:'Hip 90/90 rotation',s:'2×45s cada lado',nt:'🔑 Quadril — 8h sentado encurta rotadores'},
-    {n:'Pigeon pose modificado',s:'2×45s cada lado',nt:'Glúteo/piriforme — tensão crônica do sedentarismo'},
-    {n:'Couch stretch (iliopsoas)',s:'2×45s cada lado',nt:'🔑 Psoas encurtado = dor lombar garantida'},
-    {n:"World's greatest stretch",s:'3×5 cada lado',nt:'Quadril + torácica + isquio — full body'},
-    {n:'Dead bug',s:'2×8 lados',nt:'Core anti-extensão lombar'},
-    {n:'Bird-dog',s:'2×8 lados',nt:'Estabilidade lombar + core'},
-    {n:'Círculos de tornozelo',s:'2×15 cada sentido',nt:'🔑 Mobilidade tornozelo — prevenção crise Gota'},
-    {n:'Mobilização torácica (rolo)',s:'2×30s em 3 pontos',nt:'Postura, abertura de peito'},
-  ]},
-  BCI:{n:'Bicicleta',s:'SAB ou opcional QUA',b:'bpp',d:'40–50 min',ex:[
-    {n:'Aquecimento',s:'5 min',nt:'Resistência baixa'},
-    {n:'Ritmo constante (rua)',s:'35–40 min a 18–22 km/h',nt:'Conversacional — consegue falar frases completas'},
-    {n:'Intervalos (Fase 2)',s:'4×5 min resistência alta',nt:'Com 3 min recuperação entre cada'},
-    {n:'HIIT (Fase 3)',s:'8×30s sprint + 90s leve',nt:'FC alvo: 75–85% FCmax (~140–160 bpm)'},
-    {n:'Desaquecimento',s:'5 min',nt:'Resistência baixa — não parar abruptamente'},
-    {n:'⚠ Em crise de Gota',s:'Ergométrica em casa',nt:'Zero impacto no tornozelo — substitui a rua'},
-  ]},
+// ===== TREINO DINAMICO =====
+const SVG={
+supino_inclinado:'<svg viewBox="0 0 260 140" xmlns="http://www.w3.org/2000/svg"><rect width="260" height="140" fill="#0d1209"/><rect x="35" y="82" width="150" height="10" rx="4" fill="#2a3520" stroke="#b5e550" stroke-width="1.5"/><rect x="178" y="54" width="10" height="38" rx="3" fill="#2a3520" stroke="#b5e550" stroke-width="1.5"/><rect x="30" y="90" width="9" height="28" rx="2" fill="#1e2819"/><rect x="182" y="90" width="9" height="28" rx="2" fill="#1e2819"/><ellipse cx="130" cy="72" rx="20" ry="12" fill="#3a4f28" stroke="#b5e550" stroke-width="1.5"/><circle cx="182" cy="62" r="11" fill="#3a4f28" stroke="#b5e550" stroke-width="1.5"/><line x1="112" y1="68" x2="78" y2="44" stroke="#b5e550" stroke-width="5" stroke-linecap="round"/><line x1="148" y1="68" x2="182" y2="44" stroke="#b5e550" stroke-width="5" stroke-linecap="round"/><rect x="67" y="38" width="16" height="7" rx="3" fill="#ff6b35"/><rect x="173" y="38" width="16" height="7" rx="3" fill="#ff6b35"/><path d="M75 26 L75 37" stroke="#ffc93c" stroke-width="2" stroke-dasharray="3,2"/><path d="M181 26 L181 37" stroke="#ffc93c" stroke-width="2" stroke-dasharray="3,2"/><text x="130" y="132" text-anchor="middle" fill="#697060" font-size="9" font-family="sans-serif">Empurra para cima, escapulas no banco</text></svg>',
+desenvolvimento:'<svg viewBox="0 0 260 140" xmlns="http://www.w3.org/2000/svg"><rect width="260" height="140" fill="#0d1209"/><rect x="95" y="98" width="70" height="9" rx="3" fill="#2a3520" stroke="#b5e550" stroke-width="1.5"/><rect x="103" y="106" width="7" height="22" rx="2" fill="#1e2819"/><rect x="150" y="106" width="7" height="22" rx="2" fill="#1e2819"/><rect x="110" y="66" width="40" height="34" rx="7" fill="#3a4f28" stroke="#b5e550" stroke-width="1.5"/><circle cx="130" cy="54" r="12" fill="#3a4f28" stroke="#b5e550" stroke-width="1.5"/><line x1="110" y1="76" x2="72" y2="76" stroke="#b5e550" stroke-width="4" stroke-linecap="round"/><line x1="150" y1="76" x2="188" y2="76" stroke="#b5e550" stroke-width="4" stroke-linecap="round"/><line x1="72" y1="76" x2="72" y2="48" stroke="#b5e550" stroke-width="4" stroke-linecap="round"/><line x1="188" y1="76" x2="188" y2="48" stroke="#b5e550" stroke-width="4" stroke-linecap="round"/><rect x="61" y="41" width="15" height="7" rx="3" fill="#ff6b35"/><rect x="182" y="41" width="15" height="7" rx="3" fill="#ff6b35"/><path d="M68 33 L68 40" stroke="#ffc93c" stroke-width="2" stroke-dasharray="3,2"/><path d="M190 33 L190 40" stroke="#ffc93c" stroke-width="2" stroke-dasharray="3,2"/><text x="130" y="133" text-anchor="middle" fill="#697060" font-size="9" font-family="sans-serif">Cotovelos a 90 graus, empurra para cima</text></svg>',
+elevacao_lateral:'<svg viewBox="0 0 260 140" xmlns="http://www.w3.org/2000/svg"><rect width="260" height="140" fill="#0d1209"/><rect x="110" y="55" width="40" height="50" rx="7" fill="#3a4f28" stroke="#b5e550" stroke-width="1.5"/><circle cx="130" cy="43" r="12" fill="#3a4f28" stroke="#b5e550" stroke-width="1.5"/><rect x="112" y="103" width="12" height="25" rx="4" fill="#3a4f28" stroke="#b5e550" stroke-width="1"/><rect x="136" y="103" width="12" height="25" rx="4" fill="#3a4f28" stroke="#b5e550" stroke-width="1"/><line x1="110" y1="73" x2="62" y2="67" stroke="#b5e550" stroke-width="4" stroke-linecap="round"/><line x1="150" y1="73" x2="198" y2="67" stroke="#b5e550" stroke-width="4" stroke-linecap="round"/><rect x="51" y="62" width="13" height="7" rx="3" fill="#ff6b35"/><rect x="196" y="62" width="13" height="7" rx="3" fill="#ff6b35"/><line x1="64" y1="67" x2="196" y2="67" stroke="#ffc93c" stroke-width="1" stroke-dasharray="5,3" opacity=".35"/><text x="130" y="133" text-anchor="middle" fill="#697060" font-size="9" font-family="sans-serif">Ate paralelo ao chao, cotovelo semi-flexionado</text></svg>',
+facepull:'<svg viewBox="0 0 260 140" xmlns="http://www.w3.org/2000/svg"><rect width="260" height="140" fill="#0d1209"/><rect x="214" y="18" width="12" height="108" rx="3" fill="#2a3520" stroke="#697060" stroke-width="1"/><rect x="208" y="48" width="18" height="7" rx="2" fill="#ff6b35"/><line x1="214" y1="52" x2="172" y2="72" stroke="#697060" stroke-width="2" stroke-dasharray="4,2"/><rect x="90" y="57" width="36" height="48" rx="7" fill="#3a4f28" stroke="#b5e550" stroke-width="1.5"/><circle cx="108" cy="45" r="12" fill="#3a4f28" stroke="#b5e550" stroke-width="1.5"/><rect x="92" y="103" width="12" height="26" rx="4" fill="#3a4f28" stroke="#b5e550" stroke-width="1"/><rect x="112" y="103" width="12" height="26" rx="4" fill="#3a4f28" stroke="#b5e550" stroke-width="1"/><line x1="126" y1="70" x2="172" y2="72" stroke="#b5e550" stroke-width="4" stroke-linecap="round"/><circle cx="170" cy="72" r="5" fill="#ff6b35"/><text x="130" y="133" text-anchor="middle" fill="#697060" font-size="9" font-family="sans-serif">Puxar ate a face, cotovelos altos e abertos</text></svg>',
+triceps_corda:'<svg viewBox="0 0 260 140" xmlns="http://www.w3.org/2000/svg"><rect width="260" height="140" fill="#0d1209"/><rect x="110" y="8" width="40" height="9" rx="3" fill="#2a3520" stroke="#697060" stroke-width="1"/><line x1="125" y1="16" x2="108" y2="52" stroke="#ff6b35" stroke-width="3" stroke-linecap="round"/><line x1="135" y1="16" x2="152" y2="52" stroke="#ff6b35" stroke-width="3" stroke-linecap="round"/><rect x="108" y="52" width="44" height="44" rx="7" fill="#3a4f28" stroke="#b5e550" stroke-width="1.5"/><circle cx="130" cy="40" r="12" fill="#3a4f28" stroke="#b5e550" stroke-width="1.5"/><rect x="110" y="94" width="12" height="28" rx="4" fill="#3a4f28" stroke="#b5e550" stroke-width="1"/><rect x="138" y="94" width="12" height="28" rx="4" fill="#3a4f28" stroke="#b5e550" stroke-width="1"/><line x1="108" y1="66" x2="82" y2="98" stroke="#b5e550" stroke-width="5" stroke-linecap="round"/><line x1="152" y1="66" x2="178" y2="98" stroke="#b5e550" stroke-width="5" stroke-linecap="round"/><text x="130" y="133" text-anchor="middle" fill="#697060" font-size="9" font-family="sans-serif">Cotovelos fixos ao corpo, abre a corda no final</text></svg>',
+remada_baixa:'<svg viewBox="0 0 260 140" xmlns="http://www.w3.org/2000/svg"><rect width="260" height="140" fill="#0d1209"/><rect x="14" y="74" width="12" height="46" rx="3" fill="#2a3520" stroke="#697060" stroke-width="1"/><rect x="8" y="82" width="22" height="7" rx="2" fill="#ff6b35"/><line x1="26" y1="86" x2="108" y2="86" stroke="#697060" stroke-width="2" stroke-dasharray="5,3"/><rect x="82" y="103" width="96" height="8" rx="3" fill="#2a3520" stroke="#b5e550" stroke-width="1.5"/><ellipse cx="148" cy="82" rx="38" ry="14" fill="#3a4f28" stroke="#b5e550" stroke-width="1.5" transform="rotate(-8 148 82)"/><circle cx="182" cy="70" r="11" fill="#3a4f28" stroke="#b5e550" stroke-width="1.5"/><line x1="108" y1="86" x2="136" y2="84" stroke="#b5e550" stroke-width="5" stroke-linecap="round"/><text x="130" y="125" text-anchor="middle" fill="#697060" font-size="9" font-family="sans-serif">Puxar o cabo ate o abdomen, costas retas</text></svg>',
+pulldown:'<svg viewBox="0 0 260 140" xmlns="http://www.w3.org/2000/svg"><rect width="260" height="140" fill="#0d1209"/><rect x="94" y="7" width="72" height="9" rx="3" fill="#2a3520" stroke="#697060" stroke-width="1"/><line x1="130" y1="16" x2="130" y2="30" stroke="#697060" stroke-width="3"/><line x1="82" y1="30" x2="178" y2="30" stroke="#ff6b35" stroke-width="4" stroke-linecap="round"/><line x1="82" y1="30" x2="100" y2="50" stroke="#b5e550" stroke-width="3" stroke-linecap="round"/><line x1="178" y1="30" x2="160" y2="50" stroke="#b5e550" stroke-width="3" stroke-linecap="round"/><rect x="108" y="66" width="44" height="42" rx="7" fill="#3a4f28" stroke="#b5e550" stroke-width="1.5"/><circle cx="130" cy="55" r="12" fill="#3a4f28" stroke="#b5e550" stroke-width="1.5"/><line x1="108" y1="76" x2="100" y2="50" stroke="#b5e550" stroke-width="4" stroke-linecap="round"/><line x1="152" y1="76" x2="160" y2="50" stroke="#b5e550" stroke-width="4" stroke-linecap="round"/><path d="M130 36 L130 48" stroke="#ffc93c" stroke-width="2" stroke-dasharray="3,2"/><text x="130" y="125" text-anchor="middle" fill="#697060" font-size="9" font-family="sans-serif">Puxa a barra ate o peito, cotovelos para baixo</text></svg>',
+remada_uni:'<svg viewBox="0 0 260 140" xmlns="http://www.w3.org/2000/svg"><rect width="260" height="140" fill="#0d1209"/><rect x="55" y="88" width="120" height="9" rx="3" fill="#2a3520" stroke="#b5e550" stroke-width="1.5"/><rect x="60" y="96" width="7" height="26" rx="2" fill="#1e2819"/><rect x="170" y="96" width="7" height="26" rx="2" fill="#1e2819"/><ellipse cx="130" cy="76" rx="42" ry="13" fill="#3a4f28" stroke="#b5e550" stroke-width="1.5" transform="rotate(-5 130 76)"/><circle cx="172" cy="67" r="11" fill="#3a4f28" stroke="#b5e550" stroke-width="1.5"/><line x1="150" y1="78" x2="150" y2="93" stroke="#b5e550" stroke-width="3" stroke-linecap="round"/><line x1="104" y1="80" x2="104" y2="108" stroke="#b5e550" stroke-width="5" stroke-linecap="round"/><rect x="93" y="106" width="18" height="7" rx="3" fill="#ff6b35"/><path d="M90 94 L90 106" stroke="#ffc93c" stroke-width="2" stroke-dasharray="3,2"/><text x="130" y="130" text-anchor="middle" fill="#697060" font-size="9" font-family="sans-serif">Puxa ate o quadril, nao gire o tronco</text></svg>',
+rosca_ez:'<svg viewBox="0 0 260 140" xmlns="http://www.w3.org/2000/svg"><rect width="260" height="140" fill="#0d1209"/><rect x="108" y="47" width="44" height="60" rx="7" fill="#3a4f28" stroke="#b5e550" stroke-width="1.5"/><circle cx="130" cy="35" r="12" fill="#3a4f28" stroke="#b5e550" stroke-width="1.5"/><rect x="110" y="105" width="12" height="26" rx="4" fill="#3a4f28" stroke="#b5e550" stroke-width="1"/><rect x="138" y="105" width="12" height="26" rx="4" fill="#3a4f28" stroke="#b5e550" stroke-width="1"/><line x1="108" y1="70" x2="84" y2="62" stroke="#b5e550" stroke-width="4" stroke-linecap="round"/><line x1="84" y1="62" x2="88" y2="92" stroke="#b5e550" stroke-width="4" stroke-linecap="round"/><line x1="152" y1="70" x2="176" y2="62" stroke="#b5e550" stroke-width="4" stroke-linecap="round"/><line x1="176" y1="62" x2="172" y2="92" stroke="#b5e550" stroke-width="4" stroke-linecap="round"/><path d="M82 92 L100 89 L112 95 L128 90 L132 90 L148 95 L160 89 L178 92" stroke="#ff6b35" stroke-width="4" fill="none" stroke-linecap="round"/><text x="130" y="133" text-anchor="middle" fill="#697060" font-size="9" font-family="sans-serif">Cotovelos fixos ao corpo, sobe sem balancar</text></svg>',
+deadbug:'<svg viewBox="0 0 260 140" xmlns="http://www.w3.org/2000/svg"><rect width="260" height="140" fill="#0d1209"/><rect x="16" y="112" width="228" height="4" rx="2" fill="#2a3520"/><ellipse cx="130" cy="102" rx="66" ry="12" fill="#3a4f28" stroke="#b5e550" stroke-width="1.5"/><circle cx="68" cy="98" r="12" fill="#3a4f28" stroke="#b5e550" stroke-width="1.5"/><line x1="102" y1="94" x2="102" y2="56" stroke="#b5e550" stroke-width="4" stroke-linecap="round"/><circle cx="102" cy="52" r="4" fill="#ff6b35"/><line x1="162" y1="100" x2="204" y2="70" stroke="#b5e550" stroke-width="4" stroke-linecap="round"/><line x1="136" y1="100" x2="136" y2="68" stroke="#b5e550" stroke-width="3" stroke-linecap="round"/><line x1="136" y1="68" x2="114" y2="68" stroke="#b5e550" stroke-width="3" stroke-linecap="round"/><line x1="90" y1="112" x2="200" y2="112" stroke="#ffc93c" stroke-width="1.5" stroke-dasharray="5,3" opacity=".5"/><text x="130" y="10" text-anchor="middle" fill="#ffc93c" font-size="9" font-family="sans-serif">COLUNA NO CHAO O TEMPO TODO</text><text x="130" y="130" text-anchor="middle" fill="#697060" font-size="9" font-family="sans-serif">Braco e perna opostos esticam juntos</text></svg>',
+prancha:'<svg viewBox="0 0 260 140" xmlns="http://www.w3.org/2000/svg"><rect width="260" height="140" fill="#0d1209"/><rect x="16" y="116" width="228" height="4" rx="2" fill="#2a3520"/><ellipse cx="130" cy="104" rx="80" ry="11" fill="#3a4f28" stroke="#b5e550" stroke-width="1.5" transform="rotate(-2 130 104)"/><circle cx="50" cy="94" r="13" fill="#3a4f28" stroke="#b5e550" stroke-width="1.5"/><rect x="60" y="110" width="13" height="7" rx="3" fill="#ff6b35"/><rect x="84" y="110" width="13" height="7" rx="3" fill="#ff6b35"/><ellipse cx="214" cy="114" rx="7" ry="4" fill="#b5e550" opacity=".6"/><line x1="50" y1="94" x2="214" y2="109" stroke="#ffc93c" stroke-width="1" stroke-dasharray="6,3" opacity=".4"/><text x="130" y="133" text-anchor="middle" fill="#697060" font-size="9" font-family="sans-serif">Corpo em linha reta, quadril nao sobe nem desce</text></svg>',
+agachamento:'<svg viewBox="0 0 260 140" xmlns="http://www.w3.org/2000/svg"><rect width="260" height="140" fill="#0d1209"/><rect x="14" y="136" width="232" height="4" rx="2" fill="#2a3520"/><rect x="115" y="52" width="30" height="13" rx="3" fill="#ff6b35"/><rect x="108" y="63" width="44" height="36" rx="7" fill="#3a4f28" stroke="#b5e550" stroke-width="1.5"/><circle cx="130" cy="51" r="12" fill="#3a4f28" stroke="#b5e550" stroke-width="1.5"/><line x1="112" y1="97" x2="92" y2="134" stroke="#b5e550" stroke-width="6" stroke-linecap="round"/><line x1="148" y1="97" x2="168" y2="134" stroke="#b5e550" stroke-width="6" stroke-linecap="round"/><circle cx="92" cy="134" r="4" fill="#ffc93c" opacity=".7"/><circle cx="168" cy="134" r="4" fill="#ffc93c" opacity=".7"/><text x="130" y="20" text-anchor="middle" fill="#ffc93c" font-size="9" font-family="sans-serif">Joelhos seguem a linha dos pes</text><text x="130" y="130" text-anchor="middle" fill="#697060" font-size="9" font-family="sans-serif" dy="8">Costas retas, desca devagar</text></svg>',
+legpress:'<svg viewBox="0 0 260 140" xmlns="http://www.w3.org/2000/svg"><rect width="260" height="140" fill="#0d1209"/><rect x="16" y="46" width="152" height="86" rx="5" fill="#1a2016" stroke="#2a3520" stroke-width="2"/><rect x="148" y="52" width="20" height="74" rx="4" fill="#2a3520" stroke="#b5e550" stroke-width="1.5"/><rect x="26" y="68" width="108" height="34" rx="7" fill="#3a4f28" stroke="#b5e550" stroke-width="1.5"/><circle cx="30" cy="76" r="12" fill="#3a4f28" stroke="#b5e550" stroke-width="1.5"/><line x1="130" y1="76" x2="148" y2="74" stroke="#b5e550" stroke-width="6" stroke-linecap="round"/><line x1="130" y1="90" x2="148" y2="92" stroke="#b5e550" stroke-width="6" stroke-linecap="round"/><rect x="145" y="69" width="9" height="9" rx="2" fill="#b5e550" opacity=".6"/><rect x="145" y="84" width="9" height="9" rx="2" fill="#b5e550" opacity=".6"/><path d="M160 82 L172 82" stroke="#ffc93c" stroke-width="2"/><text x="130" y="133" text-anchor="middle" fill="#697060" font-size="9" font-family="sans-serif">Pes paralelos largos, nao trava o joelho no topo</text></svg>',
+mesa_flex:'<svg viewBox="0 0 260 140" xmlns="http://www.w3.org/2000/svg"><rect width="260" height="140" fill="#0d1209"/><rect x="44" y="64" width="172" height="48" rx="5" fill="#1a2016" stroke="#2a3520" stroke-width="2"/><rect x="44" y="56" width="172" height="12" rx="3" fill="#2a3520" stroke="#b5e550" stroke-width="1.5"/><ellipse cx="130" cy="60" rx="62" ry="9" fill="#3a4f28" stroke="#b5e550" stroke-width="1.5"/><circle cx="71" cy="56" r="11" fill="#3a4f28" stroke="#b5e550" stroke-width="1.5"/><line x1="178" y1="68" x2="200" y2="46" stroke="#b5e550" stroke-width="5" stroke-linecap="round"/><line x1="188" y1="68" x2="210" y2="46" stroke="#b5e550" stroke-width="5" stroke-linecap="round"/><ellipse cx="200" cy="48" rx="7" ry="4" fill="#ff6b35" opacity=".8"/><text x="130" y="130" text-anchor="middle" fill="#697060" font-size="9" font-family="sans-serif">Dobra os joelhos devagar sem usar balanco</text></svg>',
+hip_thrust:'<svg viewBox="0 0 260 140" xmlns="http://www.w3.org/2000/svg"><rect width="260" height="140" fill="#0d1209"/><rect x="14" y="134" width="232" height="4" rx="2" fill="#2a3520"/><rect x="50" y="84" width="82" height="13" rx="4" fill="#2a3520" stroke="#b5e550" stroke-width="1.5"/><rect x="54" y="96" width="9" height="28" rx="2" fill="#1e2819"/><rect x="124" y="96" width="9" height="28" rx="2" fill="#1e2819"/><ellipse cx="142" cy="94" rx="52" ry="12" fill="#3a4f28" stroke="#b5e550" stroke-width="1.5" transform="rotate(-14 142 94)"/><ellipse cx="90" cy="90" rx="18" ry="9" fill="#3a4f28" stroke="#b5e550" stroke-width="1.5"/><line x1="166" y1="104" x2="184" y2="134" stroke="#b5e550" stroke-width="6" stroke-linecap="round"/><line x1="152" y1="102" x2="170" y2="134" stroke="#b5e550" stroke-width="6" stroke-linecap="round"/><rect x="152" y="130" width="26" height="6" rx="2" fill="#b5e550" opacity=".4"/><rect x="100" y="91" width="76" height="7" rx="3" fill="#ff6b35"/><path d="M142 74 L142 64" stroke="#ffc93c" stroke-width="2" stroke-dasharray="3,2"/><text x="130" y="20" text-anchor="middle" fill="#ffc93c" font-size="9" font-family="sans-serif">Esprema o gluteo no topo 1 segundo</text><text x="130" y="130" text-anchor="middle" fill="#697060" font-size="9" font-family="sans-serif" dy="6">Ombros no banco, quadril sobe e desce</text></svg>',
+cadeira_ext:'<svg viewBox="0 0 260 140" xmlns="http://www.w3.org/2000/svg"><rect width="260" height="140" fill="#0d1209"/><rect x="46" y="46" width="96" height="76" rx="5" fill="#1a2016" stroke="#2a3520" stroke-width="2"/><rect x="46" y="46" width="96" height="13" rx="5" fill="#2a3520" stroke="#b5e550" stroke-width="1.5"/><rect x="126" y="46" width="10" height="68" rx="3" fill="#2a3520" stroke="#b5e550" stroke-width="1"/><rect x="60" y="58" width="62" height="42" rx="5" fill="#3a4f28" stroke="#b5e550" stroke-width="1.5"/><circle cx="114" cy="53" r="11" fill="#3a4f28" stroke="#b5e550" stroke-width="1.5"/><rect x="50" y="97" width="76" height="12" rx="4" fill="#3a4f28" stroke="#b5e550" stroke-width="1.5"/><line x1="50" y1="107" x2="24" y2="112" stroke="#b5e550" stroke-width="6" stroke-linecap="round"/><ellipse cx="22" cy="112" rx="9" ry="5" fill="#ff6b35" opacity=".8"/><path d="M18 100 Q12 107 22 112" stroke="#ffc93c" stroke-width="2" stroke-dasharray="3,2" fill="none"/><text x="130" y="133" text-anchor="middle" fill="#697060" font-size="9" font-family="sans-serif">Estende o joelho, para antes de travar</text></svg>',
+panturrilha:'<svg viewBox="0 0 260 140" xmlns="http://www.w3.org/2000/svg"><rect width="260" height="140" fill="#0d1209"/><rect x="54" y="118" width="152" height="13" rx="3" fill="#2a3520" stroke="#b5e550" stroke-width="1.5"/><rect x="108" y="38" width="44" height="58" rx="7" fill="#3a4f28" stroke="#b5e550" stroke-width="1.5"/><circle cx="130" cy="26" r="12" fill="#3a4f28" stroke="#b5e550" stroke-width="1.5"/><rect x="110" y="94" width="14" height="26" rx="4" fill="#3a4f28" stroke="#b5e550" stroke-width="1.5"/><rect x="136" y="94" width="14" height="26" rx="4" fill="#3a4f28" stroke="#b5e550" stroke-width="1.5"/><ellipse cx="117" cy="118" rx="13" ry="4" fill="#b5e550" opacity=".6"/><ellipse cx="143" cy="118" rx="13" ry="4" fill="#b5e550" opacity=".6"/><path d="M130 34 L130 24" stroke="#ffc93c" stroke-width="2" stroke-dasharray="3,2"/><text x="130" y="135" text-anchor="middle" fill="#697060" font-size="9" font-family="sans-serif">Sobe na ponta, amplitude total, 1s no topo</text></svg>',
+bike_road:'<svg viewBox="0 0 260 140" xmlns="http://www.w3.org/2000/svg"><rect width="260" height="140" fill="#0d1209"/><circle cx="72" cy="106" r="32" fill="none" stroke="#b5e550" stroke-width="3"/><circle cx="188" cy="106" r="32" fill="none" stroke="#b5e550" stroke-width="3"/><circle cx="72" cy="106" r="5" fill="#b5e550"/><circle cx="188" cy="106" r="5" fill="#b5e550"/><line x1="72" y1="74" x2="72" y2="106" stroke="#b5e550" stroke-width="1" opacity=".4"/><line x1="40" y1="106" x2="72" y2="106" stroke="#b5e550" stroke-width="1" opacity=".4"/><line x1="188" y1="74" x2="188" y2="106" stroke="#b5e550" stroke-width="1" opacity=".4"/><line x1="156" y1="106" x2="188" y2="106" stroke="#b5e550" stroke-width="1" opacity=".4"/><line x1="72" y1="106" x2="130" y2="68" stroke="#ff6b35" stroke-width="2.5"/><line x1="188" y1="106" x2="130" y2="68" stroke="#ff6b35" stroke-width="2.5"/><line x1="130" y1="68" x2="106" y2="106" stroke="#ff6b35" stroke-width="2.5"/><line x1="130" y1="68" x2="130" y2="44" stroke="#697060" stroke-width="2.5"/><line x1="118" y1="44" x2="142" y2="44" stroke="#b5e550" stroke-width="3.5" stroke-linecap="round"/><line x1="106" y1="106" x2="106" y2="80" stroke="#697060" stroke-width="2.5"/><rect x="98" y="77" width="18" height="5" rx="2" fill="#b5e550"/><circle cx="120" cy="56" r="9" fill="#3a4f28" stroke="#b5e550" stroke-width="1.5"/><line x1="120" y1="65" x2="120" y2="78" stroke="#b5e550" stroke-width="2.5"/><line x1="120" y1="70" x2="130" y2="62" stroke="#b5e550" stroke-width="2"/><text x="130" y="135" text-anchor="middle" fill="#697060" font-size="9" font-family="sans-serif">18-22 km/h, ritmo confortavel, 40-50 min</text></svg>',
+crucifixo:'<svg viewBox="0 0 260 140" xmlns="http://www.w3.org/2000/svg"><rect width="260" height="140" fill="#0d1209"/><rect x="14" y="28" width="11" height="106" rx="3" fill="#2a3520" stroke="#697060" stroke-width="1"/><rect x="235" y="28" width="11" height="106" rx="3" fill="#2a3520" stroke="#697060" stroke-width="1"/><line x1="25" y1="64" x2="88" y2="82" stroke="#697060" stroke-width="1.5" stroke-dasharray="4,2"/><line x1="235" y1="64" x2="172" y2="82" stroke="#697060" stroke-width="1.5" stroke-dasharray="4,2"/><rect x="100" y="100" width="60" height="9" rx="3" fill="#2a3520" stroke="#b5e550" stroke-width="1.5"/><ellipse cx="130" cy="82" rx="20" ry="16" fill="#3a4f28" stroke="#b5e550" stroke-width="1.5"/><circle cx="130" cy="60" r="12" fill="#3a4f28" stroke="#b5e550" stroke-width="1.5"/><line x1="112" y1="82" x2="88" y2="82" stroke="#b5e550" stroke-width="4" stroke-linecap="round"/><line x1="148" y1="82" x2="172" y2="82" stroke="#b5e550" stroke-width="4" stroke-linecap="round"/><circle cx="86" cy="82" r="4" fill="#ff6b35"/><circle cx="174" cy="82" r="4" fill="#ff6b35"/><path d="M98 70 Q130 58 162 70" stroke="#ffc93c" stroke-width="1.5" stroke-dasharray="4,2" fill="none"/><text x="130" y="126" text-anchor="middle" fill="#697060" font-size="9" font-family="sans-serif">Fecha os bracos como um abraco</text></svg>'
 };
-
-const SEMANA=[
-  {d:'Seg',t:'A',l:'Musculação A — Push',c:'bb'},
-  {d:'Ter',t:'NAT',l:'Natação',c:'bb'},
-  {d:'Qua',t:'REST',l:'Descanso (ergom. 20min opcional)',c:''},
-  {d:'Qui',t:'B',l:'Musculação B — Pull+Core',c:'bg'},
-  {d:'Sex',t:'C',l:'Musculação C — Legs',c:'bw'},
-  {d:'Sáb',t:'BCI',l:'Bicicleta (rua ou ergom.)',c:'bpp'},
-  {d:'Dom',t:'REST',l:'Descanso total',c:''},
+const PAIN_ZONES=[
+  {id:'shoulder',emoji:'💪',name:'Ombro'},
+  {id:'chest',emoji:'🫁',name:'Peito'},
+  {id:'elbow',emoji:'🦴',name:'Cotovelo'},
+  {id:'wrist',emoji:'🤲',name:'Pulso'},
+  {id:'lowerback',emoji:'🔩',name:'Lombar'},
+  {id:'upperback',emoji:'🫀',name:'Costas sup.'},
+  {id:'neck',emoji:'🧠',name:'Pescoco'},
+  {id:'hip',emoji:'🍑',name:'Quadril'},
+  {id:'knee',emoji:'🦵',name:'Joelho'},
+  {id:'ankle',emoji:'🦶',name:'Tornozelo/Gota'},
+  {id:'abs',emoji:'⚡',name:'Core/Abdomen'},
 ];
+const WORKOUTS={
+  A:{label:'PUSH',type:'Peito · Ombro · Triceps',duration:45,kcal:280,exercises:[
+    {id:'supino_inclinado',name:'Supino inclinado halteres',sets:'3x12',focus:'Peito superior',risks:['chest','shoulder','elbow','forearm','wrist'],tip:'Escapulas retraidas o tempo todo. Desça devagar 3 segundos.',sub:{name:'Flexao inclinada (pes no banco)',sets:'3x12-15',reason:'Elimina carga nos pulsos, mesmo padrao'}},
+    {id:'crucifixo',name:'Crucifixo maquina',sets:'3x15',focus:'Peito medial',risks:['chest','shoulder'],tip:'Para antes de sentir apertar no ombro. Cotovelo semi-flexionado.',sub:{name:'Cabo voador baixo (cable crossover)',sets:'3x15',reason:'Menor pico de forca no alongamento'}},
+    {id:'desenvolvimento',name:'Desenvolvimento halteres',sets:'3x12',focus:'Ombro anterior',risks:['shoulder','elbow','forearm','wrist','neck'],tip:'Cotovelos a 90 graus na posicao baixa. Core ativado sentado.',sub:{name:'Elevacao frontal leve no cabo',sets:'3x15',reason:'Menor estresse no ombro com impingement'}},
+    {id:'elevacao_lateral',name:'Elevacao lateral halteres',sets:'3x15',focus:'Deltatoide medial',risks:['shoulder','elbow','forearm','wrist'],tip:'Cotovelo levemente dobrado. Sobe ate paralelo ao chao, nao mais.',sub:{name:'Elevacao lateral no cabo unilateral',sets:'3x15',reason:'Tensao constante, menos impacto articular'}},
+    {id:'facepull',name:'Facepull cabo (chave postura)',sets:'3x15',focus:'Manguito / postura',risks:['shoulder','neck','elbow','forearm'],tip:'Puxar ate a face, cotovelos altos e abertos. NUNCA pule este exercicio.',sub:{name:'Band pull-apart com elastico',sets:'3x20',reason:'Zero carga nos cotovelos, mesmo padrao'}},
+    {id:'triceps_corda',name:'Triceps corda',sets:'3x15',focus:'Triceps',risks:['elbow','forearm','shoulder','wrist'],tip:'Cotovelos fixos ao lado do corpo. Abre a corda no final do movimento.',sub:{name:'Extensao triceps com halter neutro',sets:'3x12',reason:'Menos estresse no cotovelo'}},
+  ]},
+  B:{label:'PULL + CORE',type:'Costas · Biceps · Core',duration:45,kcal:270,exercises:[
+    {id:'remada_baixa',name:'Remada baixa cabo (chave lombar)',sets:'3x12',focus:'Costas / postura',risks:['lowerback','upperback','elbow','forearm','wrist','shoulder'],tip:'Nao curve a lombar no final. Cotovelos perto do corpo, puxar ate o umbigo.',sub:{name:'Remada maquina apoiada (chest supported)',sets:'3x12',reason:'Lombar descarregada completamente'}},
+    {id:'pulldown',name:'Pulldown barra larga',sets:'3x12',focus:'Lat / largura',risks:['shoulder','elbow','forearm','wrist'],tip:'Deixa o ombro descer ao final da subida. Puxa ate o queixo.',sub:{name:'Pulldown neutro (triangulo)',sets:'3x12',reason:'Posicao mais segura para o manguito'}},
+    {id:'remada_uni',name:'Remada unilateral halter',sets:'3x12',focus:'Costas + core',risks:['lowerback','elbow','forearm','wrist'],tip:'Apoio solido no banco. Nao gire o tronco. Puxe ate o quadril.',sub:{name:'Remada unilateral no cabo em pe',sets:'3x12',reason:'Menor torque na lombar'}},
+    {id:'rosca_ez',name:'Rosca barra EZ',sets:'3x12',focus:'Biceps',risks:['elbow','forearm','wrist'],tip:'Cotovelos fixos ao lado do corpo. Sem balanco do tronco.',sub:{name:'Rosca alternada halteres neutro',sets:'3x12',reason:'Pulso em posicao neutra, alivia cotovelo'}},
+    {id:'deadbug',name:'Deadbug core (chave lombar)',sets:'3x8 cada',focus:'Anti-extensao lombar',risks:['abs','lowerback'],tip:'COLUNA NO CHAO o tempo todo. Expira ao esticar braco e perna opostos.',sub:{name:'Marcha supina lenta',sets:'3x10 cada',reason:'Mesma ativacao, menos exigencia'}},
+    {id:'prancha',name:'Prancha frontal',sets:'3x30s',focus:'Core geral',risks:['abs','lowerback','shoulder','wrist'],tip:'Corpo em linha reta. Quadril nao sobe nem desce. Respira normalmente.',sub:{name:'Prancha em cotovelos (low plank)',sets:'3x30s',reason:'Sem carga nos pulsos, mesma ativacao'}},
+  ]},
+  C:{label:'LEGS',type:'Quadriceps · Gluteo · Posterior',duration:45,kcal:320,exercises:[
+    {id:'agachamento',name:'Agachamento goblet halter',sets:'3x12',focus:'Quadriceps / gluteo',risks:['knee','hip','groin','quadriceps','lowerback','ankle'],tip:'Joelhos seguem a linha dos dedos dos pes. Costas retas. Desça devagar.',sub:{name:'Leg press 45 graus (amplitude reduzida)',sets:'3x15',reason:'Sem compressao axial na coluna'}},
+    {id:'legpress',name:'Leg press 45 graus',sets:'3x15',focus:'Quadriceps completo',risks:['knee','hip','quadriceps','lowerback'],tip:'Pes paralelos largos. Nao fecha os joelhos. Para antes de travar.',sub:{name:'Cadeira extensora (parcial)',sets:'3x15',reason:'Isola quad sem envolver lombar'}},
+    {id:'mesa_flex',name:'Mesa flexora (chave lombar)',sets:'3x15',focus:'Isquiotibiais',risks:['knee','hip','hamstring'],tip:'Movimento controlado sem balanco. Isquio fraco = dor lombar.',sub:{name:'Stiff halter leve (amplitude reduzida)',sets:'3x12',reason:'Ativa isquio sem comprimir o joelho'}},
+    {id:'hip_thrust',name:'Hip thrust / Glute bridge (chave gluteo)',sets:'3x15',focus:'Gluteo = protege lombar',risks:['lowerback','hip','knee','hamstring'],tip:'Ombros apoiados no banco. Esprema o gluteo no topo. Pausa 1 segundo.',sub:{name:'Glute bridge no chao sem peso',sets:'3x20',reason:'Mesmo padrao, sem carga axial'}},
+    {id:'cadeira_ext',name:'Cadeira extensora',sets:'3x15',focus:'Quadriceps isolado',risks:['knee','quadriceps'],tip:'Nao trava o joelho. Para a 10 graus do final para proteger patela.',sub:{name:'Mini-squat isometrico na parede',sets:'3x30s',reason:'Ativa quad sem pico de carga patelar'}},
+    {id:'panturrilha',name:'Panturrilha em pe',sets:'3x20',focus:'Gastrocnemio / tornozelo',risks:['ankle','knee','calf','foot'],tip:'Sobe na ponta do pe. Amplitude total. Pausa 1 segundo em cima.',sub:{name:'Panturrilha sentado maquina',sets:'3x20',reason:'Menos estresse no tornozelo e Aquiles'}},
+  ]},
+  BIKE:{label:'BICICLETA',type:'Cardio · Queima de gordura',duration:45,kcal:420,exercises:[
+    {id:'bike_road',name:'Bicicleta continua (rua ou ergometrica)',sets:'40-50 min',focus:'Cardio aerobico',risks:['ankle','knee','calf','quadriceps','hamstring'],tip:'18-22 km/h. Pace confortavel. Ergometrica em casa e opcao valida.',sub:{name:'Ergometrica em casa (ritmo leve)',sets:'40 min',reason:'Zero impacto no tornozelo e joelho'}},
+  ]},
+  REST:{label:'DESCANSO',type:'Recuperacao ativa',duration:20,kcal:80,exercises:[]},
+};
+const WEEK_MAP={0:'REST',1:'A',2:'BIKE',3:'REST',4:'B',5:'C',6:'BIKE'};
+const DAY_SHORT=['DOM','SEG','TER','QUA','QUI','SEX','SAB'];
+let activePain=new Set(),selectedDay=new Date().getDay(),doneEx=new Set(),openCards=new Set();
 
-function rTreino(){
-  const t=TR[S.tr];
-  const tk=td()+'_ex';
-  const done=new Set(JSON.parse(localStorage.getItem(tk)||'[]'));
-  const dc=t.ex.filter((_,i)=>done.has(S.tr+'_'+i)).length;
-  return`<div class="page act">
-  <div class="tsel">${Object.keys(TR).map(k=>`<div class="tc ${S.tr===k?'act':''}" onclick="setTr('${k}')">${TR[k].n.split(' ').slice(0,2).join(' ')}</div>`).join('')}</div>
-  <div class="card">
-    <div class="ct">${t.n} <span class="badge ${t.b}">${t.d}</span></div>
-    <div style="font-size:11px;color:var(--t3);margin-bottom:8px">${t.s}</div>
-    ${t.ex.length?`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><span style="font-size:11px;color:var(--t3)">${dc}/${t.ex.length} concluídos</span><div class="pb" style="width:55%;margin-top:0"><div class="pf" style="width:${Math.round(dc/t.ex.length*100)}%;background:var(--a)"></div></div></div>`:''}
-    ${t.ex.map((e,i)=>{const dn=done.has(S.tr+'_'+i);return`<div class="chi" onclick="togEx(${i},'${S.tr}')"><div class="chb ${dn?'dn':''}">${dn?'<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>':''}</div><div><div class="chl ${dn?'dn':''}">${e.n}</div><div class="chs">${e.s}</div>${e.nt?`<div class="chn">${e.nt}</div>`:''}</div></div>`}).join('')}
-  </div>
-  <div class="card">
-    <div class="ct">Estrutura semanal</div>
-    <table class="tbl"><thead><tr><th>Dia</th><th>Atividade</th><th>Fase</th></tr></thead><tbody>
-    ${SEMANA.map(s=>`<tr><td style="font-family:'DM Mono',monospace;font-size:11px;color:var(--a)">${s.d}</td><td>${s.t==='REST'?`<span style="color:var(--t3)">Descanso 🛌</span>`:`<span class="badge ${s.c}">${s.l}</span>`}</td><td style="font-size:10px;color:var(--t3)">${s.t==='REST'?'—':['Téc.','Prog.','Int.'][S.ph]}</td></tr>`).join('')}
-    </tbody></table>
-    <div style="font-size:10px;color:var(--t3);margin-top:8px">QUA: ergométrica 20 min em casa, opcional. SAB: bicicleta rua ou ergométrica. Em crise de Gota: substituir rua pela ergom. DOM: descanso total — família.</div>
-  </div>
-  <div class="card">
-    <div class="ct">Fase do programa</div>
-    <div class="ptabs"><div class="pt ${S.ph===0?'act':''}" onclick="setPh(0)">1·Adaptação</div><div class="pt ${S.ph===1?'act':''}" onclick="setPh(1)">2·Progressão</div><div class="pt ${S.ph===2?'act':''}" onclick="setPh(2)">3·Intensif.</div></div>
-    <div style="font-size:12px;color:var(--t2);line-height:1.7">${['<strong>Sem 1–4 · Adaptação:</strong> Técnica perfeita antes de qualquer carga. 3 séries, 12–15 reps, 60–65% da carga. Descanso 60–75s. Bird-dog e prancha ANTES de compostos.','<strong>Sem 5–8 · Progressão:</strong> 4 séries, 8–12 reps, 70–75%. Substituir agachamento goblet por livre (se técnica consolidada). Supersets leves. Iniciar creatina.','<strong>Sem 9–12 · Intensificação:</strong> 4–5 séries, 6–10 reps, 77–83%. Drop set na última série. Natação 3x se possível. HIIT na bicicleta.'][S.ph]}</div>
-  </div>
-  <div class="card">
-    <div class="ct" style="color:var(--a3)">⚠ Regras lombar — inegociáveis</div>
-    <div style="font-size:12px;color:var(--t3);line-height:1.9">✕ Sem barra pesada nas costas antes da semana 5<br>✕ Nunca arredondar lombar em remada, terra ou agacho<br>✕ Sem exercício com dor lombar >4/10<br>✓ Bird-dog e prancha SEMPRE antes dos compostos<br>✓ Aquecimento 5 min obrigatório em cada sessão<br>✓ Dor irradiando para a perna → parar, consultar fisio</div>
-  </div>
-  </div>`;
+const WEEK_MAP={0:'REST',1:'A',2:'BIKE',3:'REST',4:'B',5:'C',6:'BIKE'};
+const DAY_SHORT=['DOM','SEG','TER','QUA','QUI','SEX','SAB'];
+
+function getTH(){try{return JSON.parse(localStorage.getItem('leo_th')||'[]');}catch{return[];}}
+function saveTH(h){try{localStorage.setItem('leo_th',JSON.stringify(h));}catch{}}
+
+function togglePain(id){if(activePain.has(id))activePain.delete(id);else activePain.add(id);doneEx.clear();openCards.clear();render();}
+function clearPain(){activePain.clear();doneEx.clear();openCards.clear();render();}
+function selDayFn(i){selDay=i;doneEx.clear();openCards.clear();render();}
+function toggleCard(id){if(openCards.has(id))openCards.delete(id);else openCards.add(id);render();}
+function toggleDone(e,id){e.stopPropagation();if(doneEx.has(id))doneEx.delete(id);else doneEx.add(id);render();}
+function finishSession(){
+  const wk=WORKOUTS[WEEK_MAP[selDay]];
+  const active=wk.exercises.filter(ex=>ex.risks.filter(r=>activePain.has(r)).length===0||ex.sub);
+  const h=getTH();
+  h.unshift({date:new Date().toLocaleDateString('pt-BR',{weekday:'short',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}),ts:Date.now(),workout:wk.label,type:wk.type,done:doneEx.size,total:active.length,kcal:wk.kcal,duration:wk.duration,pains:[...activePain].map(id=>PAIN_ZONES.find(z=>z.id===id)?.name).filter(Boolean)});
+  if(h.length>60)h.pop();
+  saveTH(h);doneEx.clear();openCards.clear();render();toast('Treino salvo no historico!');
 }
-function setTr(k){S.tr=k;ss();render()}
-function setPh(n){S.ph=n;ss();render()}
-function togEx(i,t){const k=td()+'_ex';const d=new Set(JSON.parse(localStorage.getItem(k)||'[]'));const key=t+'_'+i;if(d.has(key))d.delete(key);else d.add(key);localStorage.setItem(k,JSON.stringify([...d]));render()}
 
-// ======= NUTRIÇÃO =======
+function rTreinoDin(){
+  const wkey=WEEK_MAP[selDay];
+  const wk=WORKOUTS[wkey];
+  const painNames=[...activePain].map(id=>PAIN_ZONES.find(z=>z.id===id)?.name).filter(Boolean);
+  
+  let html=`<div class="page act">`;
+  
+  // Pain selector
+  html+=`<div class="card"><div class="ct">O que doi hoje? (toque para marcar)</div>
+    <div class="pain-grid">${PAIN_ZONES.map(z=>`<div class="pain-item ${activePain.has(z.id)?'checked':''}" onclick="togglePain('${z.id}')"><div class="pain-dot">${z.emoji}</div><div class="pain-name">${z.name}</div><div class="pain-check">${activePain.has(z.id)?'✓':''}</div></div>`).join('')}</div>
+    ${activePain.size>0?`<button onclick="clearPain()" style="width:100%;padding:7px;border-radius:7px;border:1px solid var(--br);background:transparent;color:var(--t3);font-family:'Syne',sans-serif;font-size:11px;cursor:pointer;margin-top:6px">Limpar selecao</button>`:''}</div>`;
+  
+  // Day selector
+  html+=`<div class="day-sel">${DAY_SHORT.map((d,i)=>{const k=WEEK_MAP[i];return`<button class="dsb ${i===selDay?'act':''} ${k==='REST'?'rest-d':''}" onclick="selDayFn(${i})">${d}<br><span style="font-size:8px;opacity:.6">${k==='REST'?'desc':k==='BIKE'?'bike':'treino'}</span></button>`}).join('')}</div>`;
+  
+  if(wkey==='REST'){
+    html+=`<div class="card"><div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--t3);margin-bottom:6px">DESCANSO</div>
+      <p style="font-size:12px;color:var(--t3);margin-bottom:10px">Recuperacao e onde o corpo se transforma.</p>
+      ${activePain.size>0?`<div class="ws-strip ws-y"><span>💡</span><div>Dores marcadas. Gelo 15min nas regioes. Evite cargas.</div></div>`:''}
+      <div class="ct" style="margin-top:8px">Mobilidade opcional (15 min)</div>
+      ${[{n:'Cat-Cow',s:'2x10',f:'Lombar'},{n:'Hip 90/90',s:'2x45s cada',f:'Quadril'},{n:'Couch Stretch',s:'2x45s cada',f:'Iliopsoas'},{n:'Deadbug lento',s:'2x8 cada',f:'Core suave'},{n:'Circulos de tornozelo',s:'2x15 cada',f:'Tornozelo (gota)'}].map(m=>`<div style="display:flex;gap:8px;align-items:center;padding:7px 0;border-bottom:1px solid var(--br)"><div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--a);min-width:65px">${m.s}</div><div><div style="font-size:12px">${m.n}</div><div style="font-size:10px;color:var(--t3)">${m.f}</div></div></div>`).join('')}
+    </div>`;
+    html+='</div>';return html;
+  }
+  
+  const analyzed=wk.exercises.map(ex=>{const c=ex.risks.filter(r=>activePain.has(r));return{...ex,status:c.length===0?'safe':(ex.sub?'substituted':'blocked')};});
+  const blocked=analyzed.filter(e=>e.status==='blocked').length;
+  const subst=analyzed.filter(e=>e.status==='substituted').length;
+  const active=analyzed.filter(e=>e.status!=='blocked');
+  const allBlocked=active.length===0&&wk.exercises.length>0;
+  
+  let sText=wk.label,sClass='';
+  if(activePain.size>0&&allBlocked){sText='TREINO BLOQUEADO';sClass='red';}
+  else if(activePain.size>0&&(blocked>0||subst>0)){sText=wk.label+' ADAPTADO';sClass='yellow';}
+  
+  html+=`<div class="status-row">
+    <div style="font-size:20px">${activePain.size>0&&allBlocked?'🚫':activePain.size>0&&(blocked||subst)?'⚠️':'✅'}</div>
+    <div><div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:1px">${wk.type}</div>
+      <div class="sr-main ${sClass}">${sText}</div>
+      <div class="sr-sub">${wk.duration} min · ${wk.kcal} kcal</div></div>
+    <div style="margin-left:auto;text-align:right"><div style="font-family:'DM Mono',monospace;font-size:22px;color:var(--aw)">${doneEx.size}/${active.length}</div><div style="font-size:10px;color:var(--t3)">concluidos</div></div>
+  </div>`;
+  
+  if(activePain.size>0)html+=`<div class="ws-strip ws-r"><span>⚠️</span><div><strong>Dor: ${painNames.join(', ')}</strong> — ${blocked} removido · ${subst} substituido</div></div>`;
+  if(allBlocked)html+=`<div class="card"><div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--a3);margin-bottom:6px">TREINO INCOMPATIVEL</div><div style="font-size:12px;color:var(--t3)">Suas dores afetam todos os exercicios. Opcoes: ergometrica 20 min ou mobilidade.</div></div>`;
+  
+  if(!allBlocked){
+    const pct=active.length?Math.round(doneEx.size/active.length*100):0;
+    html+=`<div class="comp-bar"><div class="comp-fill" style="width:${pct}%"></div></div>
+      <div class="comp-txt"><span>Progresso</span><span>${doneEx.size}/${active.length} · ${pct}%</span></div>`;
+    html+=`<div style="font-size:10px;color:var(--t3);margin-bottom:8px;padding:0 2px">TOQUE NO EXERCICIO PARA VER COMO FAZER</div>`;
+    
+    analyzed.forEach((ex,i)=>{
+      const isDone=doneEx.has(ex.id);
+      const isOpen=openCards.has(ex.id);
+      const dispName=ex.status==='substituted'?ex.sub.name:ex.name;
+      const dispSets=ex.status==='substituted'?ex.sub.sets:ex.sets;
+      const svgKey=ex.id in SVG?ex.id:'default_ex';
+      if(ex.status==='blocked'){
+        html+=`<div class="ex-card blocked"><div class="ex-hdr" style="cursor:default"><div class="ex-num">✕</div><div class="ex-inf"><div class="ex-nm">${ex.name}</div><div class="ex-mt"><span class="ex-sets">${ex.sets}</span><span class="ex-tag tg-r">BLOQUEADO</span></div></div></div><div class="ex-reason">Agrava: ${ex.risks.filter(r=>activePain.has(r)).map(r=>PAIN_ZONES.find(z=>z.id===r)?.name).join(', ')}</div></div>`;
+        return;
+      }
+      html+=`<div class="ex-card ${ex.status}">
+        <div class="ex-hdr" onclick="toggleCard('${ex.id}')">
+          <div class="ex-num" style="${isDone?'background:rgba(0,229,160,.18);color:var(--a)':''}">${isDone?'✓':i+1}</div>
+          <div class="ex-inf"><div class="ex-nm" style="${isDone?'opacity:.45':''}">${dispName}</div>
+            <div class="ex-mt"><span class="ex-sets">${dispSets} · ${ex.focus}</span>${ex.status==='substituted'?'<span class="ex-tag tg-y">SUBSTITUTO</span>':'<span class="ex-tag tg-g">OK</span>'}</div></div>
+          <div style="font-size:14px">${isDone?'✅':'○'}</div>
+          <div class="ex-arr ${isOpen?'open':''}" style="margin-left:4px">▼</div>
+        </div>
+        <div class="ex-body ${isOpen?'open':''}">
+          ${ex.status==='substituted'?`<div class="ex-sub-r">Substituido: ${ex.sub.reason}</div>`:''}
+          <div class="ex-svg">${SVG[svgKey]||''}<div class="ex-tip">${ex.tip||''}</div></div>
+          <button class="ex-done-btn ${isDone?'done':''}" onclick="toggleDone(event,'${ex.id}')">${isDone?'Concluido (toque para desfazer)':'Marcar como feito'}</button>
+        </div>
+      </div>`;
+    });
+    
+    if(doneEx.size===active.length&&active.length>0){
+      html+=`<div class="ws-strip ws-g" style="margin-top:8px"><span>🎉</span><div><strong>Treino concluido!</strong> Proteina em ate 60 min. 500ml agua.</div></div>
+        <button class="save-sess-btn" onclick="finishSession()">💾 Salvar no Historico</button>`;
+    }
+  }
+  
+  // History section
+  const th=getTH();
+  if(th.length>0){
+    html+=`<div class="sh">Historico de treinos</div>
+    <div class="h3grid">
+      <div class="h3c"><div class="h3v">${th.length}</div><div class="h3l">Sessoes</div></div>
+      <div class="h3c"><div class="h3v">${th.reduce((a,s)=>a+s.kcal,0).toLocaleString('pt-BR')}</div><div class="h3l">Kcal totais</div></div>
+      <div class="h3c"><div class="h3v">${Math.round(th.reduce((a,s)=>a+(s.total>0?s.done/s.total*100:0),0)/th.length)}%</div><div class="h3l">Conclusao media</div></div>
+    </div>`;
+    th.slice(0,5).forEach(s=>{
+      const pct=s.total>0?Math.round(s.done/s.total*100):100;
+      html+=`<div class="hc"><div class="hc-date">${s.date}</div><div class="hc-type">${s.type}</div>
+        <div><span class="hbadge hb-ok">${s.workout}</span>${s.pains&&s.pains.length?`<span class="hbadge hb-pain">Dor: ${s.pains.join(', ')}</span>`:''}</div>
+        <div class="comp-bar" style="margin:8px 0 3px"><div class="comp-fill" style="width:${pct}%"></div></div>
+        <div class="comp-txt"><span>${s.done}/${s.total} exercicios</span><span>${pct}%</span></div>
+      </div>`;
+    });
+    if(th.length>5)html+=`<div style="font-size:11px;color:var(--t3);text-align:center;padding:6px">+${th.length-5} sessoes anteriores</div>`;
+    html+=`<button onclick="if(confirm('Apagar historico de treinos?')){localStorage.removeItem('leo_th');render();}" style="width:100%;padding:8px;border-radius:7px;border:1px solid rgba(255,107,107,.3);background:transparent;color:var(--a3);font-family:'Syne',sans-serif;font-size:11px;cursor:pointer;margin-top:4px">Limpar historico</button>`;
+  }
+  
+  html+='</div>';
+  return html;
+}
+
+
 const ND={
   treino:{l:'Treino / Natação',k:1950,def:500,p:170,c:197,g:55,meals:[
     {t:'07:00',n:'Café da manhã',d:'Omelete 3 ovos + espinafre + 2 fatias pão integral + laranja',k:380,p:25,c:42,g:12},
@@ -465,6 +548,7 @@ const SUPLS=[
   {n:'7. Ashwagandha KSM-66 (opcional)',w:'Com jantar',d:'600mg/dia',why:'Reduz cortisol crônico — essencial com sua rotina intensa Disney+Forex+Família'},
 ];
 
+// ======= NUTRIÇÃO =======
 function rNutri(){
   const t=S.nt||'treino';
   const d=ND[t];
@@ -509,7 +593,9 @@ function rNutri(){
 }
 function setNt(t){S.nt=t;ss();render()}
 
-// ======= MAIS (Sono + Mobilidade + Alertas + Revisão) =======
+
+
+
 function rMais(){
   const st=S.st||'alertas';
   return`<div class="page act">
@@ -686,7 +772,9 @@ function stopBreath(){
   if(c){c.className='bcirc';bs.textContent='Pronto';bc.textContent='4-7-8';}
 }
 
-// ======= ATTACH EVENTS =======
+
+
+// ===== ATTACH EVENTS =====
 function attachEv(){
   if(CP==='log'){
     const tl=S.logs.find(l=>l.date===td());
@@ -695,9 +783,25 @@ function attachEv(){
   }
 }
 
-// ======= INIT =======
+// ===== INIT =====
 render();
 setInterval(()=>{const el=document.getElementById('topdate');if(el)el.textContent=new Date().toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'short'})},60000);
+
+let bTimer=null,bStep=0;
+function startBreath(){
+  clearTimeout(bTimer);bStep=0;
+  const steps=[{t:'Inspirar',d:4000,c:'expand'},{t:'Prender',d:7000,c:'hold'},{t:'Expirar',d:8000,c:''}];
+  let sec=0,cur=0;
+  function tick(){
+    const s=steps[cur];const c=document.getElementById('bcirc');const bs=document.getElementById('bstate');const bc=document.getElementById('bcount');
+    if(!c)return;c.className='bcirc '+(s.c||'')+'';bs.textContent=s.t;const rem=Math.ceil((s.d-sec*1000)/1000);bc.textContent=rem+'s';sec++;
+    if(sec*1000>=s.d){sec=0;cur=(cur+1)%3;}bTimer=setTimeout(tick,1000);
+  }tick();
+}
+function stopBreath(){
+  clearTimeout(bTimer);const c=document.getElementById('bcirc');const bs=document.getElementById('bstate');const bc=document.getElementById('bcount');
+  if(c){c.className='bcirc';bs.textContent='Pronto';bc.textContent='4-7-8';}
+}
 </script>
 </body>
 </html>
