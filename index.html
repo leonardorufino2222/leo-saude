@@ -379,10 +379,6 @@ const WORKOUTS={
 };
 const WEEK_MAP={0:'REST',1:'A',2:'BIKE',3:'REST',4:'B',5:'C',6:'BIKE'};
 const DAY_SHORT=['DOM','SEG','TER','QUA','QUI','SEX','SAB'];
-let activePain=new Set(),selectedDay=new Date().getDay(),doneEx=new Set(),openCards=new Set();
-
-const WEEK_MAP={0:'REST',1:'A',2:'BIKE',3:'REST',4:'B',5:'C',6:'BIKE'};
-const DAY_SHORT=['DOM','SEG','TER','QUA','QUI','SEX','SAB'];
 
 function getTH(){try{return JSON.parse(localStorage.getItem('leo_th')||'[]');}catch{return[];}}
 function saveTH(h){try{localStorage.setItem('leo_th',JSON.stringify(h));}catch{}}
@@ -787,21 +783,6 @@ function attachEv(){
 render();
 setInterval(()=>{const el=document.getElementById('topdate');if(el)el.textContent=new Date().toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'short'})},60000);
 
-let bTimer=null,bStep=0;
-function startBreath(){
-  clearTimeout(bTimer);bStep=0;
-  const steps=[{t:'Inspirar',d:4000,c:'expand'},{t:'Prender',d:7000,c:'hold'},{t:'Expirar',d:8000,c:''}];
-  let sec=0,cur=0;
-  function tick(){
-    const s=steps[cur];const c=document.getElementById('bcirc');const bs=document.getElementById('bstate');const bc=document.getElementById('bcount');
-    if(!c)return;c.className='bcirc '+(s.c||'')+'';bs.textContent=s.t;const rem=Math.ceil((s.d-sec*1000)/1000);bc.textContent=rem+'s';sec++;
-    if(sec*1000>=s.d){sec=0;cur=(cur+1)%3;}bTimer=setTimeout(tick,1000);
-  }tick();
-}
-function stopBreath(){
-  clearTimeout(bTimer);const c=document.getElementById('bcirc');const bs=document.getElementById('bstate');const bc=document.getElementById('bcount');
-  if(c){c.className='bcirc';bs.textContent='Pronto';bc.textContent='4-7-8';}
-}
 </script>
 </body>
 </html>
