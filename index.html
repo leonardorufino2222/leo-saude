@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <meta name="apple-mobile-web-app-title" content="Leo Saude"/>
 <link rel="manifest" href="manifest.json"/>
-<title>Leo Saúde v3</title>
+<title>Leo Saúde v4</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700&display=swap" rel="stylesheet"/>
 <style>
 
@@ -207,7 +207,7 @@ html,body{height:100%;background:var(--bg);color:var(--t);font-family:'Syne',san
 <body>
 <div id="app">
   <div class="topbar">
-    <div><div class="tt">Leo Saúde 💪 <span style="font-size:9px;color:var(--t3);font-family:'DM Mono',monospace;background:var(--bg3);padding:1px 5px;border-radius:4px;border:1px solid var(--br)">v3</span></div><div class="td" id="topdate"></div></div>
+    <div><div class="tt">Leo Saúde 💪 <span style="font-size:9px;color:var(--t3);font-family:'DM Mono',monospace;background:var(--bg3);padding:1px 5px;border-radius:4px;border:1px solid var(--br)">v4</span></div><div class="td" id="topdate"></div></div>
     <div class="tlogo">L</div>
   </div>
   <div class="content" id="content"></div>
@@ -935,11 +935,6 @@ let treinoGerado = false; // workout generated?
 
 function renderTreino(){
   document.getElementById('content').innerHTML = rTreinoDin();
-  // After HTML is in DOM, inject SVGs safely via innerHTML to avoid quote-escaping bugs
-  document.querySelectorAll('.svg-slot').forEach(el => {
-    const key = el.dataset.svgkey;
-    if(SVG[key]) el.innerHTML = SVG[key];
-  });
 }
 
 function gerarTreino(){
@@ -989,6 +984,104 @@ function toggleDone(e,id){
 
 function getTH(){try{return JSON.parse(localStorage.getItem('leo_th')||'[]');}catch{return[];}}
 function saveTH(h){try{localStorage.setItem('leo_th',JSON.stringify(h));}catch{}}
+
+const EXERCISE_INFO = {
+  supino_inclinado:{
+    muscles:'Peitoral superior · Deltóide anterior · Tríceps',
+    url:'https://musclewiki.com/pt-br/dumbbells/male/chest/dumbbell-incline-bench-press/',
+    steps:['Ajuste o banco a 30–45°. Sente com os halteres nos joelhos','Deite e posicione os halteres na altura do peito, cotovelos a 90°','Empurre os halteres para cima e levemente para dentro','Desça devagar em 3 segundos até sentir o peitoral alongar','Mantenha as escápulas retraídas e pressionadas no banco o tempo todo']
+  },
+  crucifixo:{
+    muscles:'Peitoral medial · Deltóide anterior',
+    url:'https://musclewiki.com/pt-br/machine/male/chest/machine-fly/',
+    steps:['Ajuste os braços da máquina na altura dos ombros','Sente com as costas retas, cotovelos levemente flexionados','Feche os braços como um abraço até encontrarem na frente','Abra de volta controladamente em 3 segundos','Pare antes de sentir apertar no ombro']
+  },
+  desenvolvimento:{
+    muscles:'Deltóide anterior e medial · Trapézio',
+    url:'https://musclewiki.com/pt-br/dumbbells/male/shoulders/dumbbell-shoulder-press/',
+    steps:['Sente no banco com encosto, halteres na altura dos ombros','Cotovelos a 90° e alinhados com os ombros','Empurre os halteres para cima até quase travar o cotovelo','Desça devagar de volta à posição inicial','Mantenha o core ativado — não arqueie a lombar']
+  },
+  elevacao_lateral:{
+    muscles:'Deltóide medial · Trapézio superior',
+    url:'https://musclewiki.com/pt-br/dumbbells/male/shoulders/dumbbell-lateral-raise/',
+    steps:['Fique em pé ou sentado, halteres ao lado do corpo','Cotovelo levemente flexionado durante todo o movimento','Eleve lateralmente até paralelo ao chão — não mais','Desça controladamente em 2–3 segundos','Evite usar impulso do tronco']
+  },
+  facepull:{
+    muscles:'Manguito rotador · Deltóide posterior · Trapézio',
+    url:'https://musclewiki.com/pt-br/cables/male/shoulders/cable-face-pull/',
+    steps:['Ajuste o cabo na altura dos olhos ou acima','Puxe a corda em direção ao rosto com os cotovelos altos','Na posição final os cotovelos ficam acima dos ombros','Pause 1 segundo na contração','NUNCA pule — protege o manguito rotador']
+  },
+  triceps_corda:{
+    muscles:'Tríceps (todas as cabeças)',
+    url:'https://musclewiki.com/pt-br/cables/male/triceps/cable-tricep-pushdown/',
+    steps:['Ajuste o cabo no alto, pegue a corda com pegada neutra','Cotovelos fixos ao lado do corpo durante todo o movimento','Empurre para baixo até estender completamente','Separe as mãos na corda ao final do movimento','Suba devagar sem deixar os cotovelos abrirem']
+  },
+  remada_baixa:{
+    muscles:'Latíssimo · Rômboides · Bíceps · Lombar',
+    url:'https://musclewiki.com/pt-br/cables/male/back/cable-seated-row/',
+    steps:['Sente no aparelho com os pés apoiados na plataforma','Pegue o triângulo ou barra com a coluna reta','Puxe até o cabo tocar o abdômen, cotovelos perto do corpo','Pause brevemente com as escápulas retraídas','Estique os braços devagar — não curve a lombar no final']
+  },
+  pulldown:{
+    muscles:'Latíssimo · Redondo maior · Bíceps',
+    url:'https://musclewiki.com/pt-br/cables/male/back/cable-lat-pulldown/',
+    steps:['Ajuste o joelheiro para fixar bem na máquina','Pegue a barra mais larga que os ombros','Puxe a barra até a linha do queixo ou clavícula','Deixe o ombro descer no final da subida — não trave','Subida devagar em 3 segundos']
+  },
+  remada_uni:{
+    muscles:'Latíssimo · Rômboides · Bíceps · Core',
+    url:'https://musclewiki.com/pt-br/dumbbells/male/back/dumbbell-bent-over-row/',
+    steps:['Apoie o joelho e a mão no banco formando um L','Segure o halter com o braço estendido abaixo do ombro','Puxe o halter até o quadril, cotovelo para trás','Não gire o tronco — movimento vem das costas','Desça devagar sentindo o latíssimo alongar']
+  },
+  rosca_ez:{
+    muscles:'Bíceps braquial · Braquiorradial',
+    url:'https://musclewiki.com/pt-br/barbell/male/biceps/barbell-curl/',
+    steps:['Fique em pé com a barra EZ, palmas para cima','Cotovelos fixos ao lado do corpo','Curve os braços até a barra chegar perto dos ombros','Desça devagar em 3 segundos','Sem balanço do tronco — se balançar, reduza a carga']
+  },
+  deadbug:{
+    muscles:'Core profundo · Transverso abdominal · Lombar',
+    url:'https://musclewiki.com/pt-br/bodyweight/male/abdominals/dead-bug/',
+    steps:['Deite de costas com braços estendidos para o teto','Pernas em 90° com os joelhos dobrados','COLUNA PRESSIONADA NO CHÃO o tempo todo','Estique o braço direito e a perna esquerda simultaneamente','Volte e alterne os lados — expira ao estender']
+  },
+  prancha:{
+    muscles:'Core · Reto abdominal · Glúteos · Ombros',
+    url:'https://musclewiki.com/pt-br/bodyweight/male/abdominals/plank/',
+    steps:['Apoie os cotovelos no chão abaixo dos ombros','Corpo em linha reta da cabeça aos calcanhares','Não deixe o quadril subir nem descer','Respire normalmente — não prenda a respiração','Contraia o abdômen como se fosse levar um soco']
+  },
+  agachamento:{
+    muscles:'Quadríceps · Glúteo máximo · Isquiotibiais',
+    url:'https://musclewiki.com/pt-br/dumbbells/male/quads/dumbbell-goblet-squat/',
+    steps:['Segure o halter verticalmente na frente do peito','Pés na largura dos ombros, levemente abertos','Desça como se fosse sentar numa cadeira atrás de você','Joelhos seguem a direção dos dedos dos pés','Costas retas — não incline excessivamente para frente']
+  },
+  legpress:{
+    muscles:'Quadríceps · Glúteo · Isquiotibiais · Panturrilha',
+    url:'https://musclewiki.com/pt-br/machine/male/quads/machine-leg-press/',
+    steps:['Ajuste o assento para os joelhos ficarem a 90° no início','Pés paralelos na largura dos ombros na plataforma','Empurre até quase travar o joelho — não trave','Desça até 90° ou antes se sentir desconforto','Não deixe os joelhos se fecharem']
+  },
+  mesa_flex:{
+    muscles:'Isquiotibiais · Gastrocnêmio',
+    url:'https://musclewiki.com/pt-br/machine/male/hamstrings/machine-lying-leg-curl/',
+    steps:['Deite de bruços com os tornozelos sob a almofada','Dobre os joelhos puxando os calcanhares em direção às nádegas','Pause brevemente no topo da contração','Desça devagar em 3 segundos','Sem balanço — se usar impulso, reduza a carga']
+  },
+  hip_thrust:{
+    muscles:'Glúteo máximo · Isquiotibiais · Core',
+    url:'https://musclewiki.com/pt-br/barbell/male/glutes/barbell-hip-thrust/',
+    steps:['Apoie as costas/ombros num banco firme','Barra ou peso sobre os quadris, pés no chão','Empurre os quadris para cima até o corpo ficar horizontal','Esprema o glúteo FORTE no topo — pause 1 segundo','Desça devagar sem deixar o quadril tocar o chão']
+  },
+  cadeira_ext:{
+    muscles:'Quadríceps (isolado)',
+    url:'https://musclewiki.com/pt-br/machine/male/quads/machine-leg-extension/',
+    steps:['Ajuste para o eixo do joelho alinhar com a máquina','Costas totalmente apoiadas no encosto','Estenda as pernas até quase travar — 10° antes','Pause brevemente no topo','Desça devagar — não deixe o peso bater']
+  },
+  panturrilha:{
+    muscles:'Gastrocnêmio · Sóleo',
+    url:'https://musclewiki.com/pt-br/bodyweight/male/calves/standing-calf-raise/',
+    steps:['Em pé com a ponta do pé numa borda — calcanhar suspenso','Suba na ponta dos pés o máximo possível','Pause 1 segundo no topo com a contração forte','Desça até sentir o alongamento da panturrilha','Movimento lento — evite quicar']
+  },
+  bike_road:{
+    muscles:'Quadríceps · Isquiotibiais · Glúteos · Cardiovascular',
+    url:'https://musclewiki.com/pt-br/cardio/male/quads/stationary-bike/',
+    steps:['Ajuste o selim para a perna quase estendida no ponto mais baixo','Mantenha ritmo conversacional — consegue falar frases completas','Pedale com a parte central/dianteira do pé','Mantenha o core levemente ativado','Se tornozelo incomodar, prefira a ergométrica em casa']
+  }
+};
 
 function rTreinoDin(){
   const wkey = WEEK_MAP[selDay];
@@ -1131,11 +1224,50 @@ function rTreinoDin(){
         </div>`;
 
       if(isOpen){
+        const info = EXERCISE_INFO[ex.id] || {};
         html += `<div class="ex-body open">`;
         if(ex.status==='substituted') html += `<div class="ex-sub-r">Substituido: ${ex.sub.reason}</div>`;
-        // SVG injected AFTER render via data attribute — avoids all escaping issues
-        html += `<div class="ex-svg svg-slot" data-svgkey="${ex.id}" style="padding:14px;text-align:center;background:rgba(0,0,0,.25);min-height:80px"></div>`;
-        html += `<div class="ex-tip" style="font-size:11px;color:var(--t3);margin:0 12px 8px;line-height:1.5">${ex.tip||''}</div>`;
+        // Muscles
+        if(info.muscles){
+          html += `<div style="display:flex;align-items:flex-start;gap:8px;padding:10px 12px;background:rgba(0,229,160,.05);border-bottom:1px solid var(--br)">
+            <span style="font-size:14px;flex-shrink:0">💪</span>
+            <div><div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px">Músculos trabalhados</div>
+            <div style="font-size:12px;color:var(--a);font-weight:600">${info.muscles}</div></div>
+          </div>`;
+        }
+        // Steps
+        if(info.steps&&info.steps.length){
+          html += `<div style="padding:10px 12px;border-bottom:1px solid var(--br)">
+            <div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Como fazer</div>`;
+          info.steps.forEach((step,si)=>{
+            html += `<div style="display:flex;gap:8px;margin-bottom:6px">
+              <span style="width:18px;height:18px;border-radius:50%;background:var(--a2);color:#000;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">${si+1}</span>
+              <span style="font-size:12px;color:var(--t);line-height:1.5">${step}</span>
+            </div>`;
+          });
+          html += `</div>`;
+        }
+        // Tip / warning
+        if(ex.tip){
+          html += `<div style="display:flex;gap:8px;align-items:flex-start;padding:8px 12px;background:rgba(255,179,71,.05);border-bottom:1px solid var(--br)">
+            <span style="font-size:13px;flex-shrink:0">⚠️</span>
+            <span style="font-size:11px;color:var(--aw);line-height:1.5">${ex.tip}</span>
+          </div>`;
+        }
+        // MuscleWiki link
+        if(info.url){
+          html += `<div style="padding:10px 12px;border-bottom:1px solid var(--br)">
+            <a href="${info.url}" target="_blank" style="display:flex;align-items:center;justify-content:space-between;text-decoration:none;padding:10px 12px;background:var(--bg2);border:1px solid var(--br);border-radius:8px">
+              <div style="display:flex;align-items:center;gap:8px">
+                <span style="font-size:16px">🎬</span>
+                <div><div style="font-size:12px;font-weight:600;color:var(--t)">Ver no MuscleWiki</div>
+                <div style="font-size:10px;color:var(--t3)">Vídeo com demonstração completa</div></div>
+              </div>
+              <span style="color:var(--a);font-size:14px">→</span>
+            </a>
+          </div>`;
+        }
+        // Done button
         html += `<button class="ex-done-btn ${isDone?'done':''}" onclick="toggleDone(event,'${ex.id}')">${isDone?'✅ Concluido — toque para desfazer':'✓ Marcar como feito'}</button>`;
         html += `</div>`;
       }
