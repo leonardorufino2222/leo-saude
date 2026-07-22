@@ -6,9 +6,9 @@
 <meta name="theme-color" content="#0b0b10"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
-<meta name="apple-mobile-web-app-title" content="Leo Saude"/>
+<meta name="apple-mobile-web-app-title" content="Trinca de Asnos"/>
 <link rel="manifest" href="manifest.json"/>
-<title>Leo Saúde v5</title>
+<title>Trinca de Asnos v6</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700&display=swap" rel="stylesheet"/>
 <style>
 
@@ -207,22 +207,22 @@ html,body{height:100%;background:var(--bg);color:var(--t);font-family:'Syne',san
 <body>
 <div id="app">
   <div class="topbar">
-    <div><div class="tt">Leo Saúde 💪 <span style="font-size:9px;color:var(--t3);font-family:'DM Mono',monospace;background:var(--bg3);padding:1px 5px;border-radius:4px;border:1px solid var(--br)">v5</span></div><div class="td" id="topdate"></div></div>
+    <div><div class="tt">Trinca de Asnos 🐴 <span style="font-size:9px;color:var(--t3);font-family:'DM Mono',monospace;background:var(--bg3);padding:1px 5px;border-radius:4px;border:1px solid var(--br)">v6</span></div><div class="td" id="topdate"></div></div>
     <div class="tlogo">L</div>
   </div>
   <div class="content" id="content"></div>
   <nav class="nav">
     <button class="nb act" onclick="go('home')" id="nv-home">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>Início</span>
-    </button>
-    <button class="nb" onclick="go('log')" id="nv-log">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg><span>Registrar</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>Inicio</span>
     </button>
     <button class="nb" onclick="go('treino')" id="nv-treino">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6.5 6.5h11M6.5 17.5h11M4 12h16M2 9l2 3-2 3M22 9l-2 3 2 3"/></svg><span>Treino</span>
     </button>
+    <button class="nb" onclick="go('log')" id="nv-log">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg><span>Registrar</span>
+    </button>
     <button class="nb" onclick="go('nutri')" id="nv-nutri">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2a7 7 0 0 1 7 7c0 5-7 13-7 13S5 14 5 9a7 7 0 0 1 7-7z"/><circle cx="12" cy="9" r="2.5"/></svg><span>Nutrição</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2a7 7 0 0 1 7 7c0 5-7 13-7 13S5 14 5 9a7 7 0 0 1 7-7z"/><circle cx="12" cy="9" r="2.5"/></svg><span>Nutricao</span>
     </button>
     <button class="nb" onclick="go('mais')" id="nv-mais">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg><span>Mais</span>
@@ -240,6 +240,19 @@ const TMB=1897, TDEE=2466;
 
 // ======= STATE =======
 let S={logs:[],ph:0,tr:'A',nt:'treino',st:'alertas',sE:0,sS:0};
+
+// ── ONBOARDING STATE ──
+function getProfile(){try{return JSON.parse(localStorage.getItem('ta_profile')||'null');}catch{return null;}}
+function saveProfile(p){localStorage.setItem('ta_profile',JSON.stringify(p));}
+
+// ── TREINO FLOW STATE ──
+let flowStep=0;       // 0=tipo, 1=config, 2=sessao
+let flowTipo='';      // 'treino'|'mobilidade'|'aerobico'|'descanso'
+let flowGrupo='';     // 'A'|'B'|'C'
+let flowTempo=45;     // minutes
+let flowAerobico='';  // 'natacao'|'bike'|'ergometrica'|'caminhada'
+let flowDescanso=new Set(); // selected rest options
+
 function ls(){try{const s=localStorage.getItem('lv5');if(s)S={...S,...JSON.parse(s)}}catch(e){}}
 function ss(){localStorage.setItem('lv5',JSON.stringify(S))}
 ls();
@@ -933,57 +946,110 @@ function saveTH(h){try{localStorage.setItem('leo_th',JSON.stringify(h));}catch{}
 let painOpen = true;   // pain panel collapsed state
 let treinoGerado = false; // workout generated?
 
-function renderTreino(){
+// ── DEFAULT per weekday ──
+const DAY_DEFAULTS = {DAY_DEFAULTS};
+
+const AEROBICO_PROTOCOLS = {{
+  natacao:{{
+    name:'Natação',emoji:'🏊',
+    tempos:{{
+      20:{{blocos:['5 min aquecimento nado costas leve','10 min crawl ritmo constante','5 min desaquecimento costas'],kcal:180,tip:'Pace leve — consegue falar frases completas'}},
+      30:{{blocos:['5 min aquecimento','15 min crawl contínuo','4x50m moderado c/ 20s descanso','6 min desaquecimento'],kcal:280,tip:'Foque na técnica de respiração — expira na água'}},
+      45:{{blocos:['5 min aquecimento','20 min crawl contínuo','6x100m moderado c/ 30s descanso','5 min kickboard pernas','5 min desaquecimento costas'],kcal:420,tip:'Hidrate antes — no mar/piscina não sente sede mas sua'}},
+      60:{{blocos:['8 min aquecimento variado','25 min crawl contínuo','8x100m progressivo','5 min borboleta opcional','7 min desaquecimento'],kcal:560,tip:'Sessão completa — tome 500ml água antes de entrar'}},
+    }}
+  }},
+  bike:{{
+    name:'Bicicleta (Rua)',emoji:'🚵',
+    tempos:{{
+      20:{{blocos:['5 min aquecimento ritmo leve','10 min ritmo constante 18-20km/h','5 min desaquecimento'],kcal:200,tip:'Ajuste o selim — joelho quase estendido no ponto mais baixo'}},
+      30:{{blocos:['5 min aquecimento','20 min ritmo constante 18-22km/h','5 min desaquecimento'],kcal:300,tip:'Mantenha cadência constante — evite pedalar em marcha pesada demais'}},
+      45:{{blocos:['5 min aquecimento','25 min ritmo constante','3x3min ritmo forte c/ 2min leve','5 min desaquecimento'],kcal:450,tip:'Use capacete e leve água. Em caso de gota no tornozelo: prefira ergométrica'}},
+      60:{{blocos:['8 min aquecimento','30 min ritmo constante','5x3min intervalos moderados','7 min desaquecimento'],kcal:600,tip:'Sessão longa — leve garrafa de água na bike'}},
+    }}
+  }},
+  ergometrica:{{
+    name:'Ergométrica (Casa)',emoji:'🏠',
+    tempos:{{
+      20:{{blocos:['5 min resistência baixa (nível 2-3)','10 min resistência moderada (nível 4-5)','5 min desaquecimento'],kcal:180,tip:'Zero impacto no tornozelo — ideal para dias de gota. Pode assistir algo enquanto pedala'}},
+      30:{{blocos:['5 min aquecimento','20 min resistência moderada (5-6/10)','5 min desaquecimento'],kcal:270,tip:'Mantenha a cadência acima de 60rpm para maior queima calórica'}},
+      45:{{blocos:['5 min aquecimento','15 min resistência moderada','4x4min resistência alta c/ 3min leve','5 min desaquecimento'],kcal:380,tip:'HIIT suave — ótimo para dias que não pode sair de casa'}},
+      60:{{blocos:['8 min aquecimento','20 min constante','6x3min intervalos c/ 2min leve','10 min constante moderado','5 min desaquecimento'],kcal:500,tip:'Sessão completa em casa — hidrate bem durante toda a sessão'}},
+    }}
+  }},
+  caminhada:{{
+    name:'Caminhada',emoji:'🚶',
+    tempos:{{
+      20:{{blocos:['20 min caminhada ritmo confortável','Foco: postura ereta, passos largos'],kcal:100,tip:'Braços em movimento ativo — aumenta gasto calórico em 10-15%'}},
+      30:{{blocos:['5 min aquecimento (ritmo leve)','20 min ritmo moderado (consegue falar mas levemente ofegante)','5 min desaquecimento'],kcal:150,tip:'Use tênis com boa amortecimento — protege tornozelo'}},
+      45:{{blocos:['5 min leve','30 min ritmo moderado','2x5min ritmo forte intercalado','5 min desaquecimento'],kcal:220,tip:'Hidrate a cada 15 min mesmo sem sentir sede'}},
+      60:{{blocos:['10 min aquecimento leve','35 min ritmo moderado-forte','3x3min ritmo intenso','7 min desaquecimento'],kcal:300,tip:'Sessão longa — leve garrafa de água. Evite superfícies irregulares se tornozelo doer'}},
+    }}
+  }},
+}};
+
+const DESCANSO_OPTIONS = [
+  {{id:'respiracao',emoji:'😮‍💨',label:'Respiração 4-7-8',desc:'Ativa o parassimpático — reduz cortisol em minutos'}},
+  {{id:'meditacao',emoji:'🧘',label:'Meditação guiada',desc:'Reduz ansiedade e melhora foco'}},
+  {{id:'relaxamento',emoji:'😌',label:'Relaxamento muscular',desc:'Tensão progressiva e liberação dos músculos'}},
+  {{id:'sono',emoji:'💤',label:'Dicas de sono para hoje',desc:'Rotina noturna personalizada'}},
+];
+
+function renderTreino(){{
   document.getElementById('content').innerHTML = rTreinoDin();
-}
+}}
 
-function gerarTreino(){
-  treinoGerado = true;
-  painOpen = false;
+function setFlowTipo(tipo){{
+  flowTipo = tipo;
+  // Set defaults for the day
+  const def = DAY_DEFAULTS[new Date().getDay()];
+  flowGrupo  = def.grupo || 'A';
+  flowTempo  = def.tempo || 45;
+  flowAerobico = def.aerobico || 'ergometrica';
+  flowDescanso = new Set();
+  flowStep = 1;
   renderTreino();
-}
+}}
+function setFlowGrupo(g){{ flowGrupo=g; renderTreino(); }}
+function setFlowTempo(t){{ flowTempo=t; renderTreino(); }}
+function setFlowAerobico(a){{ flowAerobico=a; renderTreino(); }}
+function toggleDescanso(id){{ if(flowDescanso.has(id))flowDescanso.delete(id);else flowDescanso.add(id); renderTreino(); }}
+function gerarTreino(){{ treinoGerado=true; painOpen=false; flowStep=2; renderTreino(); }}
+function resetFlow(){{ flowStep=0; flowTipo=''; treinoGerado=false; painOpen=true; doneEx.clear(); openCards.clear(); renderTreino(); }}
 
-function concluirTreino(){
-  const wk = WORKOUTS[WEEK_MAP[selDay]];
-  const active = wk.exercises.filter(ex => ex.risks.filter(r => activePain.has(r)).length===0 || ex.sub);
-  const h = getTH();
-  const now = new Date();
-  h.unshift({
-    date: now.toLocaleDateString('pt-BR',{weekday:'short',day:'numeric',month:'short'})
-         +' '+now.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}),
-    ts: now.getTime(), workout: wk.label, type: wk.type,
-    done: doneEx.size, total: active.length,
-    kcal: wk.kcal, duration: wk.duration,
-    pains: [...activePain].map(pid=>PAIN_ZONES.find(z=>z.id===pid)?.name).filter(Boolean)
-  });
-  if(h.length>60) h.pop();
-  saveTH(h);
-  doneEx.clear(); openCards.clear();
-  treinoGerado=false; painOpen=true;
-  renderTreino();
-  toast('Treino salvo! 💪');
-}
+function concluirTreino(){{
+  const th=getTH();
+  const now=new Date();
+  const kcalMap={{treino:flowGrupo==='A'?280:flowGrupo==='B'?270:320, mobilidade:80, descanso:0}};
+  const aero = AEROBICO_PROTOCOLS[flowAerobico];
+  const kcal = flowTipo==='aerobico' ? (aero?.tempos[flowTempo]?.kcal||200) : (kcalMap[flowTipo]||0);
+  th.unshift({{
+    date: now.toLocaleDateString('pt-BR',{{weekday:'short',day:'numeric',month:'short'}})+' '+now.toLocaleTimeString('pt-BR',{{hour:'2-digit',minute:'2-digit'}}),
+    ts: now.getTime(),
+    tipo: flowTipo,
+    workout: flowTipo==='treino'?('Push/Pull/Legs '[flowGrupo==='A'?0:flowGrupo==='B'?1:2].split('')[0]+' '+flowGrupo):flowTipo,
+    type: flowTipo==='treino'?(flowGrupo==='A'?'Peito · Ombro · Tríceps':flowGrupo==='B'?'Costas · Bíceps · Core':'Quadríceps · Glúteo · Posterior'):flowTipo==='aerobico'?(aero?.name||'Aeróbico'):'Mobilidade / Descanso',
+    done: doneEx.size,
+    total: flowTipo==='mobilidade'?MOBILITY.length:flowTipo==='treino'?WORKOUTS[flowGrupo]?.exercises.filter(e=>e.risks.filter(r=>activePain.has(r)).length===0||e.sub).length||6:1,
+    kcal, duration: flowTempo,
+    pains: [...activePain].map(pid=>PAIN_ZONES.find(z=>z.id===pid)?.name).filter(Boolean),
+    agua: '💧 Beba 500ml de água agora!'
+  }});
+  if(th.length>60)th.pop();
+  saveTH(th);
+  toast('Sessão salva! 💧 Beba água agora!');
+  resetFlow();
+}}
 
-function togglePain(id){
-  if(activePain.has(id)) activePain.delete(id); else activePain.add(id);
-  doneEx.clear(); openCards.clear(); treinoGerado=false;
-  renderTreino();
-}
-function clearPain(){ activePain.clear(); doneEx.clear(); openCards.clear(); treinoGerado=false; renderTreino(); }
-function selDayFn(i){ selDay=i; doneEx.clear(); openCards.clear(); treinoGerado=false; renderTreino(); }
-function togglePainPanel(){ painOpen=!painOpen; renderTreino(); }
-function toggleCard(id){
-  if(openCards.has(id)) openCards.delete(id); else openCards.add(id);
-  renderTreino();
-}
-function toggleDone(e,id){
-  e.stopPropagation();
-  if(doneEx.has(id)) doneEx.delete(id); else doneEx.add(id);
-  renderTreino();
-}
+function togglePain(id){{ if(activePain.has(id))activePain.delete(id);else activePain.add(id); renderTreino(); }}
+function clearPain(){{ activePain.clear(); renderTreino(); }}
+function toggleCard(id){{ if(openCards.has(id))openCards.delete(id);else openCards.add(id); renderTreino(); }}
+function toggleDone(e,id){{ e.stopPropagation(); if(doneEx.has(id))doneEx.delete(id);else doneEx.add(id); renderTreino(); }}
+function togglePainPanel(){{ painOpen=!painOpen; renderTreino(); }}
+function selDayFn(i){{ selDay=i; doneEx.clear(); openCards.clear(); treinoGerado=false; renderTreino(); }}
 
-function getTH(){try{return JSON.parse(localStorage.getItem('leo_th')||'[]');}catch{return[];}}
-function saveTH(h){try{localStorage.setItem('leo_th',JSON.stringify(h));}catch{}}
+function getTH(){{try{{return JSON.parse(localStorage.getItem('leo_th')||'[]');}}catch{{return[];}}}}
+function saveTH(h){{try{{localStorage.setItem('leo_th',JSON.stringify(h));}}catch{{}}}}
 
 const MOBILITY = [
   {id:'cat_cow',name:'Cat-Cow',sets:'2x10 lentas',muscles:'Coluna lombar · Coluna torácica · Core',
@@ -1110,293 +1176,429 @@ const EXERCISE_INFO = {
   }
 };
 
-function rTreinoDin(){
-  const wkey = WEEK_MAP[selDay];
-  const wk   = WORKOUTS[wkey];
-  const painNames = [...activePain].map(pid=>PAIN_ZONES.find(z=>z.id===pid)?.name).filter(Boolean);
-  const hasPain   = activePain.size > 0;
+// ── EXERCISE CARD RENDERER (shared) ──
+function renderExCard(ex, i, isDone, isOpen){{
+  const nm = ex.status==='substituted' ? ex.sub.name : ex.name;
+  const st = ex.status==='substituted' ? ex.sub.sets : ex.sets;
+  const info = EXERCISE_INFO[ex.id] || {{}};
+
+  if(ex.status==='blocked'){{
+    const pl = ex.risks.filter(r=>activePain.has(r)).map(r=>PAIN_ZONES.find(z=>z.id===r)?.name).filter(Boolean).join(', ');
+    return `<div class="ex-card blocked">
+      <div class="ex-hdr" style="cursor:default">
+        <div class="ex-num">✕</div>
+        <div class="ex-inf"><div class="ex-nm">${{ex.name}}</div>
+          <div class="ex-mt"><span class="ex-sets">${{ex.sets}}</span><span class="ex-tag tg-r">BLOQUEADO</span></div>
+        </div>
+      </div>
+      <div class="ex-reason">Agrava: ${{pl}}</div>
+    </div>`;
+  }}
+
+  let h = `<div class="ex-card ${{ex.status}}">
+    <div class="ex-hdr" onclick="toggleCard('${{ex.id}}')">
+      <div class="ex-num" style="${{isDone?'background:rgba(0,229,160,.18);color:var(--a)':''}}">${{isDone?'✓':i+1}}</div>
+      <div class="ex-inf">
+        <div class="ex-nm" style="${{isDone?'opacity:.45':''}}">${{nm}}</div>
+        <div class="ex-mt"><span class="ex-sets">${{st}} · ${{ex.focus}}</span>
+          ${{ex.status==='substituted'?'<span class="ex-tag tg-y">SUBSTITUTO</span>':'<span class="ex-tag tg-g">OK</span>'}}
+        </div>
+      </div>
+      <div style="font-size:14px;flex-shrink:0">${{isDone?'✅':'○'}}</div>
+      <div class="ex-arr ${{isOpen?'open':''}}" style="margin-left:4px">▼</div>
+    </div>`;
+
+  if(isOpen){{
+    h += `<div class="ex-body open">`;
+    if(ex.status==='substituted') h += `<div class="ex-sub-r">Substituido: ${{ex.sub.reason}}</div>`;
+    if(info.muscles) h += `<div style="display:flex;align-items:flex-start;gap:8px;padding:10px 12px;background:rgba(0,229,160,.05);border-bottom:1px solid var(--br)">
+      <span style="font-size:14px;flex-shrink:0">💪</span>
+      <div><div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px">Músculos</div>
+      <div style="font-size:12px;color:var(--a);font-weight:600">${{info.muscles}}</div></div></div>`;
+    if(info.steps?.length){{
+      h += `<div style="padding:10px 12px;border-bottom:1px solid var(--br)">
+        <div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Como fazer</div>`;
+      info.steps.forEach((step,si)=>{{
+        h += `<div style="display:flex;gap:8px;margin-bottom:6px">
+          <span style="width:18px;height:18px;border-radius:50%;background:var(--a2);color:#000;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">${{si+1}}</span>
+          <span style="font-size:12px;color:var(--t);line-height:1.5">${{step}}</span></div>`;
+      }});
+      h += `</div>`;
+    }}
+    if(ex.tip) h += `<div style="display:flex;gap:8px;align-items:flex-start;padding:8px 12px;background:rgba(255,179,71,.05);border-bottom:1px solid var(--br)">
+      <span style="font-size:13px;flex-shrink:0">⚠️</span>
+      <span style="font-size:11px;color:var(--aw);line-height:1.5">${{ex.tip}}</span></div>`;
+    if(info.url) h += `<div style="padding:10px 12px;border-bottom:1px solid var(--br)">
+      <a href="${{info.url}}" target="_blank" style="display:flex;align-items:center;justify-content:space-between;text-decoration:none;padding:10px 12px;background:var(--bg2);border:1px solid var(--br);border-radius:8px">
+        <div style="display:flex;align-items:center;gap:8px"><span style="font-size:16px">🎬</span>
+          <div><div style="font-size:12px;font-weight:600;color:var(--t)">Ver no YouTube</div>
+          <div style="font-size:10px;color:var(--t3)">Abre busca de vídeos demonstrativos</div></div></div>
+        <span style="color:var(--a);font-size:14px">→</span></a></div>`;
+    h += `<button class="ex-done-btn ${{isDone?'done':''}}" onclick="toggleDone(event,'${{ex.id}}')">${{isDone?'✅ Concluido — toque para desfazer':'✓ Marcar como feito'}}</button>`;
+    h += `</div>`;
+  }}
+  h += `</div>`;
+  return h;
+}}
+
+function renderMobCard(mob, i){{
+  const isDone = doneEx.has(mob.id);
+  const isOpen = openCards.has(mob.id);
+  let h = `<div class="ex-card">
+    <div class="ex-hdr" onclick="toggleCard('${{mob.id}}')">
+      <div class="ex-num" style="${{isDone?'background:rgba(0,229,160,.18);color:var(--a)':''}}">${{isDone?'✓':i+1}}</div>
+      <div class="ex-inf"><div class="ex-nm" style="${{isDone?'opacity:.45':''}}">${{mob.name}}</div>
+        <div class="ex-mt"><span class="ex-sets">${{mob.sets}}</span><span class="ex-tag tg-g">MOBILIDADE</span></div>
+      </div>
+      <div style="font-size:14px;flex-shrink:0">${{isDone?'✅':'○'}}</div>
+      <div class="ex-arr ${{isOpen?'open':''}}" style="margin-left:4px">▼</div>
+    </div>`;
+  if(isOpen){{
+    h += `<div class="ex-body open">
+      <div style="display:flex;align-items:flex-start;gap:8px;padding:10px 12px;background:rgba(0,229,160,.05);border-bottom:1px solid var(--br)">
+        <span style="font-size:14px;flex-shrink:0">💪</span>
+        <div><div style="font-size:10px;color:var(--t3);text-transform:uppercase;margin-bottom:2px">Área trabalhada</div>
+        <div style="font-size:12px;color:var(--a);font-weight:600">${{mob.muscles}}</div></div></div>
+      <div style="padding:10px 12px;border-bottom:1px solid var(--br)">
+        <div style="font-size:10px;color:var(--t3);text-transform:uppercase;margin-bottom:8px">Como fazer</div>`;
+    mob.steps.forEach((s,si)=>{{
+      h+=`<div style="display:flex;gap:8px;margin-bottom:6px">
+        <span style="width:18px;height:18px;border-radius:50%;background:var(--a2);color:#000;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">${{si+1}}</span>
+        <span style="font-size:12px;color:var(--t);line-height:1.5">${{s}}</span></div>`;
+    }});
+    h += `</div>
+      <div style="display:flex;gap:8px;align-items:flex-start;padding:8px 12px;background:rgba(255,179,71,.05);border-bottom:1px solid var(--br)">
+        <span style="font-size:13px;flex-shrink:0">⚠️</span>
+        <span style="font-size:11px;color:var(--aw);line-height:1.5">${{mob.tip}}</span></div>
+      <div style="padding:10px 12px;border-bottom:1px solid var(--br)">
+        <a href="${{mob.yt}}" target="_blank" style="display:flex;align-items:center;justify-content:space-between;text-decoration:none;padding:10px 12px;background:var(--bg2);border:1px solid var(--br);border-radius:8px">
+          <div style="display:flex;align-items:center;gap:8px"><span>🎬</span>
+            <div><div style="font-size:12px;font-weight:600;color:var(--t)">Ver no YouTube</div>
+            <div style="font-size:10px;color:var(--t3)">Vídeos demonstrativos</div></div></div>
+          <span style="color:var(--a)">→</span></a></div>
+      <button class="ex-done-btn ${{isDone?'done':''}}" onclick="toggleDone(event,'${{mob.id}}')">${{isDone?'✅ Concluido':'✓ Marcar como feito'}}</button>
+    </div>`;
+  }}
+  h += `</div>`;
+  return h;
+}}
+
+function rTreinoDin(){{
+  const today = new Date().getDay();
+  const def = DAY_DEFAULTS[today];
+  const DAY_NAMES = ['Domingo','Segunda','Terca','Quarta','Quinta','Sexta','Sabado'];
+  const SUGESTAO_LABEL = {{
+    treino: `Treino ${{def.grupo}} (${{def.grupo==='A'?'Push · Peito/Ombro':def.grupo==='B'?'Pull · Costas/Bíceps':'Legs · Pernas/Glúteo'}})`,
+    mobilidade: 'Mobilidade e Alongamento',
+    aerobico: `Aeróbico — ${{AEROBICO_PROTOCOLS[def.aerobico]?.name||'Cardio'}}`,
+    descanso: 'Descanso e Recuperação',
+  }};
+
   let html = '<div class="page act">';
 
-  // ── DAY SELECTOR ──
-  html += '<div class="day-sel">';
-  DAY_SHORT.forEach((d,i)=>{
-    const k=WEEK_MAP[i], isAct=i===selDay, isRest=k==='REST';
-    html += `<button class="dsb${isAct?' act':''}${isRest?' rest-d':''}" onclick="selDayFn(${i})">${d}<br><span style="font-size:8px;opacity:.6">${isRest?'desc':k==='BIKE'?'bike':'treino'}</span></button>`;
-  });
-  html += '</div>';
-
-  // ── PAIN PANEL (collapsible) ──
-  html += '<div class="card" style="margin-bottom:10px">';
-  html += `<div onclick="togglePainPanel()" style="display:flex;justify-content:space-between;align-items:center;cursor:pointer;user-select:none">`;
-  html += `<div class="ct" style="margin-bottom:0">Incomodo muscular hoje?${hasPain?` <span style="color:var(--a3);font-size:10px">(${activePain.size} marcado)</span>`:''}</div>`;
-  html += `<span style="color:var(--t3);font-size:13px;display:inline-block;transform:rotate(${painOpen?'180':'0'}deg);transition:transform .2s">▼</span>`;
-  html += '</div>';
-
-  if(painOpen){
-    html += '<div style="margin-top:10px"><div class="pain-grid">';
-    PAIN_ZONES.forEach(z=>{
-      const chk = activePain.has(z.id);
-      html += `<div class="pain-item${chk?' checked':''}" onclick="togglePain('${z.id}')">`;
-      html += `<span class="pain-dot">${z.emoji}</span>`;
-      html += `<span class="pain-name">${z.name}</span>`;
-      html += `<span class="pain-check">${chk?'✓':''}</span>`;
-      html += `</div>`;
-    });
-    html += '</div>';
-    if(hasPain) html += `<button onclick="clearPain()" style="width:100%;padding:7px;border-radius:7px;border:1px solid var(--br);background:transparent;color:var(--t3);font-family:Syne,sans-serif;font-size:11px;cursor:pointer;margin-top:8px">Limpar selecao</button>`;
-    html += `<button onclick="gerarTreino()" style="width:100%;margin-top:8px;padding:13px;border-radius:10px;border:none;background:var(--a);color:#000;font-family:Syne,sans-serif;font-size:14px;font-weight:700;cursor:pointer">Criar Treino →</button>`;
-    html += '</div>';
-  }
-  html += '</div>';
-
-  // ── REST DAY — full mobility protocol with instructions ──
-  if(wkey==='REST' && !treinoGerado){
-    html += '<div class="card" style="text-align:center;padding:24px 16px">';
-    html += '<div style="font-size:32px;margin-bottom:8px">🧘</div>';
-    html += '<div style="font-family:Syne,sans-serif;font-size:16px;font-weight:700;margin-bottom:4px">Dia de Descanso</div>';
-    html += `<div style="font-size:12px;color:var(--t3);margin-bottom:14px;line-height:1.6">Hoje é dia de recuperação.<br>Clique para gerar o protocolo de mobilidade.</div>`;
-    if(hasPain) html += '<div class="ws-strip ws-y" style="text-align:left"><span>💡</span><div>Incomodo registrado. Após a mobilidade, aplique gelo 15 min nas regioes afetadas.</div></div>';
-    html += `<button onclick="gerarTreino()" style="width:100%;padding:13px;border-radius:10px;border:none;background:var(--a);color:#000;font-family:Syne,sans-serif;font-size:14px;font-weight:700;cursor:pointer">Criar Protocolo de Mobilidade →</button>`;
-    html += '</div></div>';
-    return html;
-  }
-  if(wkey==='REST' && treinoGerado){
-    // Status bar for mobility
-    const mobDone = MOBILITY.filter(m=>doneEx.has(m.id));
-    const mobPct = Math.round(mobDone.length/MOBILITY.length*100);
-    const mobAllDone = mobDone.length===MOBILITY.length;
-    html += `<div class="status-row">
-      <div style="font-size:20px">🧘</div>
-      <div><div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:1px">Recuperação Ativa</div>
-        <div class="sr-main">MOBILIDADE</div>
-        <div class="sr-sub">20–25 min · Lombar · Quadril · Tornozelo</div>
-      </div>
-      <div style="margin-left:auto;text-align:right">
-        <div style="font-family:'DM Mono',monospace;font-size:22px;color:var(--aw)">${mobDone.length}/${MOBILITY.length}</div>
-        <div style="font-size:10px;color:var(--t3)">feitos</div>
-      </div>
+  // ── STEP 0 — Choose type ──
+  if(flowStep===0){{
+    html += `<div class="card">
+      <div style="font-size:11px;color:var(--a2);font-family:'DM Mono',monospace;margin-bottom:3px;text-transform:uppercase;letter-spacing:.08em">💡 Sugestão para ${{DAY_NAMES[today]}}</div>
+      <div style="font-size:14px;font-weight:700;color:var(--t);margin-bottom:4px">${{SUGESTAO_LABEL[def.tipo]}}</div>
+      <div style="font-size:11px;color:var(--t3)">${{def.tempo}} min · recomendação padrão do programa</div>
     </div>`;
-    html += `<div class="comp-bar"><div class="comp-fill" style="width:${mobPct}%"></div></div>`;
-    html += `<div class="comp-txt"><span>Progresso</span><span>${mobDone.length}/${MOBILITY.length} · ${mobPct}%</span></div>`;
-    html += '<div style="font-size:10px;color:var(--t3);margin-bottom:8px;letter-spacing:.05em">TOQUE PARA VER COMO FAZER</div>';
-    MOBILITY.forEach((mob,i)=>{
-      const isDone = doneEx.has(mob.id);
-      const isOpen = openCards.has(mob.id);
-      html += `<div class="ex-card">
-        <div class="ex-hdr" onclick="toggleCard('${mob.id}')">
-          <div class="ex-num" style="${isDone?'background:rgba(0,229,160,.18);color:var(--a)':''}">${isDone?'✓':i+1}</div>
-          <div class="ex-inf">
-            <div class="ex-nm" style="${isDone?'opacity:.45':''}">${mob.name}</div>
-            <div class="ex-mt"><span class="ex-sets">${mob.sets}</span><span class="ex-tag tg-g">MOBILIDADE</span></div>
-          </div>
-          <div style="font-size:14px;flex-shrink:0">${isDone?'✅':'○'}</div>
-          <div class="ex-arr ${isOpen?'open':''}" style="margin-left:4px">▼</div>
+    html += `<div class="ct" style="margin-top:4px">O que você quer fazer hoje?</div>`;
+    html += `<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:6px">`;
+    [
+      {{tipo:'treino',   emoji:'💪', label:'Treino',      desc:'Musculação'}},
+      {{tipo:'mobilidade',emoji:'🧘',label:'Mobilidade',  desc:'Alongamento e flexibilidade'}},
+      {{tipo:'aerobico', emoji:'🚴', label:'Aeróbico',    desc:'Cardio e queima calórica'}},
+      {{tipo:'descanso', emoji:'😴', label:'Descanso',    desc:'Recuperação mental e física'}},
+    ].forEach(opt=>{{
+      const isSug = opt.tipo===def.tipo;
+      html += `<div onclick="setFlowTipo('${{opt.tipo}}')" style="background:${{isSug?'rgba(0,229,160,.1)':'var(--bg3)'}};border:1px solid ${{isSug?'var(--a)':'var(--br)'}};border-radius:12px;padding:16px 12px;cursor:pointer;text-align:center;transition:all .2s">
+        <div style="font-size:28px;margin-bottom:6px">${{opt.emoji}}</div>
+        <div style="font-size:13px;font-weight:700;color:${{isSug?'var(--a)':'var(--t)'}}">${{opt.label}}</div>
+        <div style="font-size:10px;color:var(--t3);margin-top:2px">${{opt.desc}}</div>
+        ${{isSug?'<div style="font-size:9px;color:var(--a);margin-top:4px;font-family:'DM Mono',monospace">⭐ sugerido hoje</div>':''}}
+      </div>`;
+    }});
+    html += `</div>`;
+    html += `</div>`;
+    return html;
+  }}
+
+  // ── STEP 1 — Configure ──
+  if(flowStep===1){{
+    // Back button
+    html += `<button onclick="resetFlow()" style="display:flex;align-items:center;gap:6px;background:transparent;border:none;color:var(--t3);font-family:Syne,sans-serif;font-size:13px;cursor:pointer;padding:0;margin-bottom:14px">← Voltar</button>`;
+
+    const TIPO_ICONS = {{treino:'💪',mobilidade:'🧘',aerobico:'🚴',descanso:'😴'}};
+    const TIPO_LABELS = {{treino:'Treino',mobilidade:'Mobilidade',aerobico:'Aeróbico',descanso:'Descanso'}};
+    html += `<div class="card" style="margin-bottom:10px">
+      <div style="font-size:18px;font-weight:700;color:var(--t)">${{TIPO_ICONS[flowTipo]}} ${{TIPO_LABELS[flowTipo]}}</div>
+    </div>`;
+
+    // ── Time selector ──
+    const tempos = flowTipo==='mobilidade' ? [10,20,30] : [20,30,45,60];
+    html += `<div class="card" style="margin-bottom:10px">
+      <div class="ct">⏱ Quanto tempo você tem?</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">`;
+    tempos.forEach(t=>{{
+      const isSel = t===flowTempo;
+      html += `<button onclick="setFlowTempo(${{t}})" style="flex:1;min-width:50px;padding:10px 4px;border-radius:9px;border:1px solid ${{isSel?'var(--a)':'var(--br)'}};background:${{isSel?'rgba(0,229,160,.15)':'var(--bg3)'}};color:${{isSel?'var(--a)':'var(--t3)'}};font-family:Syne,sans-serif;font-size:13px;font-weight:700;cursor:pointer">${{t}} min</button>`;
+    }});
+    html += `</div></div>`;
+
+    // ── TREINO: group selector + pain ──
+    if(flowTipo==='treino'){{
+      html += `<div class="card" style="margin-bottom:10px"><div class="ct">Qual grupo muscular?</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">`;
+      [{{g:'A',n:'Push',d:'Peito · Ombro · Tríceps'}},{{g:'B',n:'Pull',d:'Costas · Bíceps · Core'}},{{g:'C',n:'Legs',d:'Pernas · Glúteo'}}].forEach(gr=>{{
+        const isSel=gr.g===flowGrupo;
+        html+=`<div onclick="setFlowGrupo('${{gr.g}}')" style="background:${{isSel?'rgba(0,184,255,.1)':'var(--bg3)'}};border:1px solid ${{isSel?'var(--a2)':'var(--br)'}};border-radius:10px;padding:12px 8px;cursor:pointer;text-align:center">
+          <div style="font-size:15px;font-weight:700;color:${{isSel?'var(--a2)':'var(--t)'}}">${{gr.n}}</div>
+          <div style="font-size:10px;color:var(--t3);margin-top:3px;line-height:1.4">${{gr.d}}</div>
+          ${{isSel?'<div style="font-size:9px;color:var(--a2);margin-top:3px">✓ selecionado</div>':''}}
         </div>`;
-      if(isOpen){
-        html += `<div class="ex-body open">`;
-        // Muscles
-        html += `<div style="display:flex;align-items:flex-start;gap:8px;padding:10px 12px;background:rgba(0,229,160,.05);border-bottom:1px solid var(--br)">
-          <span style="font-size:14px;flex-shrink:0">💪</span>
-          <div><div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px">Músculos / Área</div>
-          <div style="font-size:12px;color:var(--a);font-weight:600">${mob.muscles}</div></div>
+      }});
+      html += `</div></div>`;
+    }}
+
+    // ── AEROBICO: modality selector ──
+    if(flowTipo==='aerobico'){{
+      html += `<div class="card" style="margin-bottom:10px"><div class="ct">Qual atividade?</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">`;
+      Object.entries(AEROBICO_PROTOCOLS).forEach(([key,val])=>{{
+        const isSel=key===flowAerobico;
+        html+=`<div onclick="setFlowAerobico('${{key}}')" style="background:${{isSel?'rgba(176,133,245,.1)':'var(--bg3)'}};border:1px solid ${{isSel?'var(--ap)':'var(--br)'}};border-radius:10px;padding:12px;cursor:pointer;text-align:center">
+          <div style="font-size:22px">${{val.emoji}}</div>
+          <div style="font-size:12px;font-weight:700;color:${{isSel?'var(--ap)':'var(--t)'}};margin-top:4px">${{val.name}}</div>
         </div>`;
-        // Steps
-        html += `<div style="padding:10px 12px;border-bottom:1px solid var(--br)">
-          <div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Como fazer</div>`;
-        mob.steps.forEach((step,si)=>{
-          html += `<div style="display:flex;gap:8px;margin-bottom:6px">
-            <span style="width:18px;height:18px;border-radius:50%;background:var(--a2);color:#000;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">${si+1}</span>
-            <span style="font-size:12px;color:var(--t);line-height:1.5">${step}</span>
-          </div>`;
-        });
-        html += `</div>`;
-        // Tip
-        html += `<div style="display:flex;gap:8px;align-items:flex-start;padding:8px 12px;background:rgba(255,179,71,.05);border-bottom:1px solid var(--br)">
-          <span style="font-size:13px;flex-shrink:0">⚠️</span>
-          <span style="font-size:11px;color:var(--aw);line-height:1.5">${mob.tip}</span>
+      }});
+      html += `</div></div>`;
+    }}
+
+    // ── DESCANSO: multi-select ──
+    if(flowTipo==='descanso'){{
+      html += `<div class="card" style="margin-bottom:10px"><div class="ct">O que prefere? (pode selecionar vários)</div>`;
+      DESCANSO_OPTIONS.forEach(opt=>{{
+        const isSel=flowDescanso.has(opt.id);
+        html+=`<div onclick="toggleDescanso('${{opt.id}}')" style="display:flex;align-items:center;gap:12px;padding:12px;border-radius:10px;border:1px solid ${{isSel?'var(--a)':'var(--br)'}};background:${{isSel?'rgba(0,229,160,.07)':'transparent'}};cursor:pointer;margin-bottom:8px">
+          <span style="font-size:22px">${{opt.emoji}}</span>
+          <div style="flex:1"><div style="font-size:13px;font-weight:600;color:${{isSel?'var(--a)':'var(--t)'}}">${{opt.label}}</div>
+          <div style="font-size:11px;color:var(--t3)">${{opt.desc}}</div></div>
+          <div style="width:20px;height:20px;border-radius:6px;border:1.5px solid ${{isSel?'var(--a)':'var(--t3)'}};background:${{isSel?'var(--a)':'transparent'}};display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:12px;color:#000">${{isSel?'✓':''}}</div>
         </div>`;
-        // YouTube
-        html += `<div style="padding:10px 12px;border-bottom:1px solid var(--br)">
-          <a href="${mob.yt}" target="_blank" style="display:flex;align-items:center;justify-content:space-between;text-decoration:none;padding:10px 12px;background:var(--bg2);border:1px solid var(--br);border-radius:8px">
-            <div style="display:flex;align-items:center;gap:8px">
-              <span style="font-size:16px">🎬</span>
-              <div><div style="font-size:12px;font-weight:600;color:var(--t)">Ver no YouTube</div>
-              <div style="font-size:10px;color:var(--t3)">Abre busca de vídeos demonstrativos</div></div>
-            </div>
-            <span style="color:var(--a);font-size:14px">→</span>
-          </a>
-        </div>`;
-        html += `<button class="ex-done-btn ${isDone?'done':''}" onclick="toggleDone(event,'${mob.id}')">${isDone?'✅ Concluido — toque para desfazer':'✓ Marcar como feito'}</button>`;
-        html += `</div>`;
-      }
+      }});
       html += `</div>`;
-    });
-    // Concludir button
-    html += `<div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--br)">`;
-    if(mobAllDone){
-      html += '<div class="ws-strip ws-g" style="margin-bottom:10px"><span>🎉</span><div><strong>Mobilidade concluída!</strong> Beba água e descanse bem.</div></div>';
-      html += `<button onclick="concluirTreino()" style="width:100%;padding:14px;border-radius:12px;border:none;background:var(--a);color:#000;font-family:Syne,sans-serif;font-size:15px;font-weight:700;cursor:pointer">🏁 Concluir e Salvar</button>`;
-    } else {
-      html += `<button onclick="concluirTreino()" style="width:100%;padding:12px;border-radius:12px;border:1px solid var(--br);background:var(--bg3);color:var(--t3);font-family:Syne,sans-serif;font-size:13px;font-weight:600;cursor:pointer">Encerrar sem salvar</button>`;
-    }
-    html += '</div>';
+    }}
+
+    // ── PAIN panel (treino + mobilidade) ──
+    if(flowTipo==='treino'||flowTipo==='mobilidade'){{
+      const hasPain=activePain.size>0;
+      html += `<div class="card" style="margin-bottom:10px">
+        <div onclick="togglePainPanel()" style="display:flex;justify-content:space-between;align-items:center;cursor:pointer;user-select:none">
+          <div class="ct" style="margin-bottom:0">Incomodo muscular hoje?${{hasPain?` <span style="color:var(--a3);font-size:10px">(${{activePain.size}} marcado)</span>`:''}} <span style="font-size:10px;color:var(--t3)">— opcional</span></div>
+          <span style="color:var(--t3);font-size:13px;transform:rotate(${{painOpen?'180':'0'}}deg);display:inline-block">▼</span>
+        </div>`;
+      if(painOpen){{
+        html += `<div style="margin-top:10px"><div class="pain-grid">`;
+        PAIN_ZONES.forEach(z=>{{
+          const chk=activePain.has(z.id);
+          html+=`<div class="pain-item${{chk?' checked':''}}" onclick="togglePain('${{z.id}}')">
+            <span class="pain-dot">${{z.emoji}}</span><span class="pain-name">${{z.name}}</span>
+            <span class="pain-check">${{chk?'✓':''}}</span></div>`;
+        }});
+        html += `</div>`;
+        if(hasPain) html+=`<button onclick="clearPain()" style="width:100%;padding:7px;border-radius:7px;border:1px solid var(--br);background:transparent;color:var(--t3);font-family:Syne,sans-serif;font-size:11px;cursor:pointer;margin-top:8px">Limpar seleção</button>`;
+        html += `</div>`;
+      }}
+      html += `</div>`;
+    }}
+
+    // ── Generate button ──
+    const canGenerate = flowTipo==='treino'||flowTipo==='mobilidade'||(flowTipo==='aerobico'&&flowAerobico)||(flowTipo==='descanso'&&flowDescanso.size>0);
+    html += `<button onclick="${{canGenerate?'gerarTreino()':'void(0)'}}" style="width:100%;padding:14px;border-radius:12px;border:none;background:${{canGenerate?'var(--a)':'var(--bg4)'}};color:${{canGenerate?'#000':'var(--t3)'}};font-family:Syne,sans-serif;font-size:15px;font-weight:700;cursor:${{canGenerate?'pointer':'default'}}">
+      ${{flowTipo==='descanso'?'Iniciar Sessão →':flowTipo==='mobilidade'?'Criar Protocolo →':flowTipo==='aerobico'?'Criar Sessão Aeróbica →':'Criar Treino →'}}
+    </button>`;
+    if(flowTipo==='descanso'&&flowDescanso.size===0) html+=`<div style="text-align:center;font-size:11px;color:var(--t3);margin-top:8px">Selecione ao menos uma opção acima</div>`;
+
+    html += `</div>`;
+    return html;
+  }}
+
+  // ── STEP 2 — Session generated ──
+  if(flowStep===2){{
+    html += `<button onclick="resetFlow()" style="display:flex;align-items:center;gap:6px;background:transparent;border:none;color:var(--t3);font-family:Syne,sans-serif;font-size:13px;cursor:pointer;padding:0;margin-bottom:14px">← Novo treino</button>`;
+
+    // ── TREINO ──
+    if(flowTipo==='treino'){{
+      const wk = WORKOUTS[flowGrupo];
+      const analyzed = wk.exercises.map(ex=>{{
+        const conf=ex.risks.filter(r=>activePain.has(r));
+        return Object.assign({{}},ex,{{status:conf.length===0?'safe':(ex.sub?'substituted':'blocked')}});
+      }});
+      // Filter by time: 20min=3ex, 30min=4ex, 45min=all, 60min=all+extra sets label
+      const maxEx = flowTempo<=20?3:flowTempo<=30?4:wk.exercises.length;
+      const analyzed2 = analyzed.slice(0,maxEx);
+      const active = analyzed2.filter(e=>e.status!=='blocked');
+      const blocked = analyzed2.filter(e=>e.status==='blocked').length;
+      const subst = analyzed2.filter(e=>e.status==='substituted').length;
+      const allDone = active.length>0 && doneEx.size===active.length;
+      const pct = active.length?Math.round(doneEx.size/active.length*100):0;
+      const grupNm = flowGrupo==='A'?'PUSH':flowGrupo==='B'?'PULL + CORE':'LEGS';
+      const grupType = flowGrupo==='A'?'Peito · Ombro · Tríceps':flowGrupo==='B'?'Costas · Bíceps · Core':'Quadríceps · Glúteo · Posterior';
+
+      html+=`<div class="status-row">
+        <div style="font-size:20px">${{activePain.size>0&&blocked?'⚠️':'✅'}}</div>
+        <div><div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:1px">${{grupType}}</div>
+          <div class="sr-main">${{grupNm}}${{activePain.size>0&&blocked?' ADAPTADO':''}}</div>
+          <div class="sr-sub">${{flowTempo}} min · ${{wk.kcal}} kcal est.</div></div>
+        <div style="margin-left:auto;text-align:right">
+          <div style="font-family:'DM Mono',monospace;font-size:22px;color:var(--aw)">${{doneEx.size}}/${{active.length}}</div>
+          <div style="font-size:10px;color:var(--t3)">feitos</div></div>
+      </div>`;
+      if(activePain.size>0) html+=`<div class="ws-strip ws-r"><span>⚠️</span><div>Incomodo: ${{[...activePain].map(pid=>PAIN_ZONES.find(z=>z.id===pid)?.name).filter(Boolean).join(', ')}} — ${{blocked}} removido · ${{subst}} substituido</div></div>`;
+      if(flowTempo<=20) html+=`<div class="ws-strip ws-y"><span>⏱</span><div>20 min — treino rápido com os 3 exercícios principais</div></div>`;
+      html+=`<div class="comp-bar"><div class="comp-fill" style="width:${{pct}}%"></div></div>`;
+      html+=`<div class="comp-txt"><span>Progresso</span><span>${{doneEx.size}}/${{active.length}} · ${{pct}}%</span></div>`;
+      html+='<div style="font-size:10px;color:var(--t3);margin-bottom:8px">TOQUE PARA VER COMO FAZER</div>';
+      analyzed2.forEach((ex,i)=>{{ html+=renderExCard(ex,i,doneEx.has(ex.id),openCards.has(ex.id)); }});
+      html+=`<div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--br)">`;
+      if(allDone){{
+        html+='<div class="ws-strip ws-g" style="margin-bottom:10px"><span>🎉</span><div><strong>Treino concluído!</strong> 💧 Beba 500ml de água agora!</div></div>';
+        html+=`<button onclick="concluirTreino()" style="width:100%;padding:14px;border-radius:12px;border:none;background:var(--a);color:#000;font-family:Syne,sans-serif;font-size:15px;font-weight:700;cursor:pointer">🏁 Treino Concluído — Salvar</button>`;
+      }} else {{
+        html+=`<button onclick="concluirTreino()" style="width:100%;padding:12px;border-radius:12px;border:1px solid var(--br);background:var(--bg3);color:var(--t3);font-family:Syne,sans-serif;font-size:13px;font-weight:600;cursor:pointer">Encerrar sem salvar</button>`;
+      }}
+      html+=`</div>`;
+    }}
+
+    // ── MOBILIDADE ──
+    else if(flowTipo==='mobilidade'){{
+      const maxMob = flowTempo<=10?2:flowTempo<=20?4:MOBILITY.length;
+      const mobs = MOBILITY.slice(0,maxMob);
+      const mobDone = mobs.filter(m=>doneEx.has(m.id));
+      const mobPct = Math.round(mobDone.length/mobs.length*100);
+      const allDone = mobDone.length===mobs.length;
+      html+=`<div class="status-row"><div style="font-size:20px">🧘</div>
+        <div><div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:1px">Recuperação Ativa</div>
+          <div class="sr-main">MOBILIDADE</div>
+          <div class="sr-sub">${{flowTempo}} min · ${{mobs.length}} exercícios</div></div>
+        <div style="margin-left:auto;text-align:right">
+          <div style="font-family:'DM Mono',monospace;font-size:22px;color:var(--aw)">${{mobDone.length}}/${{mobs.length}}</div>
+          <div style="font-size:10px;color:var(--t3)">feitos</div></div>
+      </div>`;
+      if(activePain.size>0) html+=`<div class="ws-strip ws-y"><span>💡</span><div>Protocolo adaptado para: ${{[...activePain].map(pid=>PAIN_ZONES.find(z=>z.id===pid)?.name).filter(Boolean).join(', ')}}</div></div>`;
+      html+=`<div class="comp-bar"><div class="comp-fill" style="width:${{mobPct}}%"></div></div>`;
+      html+=`<div class="comp-txt"><span>Progresso</span><span>${{mobDone.length}}/${{mobs.length}} · ${{mobPct}}%</span></div>`;
+      html+='<div style="font-size:10px;color:var(--t3);margin-bottom:8px">TOQUE PARA VER COMO FAZER</div>';
+      mobs.forEach((m,i)=>{{ html+=renderMobCard(m,i); }});
+      html+=`<div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--br)">`;
+      if(allDone){{
+        html+='<div class="ws-strip ws-g" style="margin-bottom:10px"><span>🎉</span><div><strong>Mobilidade concluída!</strong> 💧 Beba água e descanse bem.</div></div>';
+        html+=`<button onclick="concluirTreino()" style="width:100%;padding:14px;border-radius:12px;border:none;background:var(--a);color:#000;font-family:Syne,sans-serif;font-size:15px;font-weight:700;cursor:pointer">🏁 Concluir — Salvar</button>`;
+      }} else {{
+        html+=`<button onclick="concluirTreino()" style="width:100%;padding:12px;border-radius:12px;border:1px solid var(--br);background:var(--bg3);color:var(--t3);font-family:Syne,sans-serif;font-size:13px;font-weight:600;cursor:pointer">Encerrar sem salvar</button>`;
+      }}
+      html+=`</div>`;
+    }}
+
+    // ── AERÓBICO ──
+    else if(flowTipo==='aerobico'){{
+      const aero = AEROBICO_PROTOCOLS[flowAerobico];
+      const proto = aero?.tempos[flowTempo] || aero?.tempos[45];
+      html+=`<div class="status-row"><div style="font-size:22px">${{aero?.emoji||'🚴'}}</div>
+        <div><div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:1px">Cardio</div>
+          <div class="sr-main">${{aero?.name?.toUpperCase()||'AERÓBICO'}}</div>
+          <div class="sr-sub">${{flowTempo}} min · ${{proto?.kcal||0}} kcal est.</div></div>
+        <div style="margin-left:auto;text-align:right">
+          <div style="font-family:'DM Mono',monospace;font-size:22px;color:var(--aw)">${{flowTempo}}</div>
+          <div style="font-size:10px;color:var(--t3)">minutos</div></div>
+      </div>`;
+      if(activePain.has('ankle')||activePain.has('knee')) html+=`<div class="ws-strip ws-y"><span>🦶</span><div>Incomodo no tornozelo/joelho detectado — ergométrica em casa é a melhor opção hoje.</div></div>`;
+      html+=`<div class="card">
+        <div class="ct">Protocolo da sessão</div>`;
+      proto?.blocos.forEach((b,i)=>{{
+        html+=`<div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--br)">
+          <span style="width:22px;height:22px;border-radius:50%;background:var(--ap);color:#000;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">${{i+1}}</span>
+          <span style="font-size:13px;color:var(--t);line-height:1.4">${{b}}</span></div>`;
+      }});
+      html+=`</div>`;
+      if(proto?.tip) html+=`<div class="ws-strip ws-y"><span>💡</span><div>${{proto.tip}}</div></div>`;
+      html+=`<div class="card"><div class="ct">FC alvo</div>
+        <div style="font-size:13px;color:var(--t3);line-height:1.8">
+          Zona aeróbica (60-70%): <span style="color:var(--a);font-family:'DM Mono',monospace">108–126 bpm</span><br>
+          Zona moderada (70-80%): <span style="color:var(--aw);font-family:'DM Mono',monospace">126–144 bpm</span><br>
+          <span style="font-size:11px">FCmax estimada para 40 anos: 180 bpm</span>
+        </div>
+      </div>`;
+      html+=`<div style="margin-top:16px">
+        <button onclick="concluirTreino()" style="width:100%;padding:14px;border-radius:12px;border:none;background:var(--a);color:#000;font-family:Syne,sans-serif;font-size:15px;font-weight:700;cursor:pointer">🏁 Sessão Concluída — Salvar</button>
+      </div>`;
+    }}
+
+    // ── DESCANSO ──
+    else if(flowTipo==='descanso'){{
+      const selected = DESCANSO_OPTIONS.filter(o=>flowDescanso.has(o.id));
+      html+=`<div class="status-row"><div style="font-size:22px">😴</div>
+        <div><div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:1px">Recuperação</div>
+          <div class="sr-main">DESCANSO</div>
+          <div class="sr-sub">${{selected.map(o=>o.label).join(' · ')}}</div></div>
+      </div>`;
+
+      selected.forEach(opt=>{{
+        html+=`<div class="card" style="margin-bottom:10px">`;
+        html+=`<div style="font-size:22px;margin-bottom:6px">${{opt.emoji}}</div>`;
+        html+=`<div style="font-size:15px;font-weight:700;color:var(--t);margin-bottom:8px">${{opt.label}}</div>`;
+
+        if(opt.id==='respiracao'){{
+          html+=`<div style="font-size:12px;color:var(--t3);line-height:1.8;margin-bottom:10px">
+            4s inspirar → 7s prender → 8s expirar<br>
+            Repita 4 ciclos (~2 min) · Ativa nervo vago · Reduz cortisol
+          </div>`;
+          html+=`<button onclick="setSt('breath');go('mais')" style="width:100%;padding:11px;border-radius:9px;border:1px solid var(--a);background:rgba(0,229,160,.1);color:var(--a);font-family:Syne,sans-serif;font-size:13px;font-weight:600;cursor:pointer">Abrir exercício de respiração →</button>`;
+        }} else if(opt.id==='meditacao'){{
+          const ytMed = `https://www.youtube.com/results?search_query=meditacao+guiada+${{flowTempo}}+minutos`;
+          html+=`<div style="font-size:12px;color:var(--t3);line-height:1.8;margin-bottom:10px">
+            Sessão de ${{flowTempo}} minutos · Reduz ansiedade e cortisol · Melhora foco e qualidade do sono
+          </div>`;
+          html+=`<a href="${{ytMed}}" target="_blank" style="display:flex;align-items:center;justify-content:space-between;text-decoration:none;padding:11px 14px;background:var(--bg2);border:1px solid var(--br);border-radius:9px">
+            <div style="display:flex;align-items:center;gap:8px"><span>🎬</span>
+              <div><div style="font-size:12px;font-weight:600;color:var(--t)">Meditação ${{flowTempo}} min no YouTube</div>
+              <div style="font-size:10px;color:var(--t3)">Busca vídeos de meditação guiada</div></div></div>
+            <span style="color:var(--a)">→</span></a>`;
+        }} else if(opt.id==='relaxamento'){{
+          html+=`<div style="font-size:12px;color:var(--t3);line-height:1.8;margin-bottom:10px">
+            Tensão progressiva e liberação muscular — 10 a 15 min
+          </div>`;
+          const ytRel = `https://www.youtube.com/results?search_query=relaxamento+muscular+progressivo+${{flowTempo}}+minutos`;
+          html+=`<a href="${{ytRel}}" target="_blank" style="display:flex;align-items:center;justify-content:space-between;text-decoration:none;padding:11px 14px;background:var(--bg2);border:1px solid var(--br);border-radius:9px">
+            <div style="display:flex;align-items:center;gap:8px"><span>🎬</span>
+              <div><div style="font-size:12px;font-weight:600;color:var(--t)">Relaxamento ${{flowTempo}} min no YouTube</div>
+              <div style="font-size:10px;color:var(--t3)">Relaxamento muscular progressivo</div></div></div>
+            <span style="color:var(--a)">→</span></a>`;
+        }} else if(opt.id==='sono'){{
+          html+=`<div style="font-size:12px;color:var(--t3);line-height:2;margin-bottom:8px">
+            🌙 Dorme às: <strong style="color:var(--t)">22:30</strong><br>
+            ⏰ Acorda às: <strong style="color:var(--t)">06:30</strong> (7h30 de sono)<br>
+            📵 Telas modo noite: <strong style="color:var(--t)">21:00</strong><br>
+            🛁 Banho morno: <strong style="color:var(--t)">22:00</strong><br>
+            💊 Magnésio 300mg: <strong style="color:var(--t)">22:00</strong>
+          </div>`;
+        }}
+        html+=`</div>`;
+      }});
+
+      html+=`<div style="margin-top:8px">
+        <button onclick="concluirTreino()" style="width:100%;padding:14px;border-radius:12px;border:none;background:var(--a);color:#000;font-family:Syne,sans-serif;font-size:15px;font-weight:700;cursor:pointer">✅ Sessão Concluída — Salvar</button>
+      </div>`;
+    }}
+
     html += '</div>';
     return html;
-  }
-
-  // ── NOT YET GENERATED ──
-  if(!treinoGerado){
-    html += '<div class="card" style="text-align:center;padding:28px 16px">';
-    html += '<div style="font-size:36px;margin-bottom:10px">💪</div>';
-    html += '<div style="font-family:Syne,sans-serif;font-size:16px;font-weight:700;margin-bottom:6px">Pronto para treinar?</div>';
-    html += `<div style="font-size:12px;color:var(--t3);margin-bottom:16px;line-height:1.6">Marque o incomodo acima se tiver algo doendo.<br>Se estiver tudo bem, clique direto.</div>`;
-    html += `<button onclick="gerarTreino()" style="width:100%;padding:14px;border-radius:12px;border:none;background:var(--a);color:#000;font-family:Syne,sans-serif;font-size:15px;font-weight:700;cursor:pointer">Criar Treino →</button>`;
-    html += '</div></div>';
-    return html;
-  }
-
-  // ── WORKOUT ──
-  const analyzed = wk.exercises.map(ex=>{
-    const conf = ex.risks.filter(r=>activePain.has(r));
-    return Object.assign({},ex,{status: conf.length===0?'safe':(ex.sub?'substituted':'blocked')});
-  });
-  const blocked    = analyzed.filter(e=>e.status==='blocked').length;
-  const subst      = analyzed.filter(e=>e.status==='substituted').length;
-  const active     = analyzed.filter(e=>e.status!=='blocked');
-  const allBlocked = active.length===0 && wk.exercises.length>0;
-  const allDone    = active.length>0 && doneEx.size===active.length;
-
-  let sText=wk.label, sClass='';
-  if(hasPain&&allBlocked){sText='BLOQUEADO';sClass='red';}
-  else if(hasPain&&(blocked>0||subst>0)){sText=wk.label+' ADAPTADO';sClass='yellow';}
-
-  // Status bar
-  html += `<div class="status-row">
-    <div style="font-size:20px">${hasPain&&allBlocked?'🚫':hasPain&&(blocked||subst)?'⚠️':'✅'}</div>
-    <div>
-      <div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:1px">${wk.type}</div>
-      <div class="sr-main ${sClass}">${sText}</div>
-      <div class="sr-sub">${wk.duration} min · ${wk.kcal} kcal</div>
-    </div>
-    <div style="margin-left:auto;text-align:right">
-      <div style="font-family:'DM Mono',monospace;font-size:22px;color:var(--aw)">${doneEx.size}/${active.length}</div>
-      <div style="font-size:10px;color:var(--t3)">feitos</div>
-    </div>
-  </div>`;
-
-  if(hasPain) html += `<div class="ws-strip ws-r"><span>⚠️</span><div><strong>Incomodo: ${painNames.join(', ')}</strong> — ${blocked} removido · ${subst} substituido</div></div>`;
-
-  if(allBlocked){
-    html += '<div class="card"><div style="font-size:16px;font-weight:700;color:var(--a3);margin-bottom:6px">TREINO INCOMPATIVEL</div><div style="font-size:12px;color:var(--t3)">Opcoes: ergometrica 20 min ou mobilidade.</div></div>';
-  } else {
-    // Progress bar
-    const pct = active.length ? Math.round(doneEx.size/active.length*100) : 0;
-    html += `<div class="comp-bar"><div class="comp-fill" style="width:${pct}%"></div></div>`;
-    html += `<div class="comp-txt"><span>Progresso</span><span>${doneEx.size}/${active.length} · ${pct}%</span></div>`;
-    html += '<div style="font-size:10px;color:var(--t3);margin-bottom:8px;letter-spacing:.05em">TOQUE NO EXERCICIO PARA VER COMO FAZER</div>';
-
-    // Exercise list
-    analyzed.forEach((ex,i)=>{
-      const isDone  = doneEx.has(ex.id);
-      const isOpen  = openCards.has(ex.id);
-      const nm = ex.status==='substituted' ? ex.sub.name : ex.name;
-      const st = ex.status==='substituted' ? ex.sub.sets : ex.sets;
-
-      if(ex.status==='blocked'){
-        const pl = ex.risks.filter(r=>activePain.has(r)).map(r=>PAIN_ZONES.find(z=>z.id===r)?.name).filter(Boolean).join(', ');
-        html += `<div class="ex-card blocked">
-          <div class="ex-hdr" style="cursor:default">
-            <div class="ex-num">✕</div>
-            <div class="ex-inf">
-              <div class="ex-nm">${ex.name}</div>
-              <div class="ex-mt"><span class="ex-sets">${ex.sets}</span><span class="ex-tag tg-r">BLOQUEADO</span></div>
-            </div>
-          </div>
-          <div class="ex-reason">Agrava: ${pl}</div>
-        </div>`;
-        return;
-      }
-
-      html += `<div class="ex-card ${ex.status}">
-        <div class="ex-hdr" onclick="toggleCard('${ex.id}')">
-          <div class="ex-num" style="${isDone?'background:rgba(0,229,160,.18);color:var(--a)':''}">${isDone?'✓':i+1}</div>
-          <div class="ex-inf">
-            <div class="ex-nm" style="${isDone?'opacity:.45':''}">${nm}</div>
-            <div class="ex-mt">
-              <span class="ex-sets">${st} · ${ex.focus}</span>
-              ${ex.status==='substituted'?'<span class="ex-tag tg-y">SUBSTITUTO</span>':'<span class="ex-tag tg-g">OK</span>'}
-            </div>
-          </div>
-          <div style="font-size:14px;flex-shrink:0">${isDone?'✅':'○'}</div>
-          <div class="ex-arr ${isOpen?'open':''}" style="margin-left:4px">▼</div>
-        </div>`;
-
-      if(isOpen){
-        const info = EXERCISE_INFO[ex.id] || {};
-        html += `<div class="ex-body open">`;
-        if(ex.status==='substituted') html += `<div class="ex-sub-r">Substituido: ${ex.sub.reason}</div>`;
-        // Muscles
-        if(info.muscles){
-          html += `<div style="display:flex;align-items:flex-start;gap:8px;padding:10px 12px;background:rgba(0,229,160,.05);border-bottom:1px solid var(--br)">
-            <span style="font-size:14px;flex-shrink:0">💪</span>
-            <div><div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px">Músculos trabalhados</div>
-            <div style="font-size:12px;color:var(--a);font-weight:600">${info.muscles}</div></div>
-          </div>`;
-        }
-        // Steps
-        if(info.steps&&info.steps.length){
-          html += `<div style="padding:10px 12px;border-bottom:1px solid var(--br)">
-            <div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Como fazer</div>`;
-          info.steps.forEach((step,si)=>{
-            html += `<div style="display:flex;gap:8px;margin-bottom:6px">
-              <span style="width:18px;height:18px;border-radius:50%;background:var(--a2);color:#000;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">${si+1}</span>
-              <span style="font-size:12px;color:var(--t);line-height:1.5">${step}</span>
-            </div>`;
-          });
-          html += `</div>`;
-        }
-        // Tip / warning
-        if(ex.tip){
-          html += `<div style="display:flex;gap:8px;align-items:flex-start;padding:8px 12px;background:rgba(255,179,71,.05);border-bottom:1px solid var(--br)">
-            <span style="font-size:13px;flex-shrink:0">⚠️</span>
-            <span style="font-size:11px;color:var(--aw);line-height:1.5">${ex.tip}</span>
-          </div>`;
-        }
-        // MuscleWiki link
-        if(info.url){
-          html += `<div style="padding:10px 12px;border-bottom:1px solid var(--br)">
-            <a href="${info.url}" target="_blank" style="display:flex;align-items:center;justify-content:space-between;text-decoration:none;padding:10px 12px;background:var(--bg2);border:1px solid var(--br);border-radius:8px">
-              <div style="display:flex;align-items:center;gap:8px">
-                <span style="font-size:16px">🎬</span>
-                <div><div style="font-size:12px;font-weight:600;color:var(--t)">🎬 Ver no YouTube</div>
-                <div style="font-size:10px;color:var(--t3)">Abre busca de vídeos demonstrativos</div></div>
-              </div>
-              <span style="color:var(--a);font-size:14px">→</span>
-            </a>
-          </div>`;
-        }
-        // Done button
-        html += `<button class="ex-done-btn ${isDone?'done':''}" onclick="toggleDone(event,'${ex.id}')">${isDone?'✅ Concluido — toque para desfazer':'✓ Marcar como feito'}</button>`;
-        html += `</div>`;
-      }
-      html += `</div>`;
-    });
-  }
-
-  // ── TREINO CONCLUÍDO button — always visible ──
-  html += `<div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--br)">`;
-  if(allDone){
-    html += '<div class="ws-strip ws-g" style="margin-bottom:10px"><span>🎉</span><div><strong>Treino concluido!</strong> Proteina em ate 60 min. 500ml agua.</div></div>';
-    html += `<button onclick="concluirTreino()" style="width:100%;padding:14px;border-radius:12px;border:none;background:var(--a);color:#000;font-family:Syne,sans-serif;font-size:15px;font-weight:700;cursor:pointer">🏁 Treino Concluido — Salvar</button>`;
-  } else {
-    html += `<button onclick="concluirTreino()" style="width:100%;padding:12px;border-radius:12px;border:1px solid var(--br);background:var(--bg3);color:var(--t3);font-family:Syne,sans-serif;font-size:13px;font-weight:600;cursor:pointer">Encerrar sem salvar</button>`;
-  }
-  html += '</div>';
-
+  }}
 
   html += '</div>';
   return html;
-}
+}}
 
 </script>
 </body>
