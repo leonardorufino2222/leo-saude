@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <meta name="apple-mobile-web-app-title" content="Leo Saude"/>
 <link rel="manifest" href="manifest.json"/>
-<title>Leo Saúde v4</title>
+<title>Leo Saúde v5</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700&display=swap" rel="stylesheet"/>
 <style>
 
@@ -207,7 +207,7 @@ html,body{height:100%;background:var(--bg);color:var(--t);font-family:'Syne',san
 <body>
 <div id="app">
   <div class="topbar">
-    <div><div class="tt">Leo Saúde 💪 <span style="font-size:9px;color:var(--t3);font-family:'DM Mono',monospace;background:var(--bg3);padding:1px 5px;border-radius:4px;border:1px solid var(--br)">v4</span></div><div class="td" id="topdate"></div></div>
+    <div><div class="tt">Leo Saúde 💪 <span style="font-size:9px;color:var(--t3);font-family:'DM Mono',monospace;background:var(--bg3);padding:1px 5px;border-radius:4px;border:1px solid var(--br)">v5</span></div><div class="td" id="topdate"></div></div>
     <div class="tlogo">L</div>
   </div>
   <div class="content" id="content"></div>
@@ -985,100 +985,127 @@ function toggleDone(e,id){
 function getTH(){try{return JSON.parse(localStorage.getItem('leo_th')||'[]');}catch{return[];}}
 function saveTH(h){try{localStorage.setItem('leo_th',JSON.stringify(h));}catch{}}
 
+const MOBILITY = [
+  {id:'cat_cow',name:'Cat-Cow',sets:'2x10 lentas',muscles:'Coluna lombar · Coluna torácica · Core',
+   steps:['Fique em quatro apoios — mãos sob os ombros, joelhos sob os quadris','VACA: expire e deixe a barriga cair, levante o olhar e o cóccix','CAT: inspire e arqueie as costas para cima como um gato','Alterne os dois movimentos em ritmo lento e contínuo','Foque em sentir cada vértebra se mover — sem pressa'],
+   tip:'Nunca force — movimento suave e respirado. Excelente para lombar crônica.',
+   yt:'https://www.youtube.com/results?search_query=cat+cow+exercicio+coluna+como+fazer'},
+  {id:'hip_9090',name:'Hip 90/90',sets:'2x45s cada lado',muscles:'Quadril · Rotadores · Piriforme · Iliopsoas',
+   steps:['Sente no chão com os dois joelhos dobrados a 90°','Perna da frente: joelho aponta para o lado, canela perpendicular','Perna de trás: joelho aponta para o lado oposto','Fique ereto e deixe o peso pressionar o quadril no chão','Incline levemente o tronco sobre a perna da frente para intensificar'],
+   tip:'Se sentir dor no joelho, coloque uma toalha dobrada sob ele.',
+   yt:'https://www.youtube.com/results?search_query=hip+90+90+mobilidade+quadril+como+fazer'},
+  {id:'couch_stretch',name:'Couch Stretch',sets:'2x45s cada lado',muscles:'Iliopsoas · Quadríceps · Flexores do quadril',
+   steps:['Fique de joelhos de frente para uma parede ou sofá','Coloque o peito do pé de uma perna apoiado na parede atrás','A outra perna vai para frente — posição de lunge','Mantenha o tronco ereto e o core ativado','Empurre os quadris levemente para frente e para baixo'],
+   tip:'ESSENCIAL para quem fica sentado 8h/dia — alivia lombar diretamente.',
+   yt:'https://www.youtube.com/results?search_query=couch+stretch+iliopsoas+como+fazer'},
+  {id:'worlds_greatest',name:"World's Greatest Stretch",sets:'3 cada lado',muscles:'Quadril · Coluna torácica · Isquiotibiais · Adutores',
+   steps:['Comece em posição de lunge com o pé direito na frente','Coloque a mão direita no chão do lado interno do pé direito','Rotacione o tronco levantando o braço direito para o teto','Abaixe o braço e empurre o quadril para trás estendendo a perna','Repita a sequência 3 vezes por lado'],
+   tip:'Um dos melhores exercícios para lombar travada — combina tudo numa sequência.',
+   yt:'https://www.youtube.com/results?search_query=worlds+greatest+stretch+como+fazer'},
+  {id:'deadbug_mob',name:'Deadbug (mobilidade)',sets:'2x8 cada lado',muscles:'Core profundo · Transverso abdominal · Lombar',
+   steps:['Deite de costas com braços para o teto e pernas em 90°','COLUNA PRESSIONADA NO CHÃO o tempo todo','Expire e estique o braço direito e a perna esquerda juntos','Expire completamente durante o movimento','Volte e alterne — lento e controlado'],
+   tip:'Se a lombar sair do chão, reduza a amplitude — qualidade antes de quantidade.',
+   yt:'https://www.youtube.com/results?search_query=dead+bug+exercicio+core+como+fazer'},
+  {id:'ankle_circles',name:'Círculos de Tornozelo',sets:'2x15 cada sentido',muscles:'Tornozelo · Ligamentos · Circulação — especial para Gota',
+   steps:['Sente ou deite com a perna levantada confortavelmente','Faça círculos lentos e amplos com o pé no sentido horário','Complete as repetições e inverta para o anti-horário','Faça com os dois pés','Pode fazer sentado durante o trabalho'],
+   tip:'Fundamental para você — melhora circulação e reduz acúmulo de ácido úrico nos tornozelos.',
+   yt:'https://www.youtube.com/results?search_query=mobilidade+tornozelo+exercicios+como+fazer'},
+];
+
 const EXERCISE_INFO = {
   supino_inclinado:{
     muscles:'Peitoral superior · Deltóide anterior · Tríceps',
-    url:'https://musclewiki.com/pt-br/dumbbells/male/chest/dumbbell-incline-bench-press/',
+    url:'https://www.youtube.com/results?search_query=supino+inclinado+halteres+como+fazer',
     steps:['Ajuste o banco a 30–45°. Sente com os halteres nos joelhos','Deite e posicione os halteres na altura do peito, cotovelos a 90°','Empurre os halteres para cima e levemente para dentro','Desça devagar em 3 segundos até sentir o peitoral alongar','Mantenha as escápulas retraídas e pressionadas no banco o tempo todo']
   },
   crucifixo:{
     muscles:'Peitoral medial · Deltóide anterior',
-    url:'https://musclewiki.com/pt-br/machine/male/chest/machine-fly/',
+    url:'https://www.youtube.com/results?search_query=crucifixo+maquina+como+fazer',
     steps:['Ajuste os braços da máquina na altura dos ombros','Sente com as costas retas, cotovelos levemente flexionados','Feche os braços como um abraço até encontrarem na frente','Abra de volta controladamente em 3 segundos','Pare antes de sentir apertar no ombro']
   },
   desenvolvimento:{
     muscles:'Deltóide anterior e medial · Trapézio',
-    url:'https://musclewiki.com/pt-br/dumbbells/male/shoulders/dumbbell-shoulder-press/',
+    url:'https://www.youtube.com/results?search_query=desenvolvimento+halteres+ombro+como+fazer',
     steps:['Sente no banco com encosto, halteres na altura dos ombros','Cotovelos a 90° e alinhados com os ombros','Empurre os halteres para cima até quase travar o cotovelo','Desça devagar de volta à posição inicial','Mantenha o core ativado — não arqueie a lombar']
   },
   elevacao_lateral:{
     muscles:'Deltóide medial · Trapézio superior',
-    url:'https://musclewiki.com/pt-br/dumbbells/male/shoulders/dumbbell-lateral-raise/',
+    url:'https://www.youtube.com/results?search_query=elevacao+lateral+halteres+como+fazer',
     steps:['Fique em pé ou sentado, halteres ao lado do corpo','Cotovelo levemente flexionado durante todo o movimento','Eleve lateralmente até paralelo ao chão — não mais','Desça controladamente em 2–3 segundos','Evite usar impulso do tronco']
   },
   facepull:{
     muscles:'Manguito rotador · Deltóide posterior · Trapézio',
-    url:'https://musclewiki.com/pt-br/cables/male/shoulders/cable-face-pull/',
+    url:'https://www.youtube.com/results?search_query=face+pull+cabo+como+fazer',
     steps:['Ajuste o cabo na altura dos olhos ou acima','Puxe a corda em direção ao rosto com os cotovelos altos','Na posição final os cotovelos ficam acima dos ombros','Pause 1 segundo na contração','NUNCA pule — protege o manguito rotador']
   },
   triceps_corda:{
     muscles:'Tríceps (todas as cabeças)',
-    url:'https://musclewiki.com/pt-br/cables/male/triceps/cable-tricep-pushdown/',
+    url:'https://www.youtube.com/results?search_query=triceps+corda+cabo+como+fazer',
     steps:['Ajuste o cabo no alto, pegue a corda com pegada neutra','Cotovelos fixos ao lado do corpo durante todo o movimento','Empurre para baixo até estender completamente','Separe as mãos na corda ao final do movimento','Suba devagar sem deixar os cotovelos abrirem']
   },
   remada_baixa:{
     muscles:'Latíssimo · Rômboides · Bíceps · Lombar',
-    url:'https://musclewiki.com/pt-br/cables/male/back/cable-seated-row/',
+    url:'https://www.youtube.com/results?search_query=remada+baixa+cabo+como+fazer',
     steps:['Sente no aparelho com os pés apoiados na plataforma','Pegue o triângulo ou barra com a coluna reta','Puxe até o cabo tocar o abdômen, cotovelos perto do corpo','Pause brevemente com as escápulas retraídas','Estique os braços devagar — não curve a lombar no final']
   },
   pulldown:{
     muscles:'Latíssimo · Redondo maior · Bíceps',
-    url:'https://musclewiki.com/pt-br/cables/male/back/cable-lat-pulldown/',
+    url:'https://www.youtube.com/results?search_query=pulldown+barra+larga+como+fazer',
     steps:['Ajuste o joelheiro para fixar bem na máquina','Pegue a barra mais larga que os ombros','Puxe a barra até a linha do queixo ou clavícula','Deixe o ombro descer no final da subida — não trave','Subida devagar em 3 segundos']
   },
   remada_uni:{
     muscles:'Latíssimo · Rômboides · Bíceps · Core',
-    url:'https://musclewiki.com/pt-br/dumbbells/male/back/dumbbell-bent-over-row/',
+    url:'https://www.youtube.com/results?search_query=remada+unilateral+halter+como+fazer',
     steps:['Apoie o joelho e a mão no banco formando um L','Segure o halter com o braço estendido abaixo do ombro','Puxe o halter até o quadril, cotovelo para trás','Não gire o tronco — movimento vem das costas','Desça devagar sentindo o latíssimo alongar']
   },
   rosca_ez:{
     muscles:'Bíceps braquial · Braquiorradial',
-    url:'https://musclewiki.com/pt-br/barbell/male/biceps/barbell-curl/',
+    url:'https://www.youtube.com/results?search_query=rosca+barra+ez+como+fazer',
     steps:['Fique em pé com a barra EZ, palmas para cima','Cotovelos fixos ao lado do corpo','Curve os braços até a barra chegar perto dos ombros','Desça devagar em 3 segundos','Sem balanço do tronco — se balançar, reduza a carga']
   },
   deadbug:{
     muscles:'Core profundo · Transverso abdominal · Lombar',
-    url:'https://musclewiki.com/pt-br/bodyweight/male/abdominals/dead-bug/',
+    url:'https://www.youtube.com/results?search_query=dead+bug+exercicio+core+como+fazer',
     steps:['Deite de costas com braços estendidos para o teto','Pernas em 90° com os joelhos dobrados','COLUNA PRESSIONADA NO CHÃO o tempo todo','Estique o braço direito e a perna esquerda simultaneamente','Volte e alterne os lados — expira ao estender']
   },
   prancha:{
     muscles:'Core · Reto abdominal · Glúteos · Ombros',
-    url:'https://musclewiki.com/pt-br/bodyweight/male/abdominals/plank/',
+    url:'https://www.youtube.com/results?search_query=prancha+abdominal+como+fazer',
     steps:['Apoie os cotovelos no chão abaixo dos ombros','Corpo em linha reta da cabeça aos calcanhares','Não deixe o quadril subir nem descer','Respire normalmente — não prenda a respiração','Contraia o abdômen como se fosse levar um soco']
   },
   agachamento:{
     muscles:'Quadríceps · Glúteo máximo · Isquiotibiais',
-    url:'https://musclewiki.com/pt-br/dumbbells/male/quads/dumbbell-goblet-squat/',
+    url:'https://www.youtube.com/results?search_query=agachamento+goblet+halter+como+fazer',
     steps:['Segure o halter verticalmente na frente do peito','Pés na largura dos ombros, levemente abertos','Desça como se fosse sentar numa cadeira atrás de você','Joelhos seguem a direção dos dedos dos pés','Costas retas — não incline excessivamente para frente']
   },
   legpress:{
     muscles:'Quadríceps · Glúteo · Isquiotibiais · Panturrilha',
-    url:'https://musclewiki.com/pt-br/machine/male/quads/machine-leg-press/',
+    url:'https://www.youtube.com/results?search_query=leg+press+45+como+fazer',
     steps:['Ajuste o assento para os joelhos ficarem a 90° no início','Pés paralelos na largura dos ombros na plataforma','Empurre até quase travar o joelho — não trave','Desça até 90° ou antes se sentir desconforto','Não deixe os joelhos se fecharem']
   },
   mesa_flex:{
     muscles:'Isquiotibiais · Gastrocnêmio',
-    url:'https://musclewiki.com/pt-br/machine/male/hamstrings/machine-lying-leg-curl/',
+    url:'https://www.youtube.com/results?search_query=mesa+flexora+como+fazer',
     steps:['Deite de bruços com os tornozelos sob a almofada','Dobre os joelhos puxando os calcanhares em direção às nádegas','Pause brevemente no topo da contração','Desça devagar em 3 segundos','Sem balanço — se usar impulso, reduza a carga']
   },
   hip_thrust:{
     muscles:'Glúteo máximo · Isquiotibiais · Core',
-    url:'https://musclewiki.com/pt-br/barbell/male/glutes/barbell-hip-thrust/',
+    url:'https://www.youtube.com/results?search_query=hip+thrust+gluteo+como+fazer',
     steps:['Apoie as costas/ombros num banco firme','Barra ou peso sobre os quadris, pés no chão','Empurre os quadris para cima até o corpo ficar horizontal','Esprema o glúteo FORTE no topo — pause 1 segundo','Desça devagar sem deixar o quadril tocar o chão']
   },
   cadeira_ext:{
     muscles:'Quadríceps (isolado)',
-    url:'https://musclewiki.com/pt-br/machine/male/quads/machine-leg-extension/',
+    url:'https://www.youtube.com/results?search_query=cadeira+extensora+como+fazer',
     steps:['Ajuste para o eixo do joelho alinhar com a máquina','Costas totalmente apoiadas no encosto','Estenda as pernas até quase travar — 10° antes','Pause brevemente no topo','Desça devagar — não deixe o peso bater']
   },
   panturrilha:{
     muscles:'Gastrocnêmio · Sóleo',
-    url:'https://musclewiki.com/pt-br/bodyweight/male/calves/standing-calf-raise/',
+    url:'https://www.youtube.com/results?search_query=panturrilha+em+pe+como+fazer',
     steps:['Em pé com a ponta do pé numa borda — calcanhar suspenso','Suba na ponta dos pés o máximo possível','Pause 1 segundo no topo com a contração forte','Desça até sentir o alongamento da panturrilha','Movimento lento — evite quicar']
   },
   bike_road:{
     muscles:'Quadríceps · Isquiotibiais · Glúteos · Cardiovascular',
-    url:'https://musclewiki.com/pt-br/cardio/male/quads/stationary-bike/',
+    url:'https://www.youtube.com/results?search_query=bicicleta+ergometrica+tecnica+correta',
     steps:['Ajuste o selim para a perna quase estendida no ponto mais baixo','Mantenha ritmo conversacional — consegue falar frases completas','Pedale com a parte central/dianteira do pé','Mantenha o core levemente ativado','Se tornozelo incomodar, prefira a ergométrica em casa']
   }
 };
@@ -1122,17 +1149,98 @@ function rTreinoDin(){
   }
   html += '</div>';
 
-  // ── REST DAY ──
-  if(wkey==='REST'){
-    html += '<div class="card">';
-    html += '<div style="font-family:Syne,sans-serif;font-size:18px;font-weight:700;color:var(--t3);margin-bottom:6px">DESCANSO</div>';
-    html += '<p style="font-size:12px;color:var(--t3);margin-bottom:10px">Recuperacao e onde o corpo muda.</p>';
-    if(hasPain) html += '<div class="ws-strip ws-y"><span>💡</span><div>Incomodo registrado. Gelo 15min. Evite cargas.</div></div>';
-    html += '<div class="ct" style="margin-top:8px">Mobilidade opcional</div>';
-    [{n:'Cat-Cow',s:'2x10',f:'Lombar'},{n:'Hip 90/90',s:'2x45s cada',f:'Quadril'},{n:'Couch Stretch',s:'2x45s cada',f:'Iliopsoas'},{n:'Deadbug',s:'2x8 cada',f:'Core'},{n:'Circulos tornozelo',s:'2x15 cada',f:'Tornozelo'}].forEach(m=>{
-      html += `<div style="display:flex;gap:8px;padding:7px 0;border-bottom:1px solid var(--br)"><div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--a);min-width:70px">${m.s}</div><div><div style="font-size:12px">${m.n}</div><div style="font-size:10px;color:var(--t3)">${m.f}</div></div></div>`;
-    });
+  // ── REST DAY — full mobility protocol with instructions ──
+  if(wkey==='REST' && !treinoGerado){
+    html += '<div class="card" style="text-align:center;padding:24px 16px">';
+    html += '<div style="font-size:32px;margin-bottom:8px">🧘</div>';
+    html += '<div style="font-family:Syne,sans-serif;font-size:16px;font-weight:700;margin-bottom:4px">Dia de Descanso</div>';
+    html += `<div style="font-size:12px;color:var(--t3);margin-bottom:14px;line-height:1.6">Hoje é dia de recuperação.<br>Clique para gerar o protocolo de mobilidade.</div>`;
+    if(hasPain) html += '<div class="ws-strip ws-y" style="text-align:left"><span>💡</span><div>Incomodo registrado. Após a mobilidade, aplique gelo 15 min nas regioes afetadas.</div></div>';
+    html += `<button onclick="gerarTreino()" style="width:100%;padding:13px;border-radius:10px;border:none;background:var(--a);color:#000;font-family:Syne,sans-serif;font-size:14px;font-weight:700;cursor:pointer">Criar Protocolo de Mobilidade →</button>`;
     html += '</div></div>';
+    return html;
+  }
+  if(wkey==='REST' && treinoGerado){
+    // Status bar for mobility
+    const mobDone = MOBILITY.filter(m=>doneEx.has(m.id));
+    const mobPct = Math.round(mobDone.length/MOBILITY.length*100);
+    const mobAllDone = mobDone.length===MOBILITY.length;
+    html += `<div class="status-row">
+      <div style="font-size:20px">🧘</div>
+      <div><div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:1px">Recuperação Ativa</div>
+        <div class="sr-main">MOBILIDADE</div>
+        <div class="sr-sub">20–25 min · Lombar · Quadril · Tornozelo</div>
+      </div>
+      <div style="margin-left:auto;text-align:right">
+        <div style="font-family:'DM Mono',monospace;font-size:22px;color:var(--aw)">${mobDone.length}/${MOBILITY.length}</div>
+        <div style="font-size:10px;color:var(--t3)">feitos</div>
+      </div>
+    </div>`;
+    html += `<div class="comp-bar"><div class="comp-fill" style="width:${mobPct}%"></div></div>`;
+    html += `<div class="comp-txt"><span>Progresso</span><span>${mobDone.length}/${MOBILITY.length} · ${mobPct}%</span></div>`;
+    html += '<div style="font-size:10px;color:var(--t3);margin-bottom:8px;letter-spacing:.05em">TOQUE PARA VER COMO FAZER</div>';
+    MOBILITY.forEach((mob,i)=>{
+      const isDone = doneEx.has(mob.id);
+      const isOpen = openCards.has(mob.id);
+      html += `<div class="ex-card">
+        <div class="ex-hdr" onclick="toggleCard('${mob.id}')">
+          <div class="ex-num" style="${isDone?'background:rgba(0,229,160,.18);color:var(--a)':''}">${isDone?'✓':i+1}</div>
+          <div class="ex-inf">
+            <div class="ex-nm" style="${isDone?'opacity:.45':''}">${mob.name}</div>
+            <div class="ex-mt"><span class="ex-sets">${mob.sets}</span><span class="ex-tag tg-g">MOBILIDADE</span></div>
+          </div>
+          <div style="font-size:14px;flex-shrink:0">${isDone?'✅':'○'}</div>
+          <div class="ex-arr ${isOpen?'open':''}" style="margin-left:4px">▼</div>
+        </div>`;
+      if(isOpen){
+        html += `<div class="ex-body open">`;
+        // Muscles
+        html += `<div style="display:flex;align-items:flex-start;gap:8px;padding:10px 12px;background:rgba(0,229,160,.05);border-bottom:1px solid var(--br)">
+          <span style="font-size:14px;flex-shrink:0">💪</span>
+          <div><div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px">Músculos / Área</div>
+          <div style="font-size:12px;color:var(--a);font-weight:600">${mob.muscles}</div></div>
+        </div>`;
+        // Steps
+        html += `<div style="padding:10px 12px;border-bottom:1px solid var(--br)">
+          <div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Como fazer</div>`;
+        mob.steps.forEach((step,si)=>{
+          html += `<div style="display:flex;gap:8px;margin-bottom:6px">
+            <span style="width:18px;height:18px;border-radius:50%;background:var(--a2);color:#000;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">${si+1}</span>
+            <span style="font-size:12px;color:var(--t);line-height:1.5">${step}</span>
+          </div>`;
+        });
+        html += `</div>`;
+        // Tip
+        html += `<div style="display:flex;gap:8px;align-items:flex-start;padding:8px 12px;background:rgba(255,179,71,.05);border-bottom:1px solid var(--br)">
+          <span style="font-size:13px;flex-shrink:0">⚠️</span>
+          <span style="font-size:11px;color:var(--aw);line-height:1.5">${mob.tip}</span>
+        </div>`;
+        // YouTube
+        html += `<div style="padding:10px 12px;border-bottom:1px solid var(--br)">
+          <a href="${mob.yt}" target="_blank" style="display:flex;align-items:center;justify-content:space-between;text-decoration:none;padding:10px 12px;background:var(--bg2);border:1px solid var(--br);border-radius:8px">
+            <div style="display:flex;align-items:center;gap:8px">
+              <span style="font-size:16px">🎬</span>
+              <div><div style="font-size:12px;font-weight:600;color:var(--t)">Ver no YouTube</div>
+              <div style="font-size:10px;color:var(--t3)">Abre busca de vídeos demonstrativos</div></div>
+            </div>
+            <span style="color:var(--a);font-size:14px">→</span>
+          </a>
+        </div>`;
+        html += `<button class="ex-done-btn ${isDone?'done':''}" onclick="toggleDone(event,'${mob.id}')">${isDone?'✅ Concluido — toque para desfazer':'✓ Marcar como feito'}</button>`;
+        html += `</div>`;
+      }
+      html += `</div>`;
+    });
+    // Concludir button
+    html += `<div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--br)">`;
+    if(mobAllDone){
+      html += '<div class="ws-strip ws-g" style="margin-bottom:10px"><span>🎉</span><div><strong>Mobilidade concluída!</strong> Beba água e descanse bem.</div></div>';
+      html += `<button onclick="concluirTreino()" style="width:100%;padding:14px;border-radius:12px;border:none;background:var(--a);color:#000;font-family:Syne,sans-serif;font-size:15px;font-weight:700;cursor:pointer">🏁 Concluir e Salvar</button>`;
+    } else {
+      html += `<button onclick="concluirTreino()" style="width:100%;padding:12px;border-radius:12px;border:1px solid var(--br);background:var(--bg3);color:var(--t3);font-family:Syne,sans-serif;font-size:13px;font-weight:600;cursor:pointer">Encerrar sem salvar</button>`;
+    }
+    html += '</div>';
+    html += '</div>';
     return html;
   }
 
@@ -1260,8 +1368,8 @@ function rTreinoDin(){
             <a href="${info.url}" target="_blank" style="display:flex;align-items:center;justify-content:space-between;text-decoration:none;padding:10px 12px;background:var(--bg2);border:1px solid var(--br);border-radius:8px">
               <div style="display:flex;align-items:center;gap:8px">
                 <span style="font-size:16px">🎬</span>
-                <div><div style="font-size:12px;font-weight:600;color:var(--t)">Ver no MuscleWiki</div>
-                <div style="font-size:10px;color:var(--t3)">Vídeo com demonstração completa</div></div>
+                <div><div style="font-size:12px;font-weight:600;color:var(--t)">🎬 Ver no YouTube</div>
+                <div style="font-size:10px;color:var(--t3)">Abre busca de vídeos demonstrativos</div></div>
               </div>
               <span style="color:var(--a);font-size:14px">→</span>
             </a>
