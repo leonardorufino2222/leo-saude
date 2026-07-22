@@ -845,127 +845,241 @@ const DAY_SHORT=['DOM','SEG','TER','QUA','QUI','SEX','SAB'];
 function getTH(){try{return JSON.parse(localStorage.getItem('leo_th')||'[]');}catch{return[];}}
 function saveTH(h){try{localStorage.setItem('leo_th',JSON.stringify(h));}catch{}}
 
-function togglePain(id){if(activePain.has(id))activePain.delete(id);else activePain.add(id);doneEx.clear();openCards.clear();renderTreino();}
-function clearPain(){activePain.clear();doneEx.clear();openCards.clear();renderTreino();}
-function selDayFn(i){selDay=i;doneEx.clear();openCards.clear();renderTreino();}
-function toggleCard(id){if(openCards.has(id))openCards.delete(id);else openCards.add(id);renderTreino();}
-function toggleDone(e,id){e.stopPropagation();if(doneEx.has(id))doneEx.delete(id);else doneEx.add(id);renderTreino();}
-function finishSession(){
-  const wk=WORKOUTS[WEEK_MAP[selDay]];
-  const active=wk.exercises.filter(ex=>ex.risks.filter(r=>activePain.has(r)).length===0||ex.sub);
-  const h=getTH();
-  const now=new Date();
-  h.unshift({date:now.toLocaleDateString('pt-BR',{weekday:'short',day:'numeric',month:'short'})+' '+now.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}),ts:now.getTime(),workout:wk.label,type:wk.type,done:doneEx.size,total:active.length,kcal:wk.kcal,duration:wk.duration,pains:[...activePain].map(pid=>PAIN_ZONES.find(z=>z.id===pid)?.name).filter(Boolean)});
-  if(h.length>60)h.pop();
-  saveTH(h);doneEx.clear();openCards.clear();renderTreino();toast('Treino salvo!');
-}
+// ===== TREINO DINAMICO =====
+let painOpen = true;   // pain panel collapsed state
+let treinoGerado = false; // workout generated?
 
 function renderTreino(){
-  document.getElementById('content').innerHTML=rTreinoDin();
+  document.getElementById('content').innerHTML = rTreinoDin();
 }
 
+function gerarTreino(){
+  treinoGerado = true;
+  painOpen = false;
+  renderTreino();
+}
+
+function concluirTreino(){
+  const wk = WORKOUTS[WEEK_MAP[selDay]];
+  const active = wk.exercises.filter(ex => ex.risks.filter(r => activePain.has(r)).length === 0 || ex.sub);
+  const h = getTH();
+  const now = new Date();
+  h.unshift({
+    date: now.toLocaleDateString('pt-BR',{weekday:'short',day:'numeric',month:'short'}) + ' ' + now.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}),
+    ts: now.getTime(), workout: wk.label, type: wk.type,
+    done: doneEx.size, total: active.length,
+    kcal: wk.kcal, duration: wk.duration,
+    pains: [...activePain].map(pid => PAIN_ZONES.find(z => z.id === pid)?.name).filter(Boolean)
+  });
+  if(h.length > 60) h.pop();
+  saveTH(h);
+  // Reset for next time
+  doneEx.clear(); openCards.clear();
+  treinoGerado = false; painOpen = true;
+  renderTreino();
+  toast('Treino salvo!');
+}
+
+function togglePain(id){
+  if(activePain.has(id)) activePain.delete(id); else activePain.add(id);
+  doneEx.clear(); openCards.clear();
+  treinoGerado = false;
+  renderTreino();
+}
+function clearPain(){ activePain.clear(); doneEx.clear(); openCards.clear(); treinoGerado=false; renderTreino(); }
+function selDayFn(i){ selDay=i; doneEx.clear(); openCards.clear(); treinoGerado=false; renderTreino(); }
+function togglePainPanel(){ painOpen=!painOpen; renderTreino(); }
+function toggleCard(id){ if(openCards.has(id)) openCards.delete(id); else openCards.add(id); renderTreino(); }
+function toggleDone(e,id){ e.stopPropagation(); if(doneEx.has(id)) doneEx.delete(id); else doneEx.add(id); renderTreino(); }
+
+function getTH(){try{return JSON.parse(localStorage.getItem('leo_th')||'[]');}catch{return[];}}
+function saveTH(h){try{localStorage.setItem('leo_th',JSON.stringify(h));}catch{}}
+
 function rTreinoDin(){
-  const wkey=WEEK_MAP[selDay];
-  const wk=WORKOUTS[wkey];
-  const painNames=[...activePain].map(pid=>PAIN_ZONES.find(z=>z.id===pid)?.name).filter(Boolean);
-  let html='<div class="page act">';
+  const wkey = WEEK_MAP[selDay];
+  const wk = WORKOUTS[wkey];
+  const painNames = [...activePain].map(pid => PAIN_ZONES.find(z => z.id === pid)?.name).filter(Boolean);
 
-  // Pain grid
-  html+='<div class="card"><div class="ct">O que doi hoje?</div><div class="pain-grid">';
-  PAIN_ZONES.forEach(z=>{
-    const chk=activePain.has(z.id);
-    html+=`<div class="pain-item${chk?' checked':''}" onclick="togglePain('${z.id}')"><span class="pain-dot">${z.emoji}</span><span class="pain-name">${z.name}</span><span class="pain-check">${chk?'✓':''}</span></div>`;
+  let html = '<div class="page act">';
+
+  // ── DAY SELECTOR ──
+  html += '<div class="day-sel">';
+  DAY_SHORT.forEach((d,i) => {
+    const k = WEEK_MAP[i], isAct = i===selDay, isRest = k==='REST';
+    html += `<button class="dsb${isAct?' act':''}${isRest?' rest-d':''}" onclick="selDayFn(${i})">${d}<br><span style="font-size:8px;opacity:.6">${isRest?'desc':k==='BIKE'?'bike':'treino'}</span></button>`;
   });
-  html+='</div>';
-  if(activePain.size>0) html+='<button onclick="clearPain()" style="width:100%;padding:7px;border-radius:7px;border:1px solid var(--br);background:transparent;color:var(--t3);font-family:Syne,sans-serif;font-size:11px;cursor:pointer;margin-top:6px">Limpar selecao</button>';
-  html+='</div>';
+  html += '</div>';
 
-  // Day selector
-  html+='<div class="day-sel">';
-  DAY_SHORT.forEach((d,i)=>{
-    const k=WEEK_MAP[i];
-    const isAct=i===selDay;
-    const isRest=k==='REST';
-    html+=`<button class="dsb${isAct?' act':''}${isRest?' rest-d':''}" onclick="selDayFn(${i})">${d}<br><span style="font-size:8px;opacity:.6">${isRest?'desc':k==='BIKE'?'bike':'treino'}</span></button>`;
-  });
-  html+='</div>';
+  // ── PAIN PANEL ──
+  const hasPain = activePain.size > 0;
+  html += `<div class="card" style="margin-bottom:10px">`;
+  html += `<div onclick="togglePainPanel()" style="display:flex;justify-content:space-between;align-items:center;cursor:pointer">`;
+  html += `<div class="ct" style="margin-bottom:0">O que doi hoje?${hasPain ? ` <span style="color:var(--a3);font-size:10px">(${activePain.size} marcado)</span>` : ''}</div>`;
+  html += `<span style="color:var(--t3);font-size:14px;transition:transform .2s;display:inline-block;transform:rotate(${painOpen?'180':'0'}deg)">▼</span>`;
+  html += `</div>`;
 
-  if(wkey==='REST'){
-    html+='<div class="card">';
-    html+='<div style="font-family:Syne,sans-serif;font-size:18px;font-weight:700;color:var(--t3);margin-bottom:6px">DESCANSO</div>';
-    html+='<p style="font-size:12px;color:var(--t3);margin-bottom:10px">Recuperacao e onde o corpo muda.</p>';
-    if(activePain.size>0) html+='<div class="ws-strip ws-y"><span>💡</span><div>Dores marcadas. Gelo 15min. Evite cargas.</div></div>';
-    html+='<div class="ct" style="margin-top:8px">Mobilidade opcional</div>';
-    [{n:'Cat-Cow',s:'2x10',f:'Lombar'},{n:'Hip 90/90',s:'2x45s cada',f:'Quadril'},{n:'Couch Stretch',s:'2x45s cada',f:'Iliopsoas'},{n:'Deadbug',s:'2x8 cada',f:'Core'},{n:'Circulos tornozelo',s:'2x15 cada',f:'Tornozelo'}].forEach(m=>{
-      html+=`<div style="display:flex;gap:8px;padding:7px 0;border-bottom:1px solid var(--br)"><div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--a);min-width:70px">${m.s}</div><div><div style="font-size:12px">${m.n}</div><div style="font-size:10px;color:var(--t3)">${m.f}</div></div></div>`;
+  if(painOpen){
+    html += '<div style="margin-top:10px"><div class="pain-grid">';
+    PAIN_ZONES.forEach(z => {
+      const chk = activePain.has(z.id);
+      html += `<div class="pain-item${chk?' checked':''}" onclick="togglePain('${z.id}')">`;
+      html += `<span class="pain-dot">${z.emoji}</span>`;
+      html += `<span class="pain-name">${z.name}</span>`;
+      html += `<span class="pain-check">${chk?'✓':''}</span>`;
+      html += `</div>`;
     });
-    html+='</div></div>';
+    html += '</div>';
+    if(hasPain) html += `<button onclick="clearPain()" style="width:100%;padding:7px;border-radius:7px;border:1px solid var(--br);background:transparent;color:var(--t3);font-family:Syne,sans-serif;font-size:11px;cursor:pointer;margin-top:8px">Limpar selecao</button>`;
+    // CRIAR TREINO button
+    html += `<button onclick="gerarTreino()" style="width:100%;margin-top:8px;padding:12px;border-radius:10px;border:none;background:var(--a);color:#000;font-family:Syne,sans-serif;font-size:14px;font-weight:700;cursor:pointer">Criar Treino →</button>`;
+    html += '</div>';
+  }
+  html += '</div>';
+
+  // ── REST DAY ──
+  if(wkey === 'REST'){
+    html += '<div class="card"><div style="font-family:Syne,sans-serif;font-size:18px;font-weight:700;color:var(--t3);margin-bottom:6px">DESCANSO</div>';
+    html += '<p style="font-size:12px;color:var(--t3);margin-bottom:10px">Recuperacao e onde o corpo muda.</p>';
+    if(hasPain) html += '<div class="ws-strip ws-y"><span>💡</span><div>Dores marcadas. Gelo 15min. Evite cargas.</div></div>';
+    html += '<div class="ct" style="margin-top:8px">Mobilidade opcional</div>';
+    [{n:'Cat-Cow',s:'2x10',f:'Lombar'},{n:'Hip 90/90',s:'2x45s cada',f:'Quadril'},{n:'Couch Stretch',s:'2x45s cada',f:'Iliopsoas'},{n:'Deadbug',s:'2x8 cada',f:'Core'},{n:'Circulos tornozelo',s:'2x15 cada',f:'Tornozelo'}].forEach(m => {
+      html += `<div style="display:flex;gap:8px;padding:7px 0;border-bottom:1px solid var(--br)"><div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--a);min-width:70px">${m.s}</div><div><div style="font-size:12px">${m.n}</div><div style="font-size:10px;color:var(--t3)">${m.f}</div></div></div>`;
+    });
+    html += '</div></div>';
     return html;
   }
 
-  const analyzed=wk.exercises.map(ex=>{
-    const conf=ex.risks.filter(r=>activePain.has(r));
-    return Object.assign({},ex,{status:conf.length===0?'safe':(ex.sub?'substituted':'blocked')});
+  // ── TREINO NOT GENERATED YET ──
+  if(!treinoGerado){
+    html += `<div class="card" style="text-align:center;padding:28px 16px">`;
+    html += `<div style="font-size:32px;margin-bottom:10px">💪</div>`;
+    html += `<div style="font-family:Syne,sans-serif;font-size:16px;font-weight:700;margin-bottom:6px">Pronto para treinar?</div>`;
+    html += `<div style="font-size:12px;color:var(--t3);margin-bottom:16px">Marque o que doi acima e clique em Criar Treino.<br>Se nao doi nada, clique diretamente.</div>`;
+    html += `<button onclick="gerarTreino()" style="width:100%;padding:14px;border-radius:12px;border:none;background:var(--a);color:#000;font-family:Syne,sans-serif;font-size:15px;font-weight:700;cursor:pointer">Criar Treino →</button>`;
+    html += `</div>`;
+    html += '</div>';
+    return html;
+  }
+
+  // ── WORKOUT GENERATED ──
+  const analyzed = wk.exercises.map(ex => {
+    const conf = ex.risks.filter(r => activePain.has(r));
+    return Object.assign({}, ex, {status: conf.length===0 ? 'safe' : (ex.sub ? 'substituted' : 'blocked')});
   });
-  const blocked=analyzed.filter(e=>e.status==='blocked').length;
-  const subst=analyzed.filter(e=>e.status==='substituted').length;
-  const active=analyzed.filter(e=>e.status!=='blocked');
-  const allBlocked=active.length===0&&wk.exercises.length>0;
+  const blocked = analyzed.filter(e => e.status==='blocked').length;
+  const subst   = analyzed.filter(e => e.status==='substituted').length;
+  const active  = analyzed.filter(e => e.status!=='blocked');
+  const allBlocked = active.length===0 && wk.exercises.length>0;
 
-  let sText=wk.label,sClass='';
-  if(activePain.size>0&&allBlocked){sText='BLOQUEADO';sClass='red';}
-  else if(activePain.size>0&&(blocked>0||subst>0)){sText=wk.label+' ADAPTADO';sClass='yellow';}
+  let sText = wk.label, sClass = '';
+  if(hasPain && allBlocked){ sText='BLOQUEADO'; sClass='red'; }
+  else if(hasPain && (blocked>0||subst>0)){ sText=wk.label+' ADAPTADO'; sClass='yellow'; }
 
-  html+=`<div class="status-row"><div style="font-size:20px">${activePain.size>0&&allBlocked?'🚫':activePain.size>0&&(blocked||subst)?'⚠️':'✅'}</div><div><div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:1px">${wk.type}</div><div class="sr-main ${sClass}">${sText}</div><div class="sr-sub">${wk.duration} min · ${wk.kcal} kcal</div></div><div style="margin-left:auto;text-align:right"><div style="font-family:'DM Mono',monospace;font-size:22px;color:var(--aw)">${doneEx.size}/${active.length}</div><div style="font-size:10px;color:var(--t3)">feitos</div></div></div>`;
+  html += `<div class="status-row">
+    <div style="font-size:20px">${hasPain&&allBlocked?'🚫':hasPain&&(blocked||subst)?'⚠️':'✅'}</div>
+    <div>
+      <div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:1px">${wk.type}</div>
+      <div class="sr-main ${sClass}">${sText}</div>
+      <div class="sr-sub">${wk.duration} min · ${wk.kcal} kcal</div>
+    </div>
+    <div style="margin-left:auto;text-align:right">
+      <div style="font-family:'DM Mono',monospace;font-size:22px;color:var(--aw)">${doneEx.size}/${active.length}</div>
+      <div style="font-size:10px;color:var(--t3)">feitos</div>
+    </div>
+  </div>`;
 
-  if(activePain.size>0) html+=`<div class="ws-strip ws-r"><span>⚠️</span><div><strong>Dor: ${painNames.join(', ')}</strong> — ${blocked} removido · ${subst} substituido</div></div>`;
-  if(allBlocked) html+='<div class="card"><div style="font-size:16px;font-weight:700;color:var(--a3);margin-bottom:6px">TREINO INCOMPATIVEL</div><div style="font-size:12px;color:var(--t3)">Opcoes: ergometrica 20 min ou mobilidade.</div></div>';
+  if(hasPain) html += `<div class="ws-strip ws-r"><span>⚠️</span><div><strong>Dor: ${painNames.join(', ')}</strong> — ${blocked} removido · ${subst} substituido</div></div>`;
+  if(allBlocked) html += '<div class="card"><div style="font-size:16px;font-weight:700;color:var(--a3);margin-bottom:6px">TREINO INCOMPATIVEL</div><div style="font-size:12px;color:var(--t3)">Opcoes: ergometrica 20 min ou mobilidade.</div></div>';
 
   if(!allBlocked){
-    const pct=active.length?Math.round(doneEx.size/active.length*100):0;
-    html+=`<div class="comp-bar"><div class="comp-fill" style="width:${pct}%"></div></div><div class="comp-txt"><span>Progresso da sessao</span><span>${doneEx.size}/${active.length} · ${pct}%</span></div>`;
-    html+='<div style="font-size:10px;color:var(--t3);margin-bottom:8px">TOQUE PARA VER COMO FAZER</div>';
+    const pct = active.length ? Math.round(doneEx.size/active.length*100) : 0;
+    html += `<div class="comp-bar"><div class="comp-fill" style="width:${pct}%"></div></div>`;
+    html += `<div class="comp-txt"><span>Progresso</span><span>${doneEx.size}/${active.length} · ${pct}%</span></div>`;
+    html += '<div style="font-size:10px;color:var(--t3);margin-bottom:8px">TOQUE NO EXERCICIO PARA VER COMO FAZER</div>';
 
-    analyzed.forEach((ex,i)=>{
-      const isDone=doneEx.has(ex.id);
-      const isOpen=openCards.has(ex.id);
-      const nm=ex.status==='substituted'?ex.sub.name:ex.name;
-      const st=ex.status==='substituted'?ex.sub.sets:ex.sets;
-      const svgk=SVG[ex.id]?ex.id:'default_ex';
+    analyzed.forEach((ex,i) => {
+      const isDone = doneEx.has(ex.id);
+      const isOpen = openCards.has(ex.id);
+      const nm = ex.status==='substituted' ? ex.sub.name : ex.name;
+      const st = ex.status==='substituted' ? ex.sub.sets : ex.sets;
+      const svgContent = SVG[ex.id] || SVG['default_ex'] || '';
 
       if(ex.status==='blocked'){
-        const painList=ex.risks.filter(r=>activePain.has(r)).map(r=>PAIN_ZONES.find(z=>z.id===r)?.name).filter(Boolean).join(', ');
-        html+=`<div class="ex-card blocked"><div class="ex-hdr" style="cursor:default"><div class="ex-num">✕</div><div class="ex-inf"><div class="ex-nm">${ex.name}</div><div class="ex-mt"><span class="ex-sets">${ex.sets}</span><span class="ex-tag tg-r">BLOQUEADO</span></div></div></div><div class="ex-reason">Agrava: ${painList}</div></div>`;
+        const painList = ex.risks.filter(r=>activePain.has(r)).map(r=>PAIN_ZONES.find(z=>z.id===r)?.name).filter(Boolean).join(', ');
+        html += `<div class="ex-card blocked">
+          <div class="ex-hdr" style="cursor:default">
+            <div class="ex-num">✕</div>
+            <div class="ex-inf">
+              <div class="ex-nm">${ex.name}</div>
+              <div class="ex-mt"><span class="ex-sets">${ex.sets}</span><span class="ex-tag tg-r">BLOQUEADO</span></div>
+            </div>
+          </div>
+          <div class="ex-reason">Agrava: ${painList}</div>
+        </div>`;
         return;
       }
 
-      html+=`<div class="ex-card ${ex.status}"><div class="ex-hdr" onclick="toggleCard('${ex.id}')"><div class="ex-num" style="${isDone?'background:rgba(0,229,160,.18);color:var(--a)':''}">${isDone?'✓':i+1}</div><div class="ex-inf"><div class="ex-nm" style="${isDone?'opacity:.45':''}">${nm}</div><div class="ex-mt"><span class="ex-sets">${st} · ${ex.focus}</span>${ex.status==='substituted'?'<span class="ex-tag tg-y">SUBSTITUTO</span>':'<span class="ex-tag tg-g">OK</span>'}</div></div><div style="font-size:14px">${isDone?'✅':'○'}</div><div class="ex-arr ${isOpen?'open':''}" style="margin-left:4px">▼</div></div>`;
-      html+=`<div class="ex-body ${isOpen?'open':''}">`;
-      if(ex.status==='substituted') html+=`<div class="ex-sub-r">Substituido: ${ex.sub.reason}</div>`;
-      html+=`<div class="ex-svg">${SVG[svgk]||''}<div class="ex-tip">${ex.tip||''}</div></div>`;
-      html+=`<button class="ex-done-btn ${isDone?'done':''}" onclick="toggleDone(event,'${ex.id}')">${isDone?'Concluido — toque para desfazer':'Marcar como feito'}</button>`;
-      html+='</div></div>';
+      html += `<div class="ex-card ${ex.status}">
+        <div class="ex-hdr" onclick="toggleCard('${ex.id}')">
+          <div class="ex-num" style="${isDone?'background:rgba(0,229,160,.18);color:var(--a)':''}">${isDone?'✓':i+1}</div>
+          <div class="ex-inf">
+            <div class="ex-nm" style="${isDone?'opacity:.45':''}">${nm}</div>
+            <div class="ex-mt">
+              <span class="ex-sets">${st} · ${ex.focus}</span>
+              ${ex.status==='substituted'?'<span class="ex-tag tg-y">SUBSTITUTO</span>':'<span class="ex-tag tg-g">OK</span>'}
+            </div>
+          </div>
+          <div style="font-size:14px;flex-shrink:0">${isDone?'✅':'○'}</div>
+          <div class="ex-arr ${isOpen?'open':''}" style="margin-left:4px">▼</div>
+        </div>`;
+
+      if(isOpen){
+        html += `<div class="ex-body open">`;
+        if(ex.status==='substituted') html += `<div class="ex-sub-r">Substituido: ${ex.sub.reason}</div>`;
+        html += `<div class="ex-svg" style="padding:14px;text-align:center;background:rgba(0,0,0,.25)">`;
+        html += svgContent;
+        html += `<div class="ex-tip" style="font-size:11px;color:var(--t3);margin-top:8px;line-height:1.5">${ex.tip||''}</div>`;
+        html += `</div>`;
+        html += `<button class="ex-done-btn ${isDone?'done':''}" onclick="toggleDone(event,'${ex.id}')">${isDone?'✅ Concluido — toque para desfazer':'✓ Marcar como feito'}</button>`;
+        html += `</div>`;
+      }
+
+      html += `</div>`;
     });
 
-    if(doneEx.size===active.length&&active.length>0){
-      html+='<div class="ws-strip ws-g" style="margin-top:8px"><span>🎉</span><div><strong>Treino concluido!</strong> Proteina em ate 60 min.</div></div>';
-      html+='<button class="save-sess-btn" onclick="finishSession()">Salvar no Historico</button>';
+    // TREINO CONCLUÍDO button - always visible during workout
+    html += `<div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--br)">`;
+    if(doneEx.size===active.length && active.length>0){
+      html += '<div class="ws-strip ws-g"><span>🎉</span><div><strong>Treino concluido!</strong> Proteina em ate 60 min.</div></div>';
     }
+    html += `<button onclick="concluirTreino()" style="width:100%;padding:14px;border-radius:12px;border:${doneEx.size===active.length&&active.length>0?'none':'1px solid var(--br)'};background:${doneEx.size===active.length&&active.length>0?'var(--a)':'var(--bg3)'};color:${doneEx.size===active.length&&active.length>0?'#000':'var(--t3)'};font-family:Syne,sans-serif;font-size:14px;font-weight:700;cursor:pointer">`;
+    html += doneEx.size===active.length&&active.length>0 ? '🏁 Treino Concluido — Salvar' : '⏭ Encerrar treino sem salvar';
+    html += `</button></div>`;
   }
 
   // History
-  const th=getTH();
-  if(th.length>0){
-    const avgPct=Math.round(th.reduce((a,sv)=>a+(sv.total>0?sv.done/sv.total*100:0),0)/th.length);
-    html+=`<div class="sh">Historico de treinos</div><div class="h3grid"><div class="h3c"><div class="h3v">${th.length}</div><div class="h3l">Sessoes</div></div><div class="h3c"><div class="h3v">${th.reduce((a,sv)=>a+sv.kcal,0).toLocaleString('pt-BR')}</div><div class="h3l">Kcal</div></div><div class="h3c"><div class="h3v">${avgPct}%</div><div class="h3l">Media</div></div></div>`;
-    th.slice(0,5).forEach(sv=>{
-      const p=sv.total>0?Math.round(sv.done/sv.total*100):100;
-      html+=`<div class="hc"><div class="hc-date">${sv.date}</div><div class="hc-type">${sv.type}</div><div><span class="hbadge hb-ok">${sv.workout}</span>${sv.pains&&sv.pains.length?`<span class="hbadge hb-pain">Dor: ${sv.pains.join(', ')}</span>`:''}</div><div class="comp-bar" style="margin:8px 0 3px"><div class="comp-fill" style="width:${p}%"></div></div><div class="comp-txt"><span>${sv.done}/${sv.total}</span><span>${p}%</span></div></div>`;
+  const th = getTH();
+  if(th.length > 0){
+    const avgPct = Math.round(th.reduce((a,sv)=>a+(sv.total>0?sv.done/sv.total*100:0),0)/th.length);
+    html += `<div class="sh">Historico</div>
+    <div class="h3grid">
+      <div class="h3c"><div class="h3v">${th.length}</div><div class="h3l">Sessoes</div></div>
+      <div class="h3c"><div class="h3v">${th.reduce((a,sv)=>a+sv.kcal,0).toLocaleString('pt-BR')}</div><div class="h3l">Kcal</div></div>
+      <div class="h3c"><div class="h3v">${avgPct}%</div><div class="h3l">Media</div></div>
+    </div>`;
+    th.slice(0,3).forEach(sv => {
+      const p = sv.total>0 ? Math.round(sv.done/sv.total*100) : 100;
+      html += `<div class="hc">
+        <div class="hc-date">${sv.date}</div>
+        <div class="hc-type">${sv.type}</div>
+        <div><span class="hbadge hb-ok">${sv.workout}</span>${sv.pains&&sv.pains.length?`<span class="hbadge hb-pain">Dor: ${sv.pains.join(', ')}</span>`:''}</div>
+        <div class="comp-bar" style="margin:8px 0 3px"><div class="comp-fill" style="width:${p}%"></div></div>
+        <div class="comp-txt"><span>${sv.done}/${sv.total}</span><span>${p}%</span></div>
+      </div>`;
     });
-    html+=`<button onclick="if(confirm('Apagar historico?')){localStorage.removeItem('leo_th');renderTreino();}" style="width:100%;padding:8px;border-radius:7px;border:1px solid rgba(255,107,107,.3);background:transparent;color:var(--a3);font-family:Syne,sans-serif;font-size:11px;cursor:pointer;margin-top:4px">Limpar historico</button>`;
   }
 
-  html+='</div>';
+  html += '</div>';
   return html;
 }
 
