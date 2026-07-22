@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <meta name="apple-mobile-web-app-title" content="Leo Saude"/>
 <link rel="manifest" href="manifest.json"/>
-<title>Leo Saude</title>
+<title>Leo Saúde v3</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700&display=swap" rel="stylesheet"/>
 <style>
 
@@ -207,7 +207,7 @@ html,body{height:100%;background:var(--bg);color:var(--t);font-family:'Syne',san
 <body>
 <div id="app">
   <div class="topbar">
-    <div><div class="tt">Leo Saúde 💪</div><div class="td" id="topdate"></div></div>
+    <div><div class="tt">Leo Saúde 💪 <span style="font-size:9px;color:var(--t3);font-family:'DM Mono',monospace;background:var(--bg3);padding:1px 5px;border-radius:4px;border:1px solid var(--br)">v3</span></div><div class="td" id="topdate"></div></div>
     <div class="tlogo">L</div>
   </div>
   <div class="content" id="content"></div>
@@ -277,78 +277,162 @@ function rHome(){
   const pct=Math.min(100,Math.round(perd/(PI-PM)*100));
   const sem=wk(), sp=Math.round(sem/12*100);
   const ip=Math.min(98,Math.max(2,((iv-16)/(40-16))*100));
-  const di=dayKcal();
   const logs=S.logs.slice(-5).reverse();
   const h=new Date().getHours();
-
-  // day alerts
   const alls=[
-    {h:6,t:'06:00',ti:'💧 500ml água em jejum',w:'Hidratação + Gota'},
-    {h:7,t:'07:00',ti:'🥚 Café da manhã proteico',w:'3 ovos + pão integral + fruta (~380 kcal)'},
-    {h:7,t:'07:30',ti:'💊 Vit D3 (2.000UI) + Vit C (500mg)',w:'Com alimento, absorção ideal'},
-    {h:10,t:'10:00',ti:'🧘 Pausa ativa 8 min',w:'Lombar, postura — a cada 50min no trabalho'},
-    {h:10,t:'10:05',ti:'💧 300ml água',w:'Hidratação contínua — Gota'},
-    {h:13,t:'13:00',ti:'🥗 Almoço completo',w:'Não pular — base da dieta'},
-    {h:14,t:'14:00',ti:'☕ Última cafeína',w:'Meia-vida 6h — após esse horário prejudica sono'},
-    {h:15,t:'15:00',ti:'🧘 2ª pausa ativa',w:'Circulação, concentração'},
-    {h:19,t:'19:30',ti:'🍽️ Jantar leve e proteico',w:'Anabolismo noturno'},
+    {h:6,t:'06:00',ti:'💧 500ml agua em jejum',w:'Hidratacao + Gota'},
+    {h:7,t:'07:00',ti:'🥚 Cafe da manha proteico',w:'3 ovos + pao integral (~380 kcal)'},
+    {h:7,t:'07:30',ti:'💊 Vit D3 + Vit C',w:'Com alimento'},
+    {h:10,t:'10:00',ti:'🧘 Pausa ativa 8 min',w:'Lombar, postura'},
+    {h:13,t:'13:00',ti:'🥗 Almoco completo',w:'Nao pular'},
+    {h:14,t:'14:00',ti:'☕ Ultima cafeina',w:'Meia-vida 6h'},
+    {h:19,t:'19:30',ti:'🍽️ Jantar proteico',w:'Anabolismo noturno'},
     {h:21,t:'21:00',ti:'📵 Telas modo noite',w:'Melatonina protegida'},
-    {h:21,t:'21:30',ti:'🛁 Banho morno 10 min',w:'Queda de temp. corporal → sono fácil'},
-    {h:22,t:'22:00',ti:'💊 Magnésio 300mg + respiração 4-7-8',w:'Parassimpático, relaxamento muscular'},
-    {h:22,t:'22:30',ti:'🌙 Luzes apagadas — dormir',w:'Meta: 7h30 (23:00 → 06:30)'},
+    {h:22,t:'22:00',ti:'💊 Magnesio 300mg',w:'Relaxamento muscular'},
+    {h:22,t:'22:30',ti:'🌙 Dormir',w:'Meta: 7h30'},
   ];
   const prox=alls.filter(a=>a.h>=h-1).slice(0,4);
 
-  return`<div class="page act">
-  <div class="m2">
-    <div class="met ca"><div class="mv">${peso.toFixed(1)}<span class="mu">kg</span></div><div class="ml">Peso atual</div><div class="ms">Meta: ${PM} kg</div><div class="pb"><div class="pf" style="width:${100-pct}%;background:var(--a)"></div></div></div>
+  // Training history data
+  const th=JSON.parse(localStorage.getItem('leo_th')||'[]');
+
+  // Build heatmap — last 28 days
+  function buildHeatmap(){
+    const today=new Date(); today.setHours(0,0,0,0);
+    const days=[];
+    for(let i=27;i>=0;i--){
+      const d=new Date(today); d.setDate(d.getDate()-i);
+      const ds=d.toLocaleDateString('pt-BR',{weekday:'short'});
+      const iso=d.toISOString().slice(0,10);
+      // find session on that day
+      const sess=th.find(s=>s.date&&s.date.includes(d.toLocaleDateString('pt-BR',{day:'numeric',month:'short'})));
+      days.push({d,iso,ds,sess});
+    }
+    return days;
+  }
+  const heatDays=buildHeatmap();
+
+  // Stats
+  const total4w=th.slice(0,20).length;
+  const totalKcal=th.slice(0,20).reduce((a,s)=>a+s.kcal,0);
+  const avgComp=th.length?Math.round(th.slice(0,20).reduce((a,s)=>a+(s.total>0?s.done/s.total*100:0),0)/Math.min(th.length,20)):0;
+
+  let out=`<div class="page act">`;
+
+  // ── METRICS GRID ──
+  out+=`<div class="m2">
+    <div class="met ${iv>=30?'cr':iv>=25?'cw':'ca'}"><div class="mv">${peso.toFixed(1)}<span class="mu">kg</span></div><div class="ml">Peso atual</div><div class="ms">Meta: ${PM} kg</div><div class="pb"><div class="pf" style="width:${100-pct}%;background:var(--a)"></div></div></div>
     <div class="met ${iv>=30?'cr':iv>=25?'cw':'ca'}"><div class="mv">${iv}</div><div class="ml">IMC</div><div class="ms">${iv>=30?'Obesidade':iv>=25?'Sobrepeso':'Normal'} → meta &lt;25</div></div>
     <div class="met ca"><div class="mv">${perd.toFixed(1)}<span class="mu">kg</span></div><div class="ml">Perdido</div><div class="ms">${pct}% da meta</div></div>
     <div class="met cb"><div class="mv">${Math.max(0,peso-PM).toFixed(1)}<span class="mu">kg</span></div><div class="ml">Faltam</div><div class="ms">Sem ${sem}/12</div></div>
-  </div>
+  </div>`;
 
-  <div class="card">
+  // ── PROGRESS ──
+  out+=`<div class="card">
     <div class="ct">Progresso — 12 semanas</div>
     <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--t3);margin-bottom:3px"><span>${PI} kg → ${PM} kg</span><span>${pct}%</span></div>
     <div class="pb" style="height:9px"><div class="pf" style="width:${pct}%;background:linear-gradient(90deg,var(--a2),var(--a))"></div></div>
     <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--t3);margin:8px 0 3px"><span>Semana ${sem} de 12</span><span>${sp}%</span></div>
     <div class="pb"><div class="pf" style="width:${sp}%;background:var(--a2)"></div></div>
-  </div>
+  </div>`;
 
-  <div class="card">
-    <div class="ct">IMC — escala</div>
-    <div class="imcbar">
-      <div style="flex:2;background:#00b8ff;opacity:.65"></div>
-      <div style="flex:3;background:#00e5a0;opacity:.75"></div>
-      <div style="flex:2.5;background:#ffb347;opacity:.8"></div>
-      <div style="flex:2.5;background:#ff6b6b;opacity:.75"></div>
-      <div style="position:absolute;top:-3px;width:4px;height:16px;background:var(--t);border-radius:2px;left:${ip}%;transform:translateX(-50%)"></div>
+  // ── TRAINING HISTORY ──
+  out+=`<div class="card">
+    <div class="ct">Treinos — historico</div>`;
+
+  if(th.length===0){
+    out+=`<div style="text-align:center;padding:20px;color:var(--t3);font-size:13px">
+      Nenhum treino salvo ainda.<br>
+      <span style="font-size:11px">Complete um treino na aba 💪 e clique "Treino Concluido".</span>
+    </div>`;
+  } else {
+    // Stats row
+    out+=`<div class="m4" style="margin-bottom:12px">
+      <div class="met ca" style="padding:10px 6px;text-align:center"><div class="mv" style="font-size:20px">${th.length}</div><div class="ml" style="font-size:9px">Sessoes</div></div>
+      <div class="met cw" style="padding:10px 6px;text-align:center"><div class="mv" style="font-size:20px">${totalKcal.toLocaleString('pt-BR')}</div><div class="ml" style="font-size:9px">Kcal totais</div></div>
+      <div class="met cb" style="padding:10px 6px;text-align:center"><div class="mv" style="font-size:20px">${avgComp}%</div><div class="ml" style="font-size:9px">Conclusao</div></div>
+      <div class="met cp" style="padding:10px 6px;text-align:center"><div class="mv" style="font-size:20px">${th.filter(s=>s.done===s.total&&s.total>0).length}</div><div class="ml" style="font-size:9px">Completos</div></div>
+    </div>`;
+
+    // Heatmap — 4 rows of 7 days
+    out+=`<div style="font-size:10px;color:var(--t3);margin-bottom:6px;text-transform:uppercase;letter-spacing:.08em">Frequencia — 28 dias</div>`;
+    out+=`<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:14px">`;
+    const dayLabels=['D','S','T','Q','Q','S','S'];
+    dayLabels.forEach(l=>{ out+=`<div style="text-align:center;font-size:9px;color:var(--t3);font-family:'DM Mono',monospace">${l}</div>`; });
+    heatDays.forEach(day=>{
+      const hasSess=day.sess!=null;
+      const isToday=day.iso===new Date().toISOString().slice(0,10);
+      const bg=hasSess?'var(--a)':isToday?'var(--br)':'var(--bg3)';
+      const border=isToday?'1px solid var(--a2)':'1px solid transparent';
+      out+=`<div style="aspect-ratio:1;border-radius:4px;background:${bg};border:${border};display:flex;align-items:center;justify-content:center;font-size:9px;color:${hasSess?'#000':'var(--t3)'}">
+        ${hasSess?(day.sess.done===day.sess.total?'✓':'~'):''}
+      </div>`;
+    });
+    out+=`</div>`;
+
+    // Recent sessions list
+    out+=`<div style="font-size:10px;color:var(--t3);margin-bottom:6px;text-transform:uppercase;letter-spacing:.08em">Ultimas sessoes</div>`;
+    th.slice(0,5).forEach(s=>{
+      const p=s.total>0?Math.round(s.done/s.total*100):100;
+      const complete=s.done===s.total&&s.total>0;
+      out+=`<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--br)">
+        <div style="font-size:16px">${complete?'✅':'⚠️'}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:12px;font-weight:600;color:var(--t)">${s.workout}</div>
+          <div style="font-size:10px;color:var(--t3)">${s.date}${s.pains&&s.pains.length?' · Incomodo: '+s.pains.join(', '):''}</div>
+        </div>
+        <div style="text-align:right;flex-shrink:0">
+          <div style="font-family:'DM Mono',monospace;font-size:12px;color:${complete?'var(--a)':'var(--aw)'}">${s.done}/${s.total}</div>
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--t3)">${s.kcal} kcal</div>
+        </div>
+      </div>`;
+    });
+
+    if(th.length>5){
+      out+=`<div style="text-align:center;font-size:11px;color:var(--t3);padding:8px 0">+${th.length-5} sessoes anteriores</div>`;
+    }
+  }
+  out+=`</div>`;
+
+  // ── TODAY CARD ──
+  out+=`<div class="card"><div class="ct">Hoje</div>
+    <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--br)">
+      <span style="font-size:12px;color:var(--t2)">Treino</span>
+      <span class="badge bg">${dayT()==='rest'?'Descanso':dayT()==='BIKE'?'Bicicleta':'Musculacao '+dayT()}</span>
     </div>
-    <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--t3)"><span>Baixo</span><span style="color:var(--a)">Normal</span><span style="color:var(--aw)">Sobrepeso←</span><span style="color:var(--a3)">Obeso</span></div>
-  </div>
+    <div style="display:flex;justify-content:space-between;padding:7px 0">
+      <span style="font-size:12px;color:var(--t2)">Meta calorica</span>
+      <span style="font-family:'DM Mono',monospace;font-size:13px;color:${dayKcal().c}">${dayKcal().k} kcal</span>
+    </div>
+    <button onclick="go('treino')" style="margin-top:8px;padding:11px;width:100%;border-radius:9px;border:none;background:var(--a);color:#000;font-family:'Syne',sans-serif;font-size:13px;font-weight:700;cursor:pointer">Abrir Treino do Dia →</button>
+  </div>`;
 
-  <div class="card">
-    <div class="ct">Hoje — ${new Date().toLocaleDateString('pt-BR',{weekday:'long'})}</div>
-    <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--br)"><span style="font-size:12px;color:var(--t2)">Tipo de dia</span><span class="badge ${di.l.includes('Refeed')?'bw':di.l.includes('Descanso')?'bpp':'bg'}">${di.l}</span></div>
-    <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--br)"><span style="font-size:12px;color:var(--t2)">Meta calórica</span><span style="font-family:'DM Mono',monospace;font-size:13px;color:${di.c}">${di.k} kcal</span></div>
-    <div style="display:flex;justify-content:space-between;padding:7px 0"><span style="font-size:12px;color:var(--t2)">Água mínima</span><span style="font-family:'DM Mono',monospace;font-size:13px;color:var(--a2)">3,5 L</span></div>
-  </div>
-
-  <div class="card">
-    <div class="ct">Próximos alertas</div>
+  // ── PRÓXIMOS ALERTAS ──
+  out+=`<div class="card"><div class="ct">Proximos alertas</div>
     ${prox.length?prox.map(a=>`<div style="display:flex;justify-content:space-between;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--br)">
       <div><div style="font-size:12px;color:${a.h<h?'var(--t3)':'var(--t)'};${a.h<h?'text-decoration:line-through':''}">${a.ti}</div><div style="font-size:10px;color:var(--t3)">${a.w}</div></div>
       <div style="font-family:'DM Mono',monospace;font-size:11px;color:${a.h<=h?'var(--a)':'var(--aw)'};flex-shrink:0;margin-left:8px">${a.t}</div>
-    </div>`).join(''):`<div style="font-size:12px;color:var(--t3);text-align:center;padding:8px">Dia concluído 🎉</div>`}
-  </div>
-
-  ${logs.length?`<div class="card"><div class="ct">Histórico recente</div>
-    ${logs.map((l,i)=>{const p2=S.logs.slice().reverse()[i+1]?S.logs.slice().reverse()[i+1].peso:PI;const d=Math.round((l.peso-p2)*10)/10;return`<div class="hi"><div><div class="hd">${fd(l.date)}</div>${l.energia?`<div style="font-size:10px;color:var(--t3)">E:${l.energia}/10 · S:${l.sono||'—'}/10</div>`:''}</div><div style="text-align:right"><div class="hw">${l.peso.toFixed(1)} kg</div><div class="hdl" style="color:${d<0?'var(--a)':d>0?'var(--a3)':'var(--t3)'}">${d>0?'+':''}${d} kg</div></div></div>`}).join('')}
-  </div>`:''}
+    </div>`).join(''):`<div style="font-size:12px;color:var(--t3);text-align:center;padding:8px">Dia concluido 🎉</div>`}
   </div>`;
+
+  // ── PESO HISTORY ──
+  if(logs.length){
+    out+=`<div class="card"><div class="ct">Historico de peso</div>
+      ${logs.map((l,i)=>{
+        const p2=S.logs.slice().reverse()[i+1]?S.logs.slice().reverse()[i+1].peso:PI;
+        const d=Math.round((l.peso-p2)*10)/10;
+        return`<div class="hi"><div><div class="hd">${fd(l.date)}</div>${l.energia?`<div style="font-size:10px;color:var(--t3)">Energia:${l.energia}/10 · Sono:${l.sono||'—'}/10</div>`:''}</div>
+          <div style="text-align:right"><div class="hw">${l.peso.toFixed(1)} kg</div>
+          <div class="hdl" style="color:${d<0?'var(--a)':d>0?'var(--a3)':'var(--t3)'}">${d>0?'+':''}${d} kg</div></div>
+        </div>`;
+      }).join('')}
+    </div>`;
+  }
+
+  out+=`</div>`;
+  return out;
 }
 
-// ======= LOG =======
 function rLog(){
   const tl=S.logs.find(l=>l.date===td());
   return`<div class="page act">
@@ -851,6 +935,11 @@ let treinoGerado = false; // workout generated?
 
 function renderTreino(){
   document.getElementById('content').innerHTML = rTreinoDin();
+  // After HTML is in DOM, inject SVGs safely via innerHTML to avoid quote-escaping bugs
+  document.querySelectorAll('.svg-slot').forEach(el => {
+    const key = el.dataset.svgkey;
+    if(SVG[key]) el.innerHTML = SVG[key];
+  });
 }
 
 function gerarTreino(){
@@ -861,66 +950,71 @@ function gerarTreino(){
 
 function concluirTreino(){
   const wk = WORKOUTS[WEEK_MAP[selDay]];
-  const active = wk.exercises.filter(ex => ex.risks.filter(r => activePain.has(r)).length === 0 || ex.sub);
+  const active = wk.exercises.filter(ex => ex.risks.filter(r => activePain.has(r)).length===0 || ex.sub);
   const h = getTH();
   const now = new Date();
   h.unshift({
-    date: now.toLocaleDateString('pt-BR',{weekday:'short',day:'numeric',month:'short'}) + ' ' + now.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}),
+    date: now.toLocaleDateString('pt-BR',{weekday:'short',day:'numeric',month:'short'})
+         +' '+now.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}),
     ts: now.getTime(), workout: wk.label, type: wk.type,
     done: doneEx.size, total: active.length,
     kcal: wk.kcal, duration: wk.duration,
-    pains: [...activePain].map(pid => PAIN_ZONES.find(z => z.id === pid)?.name).filter(Boolean)
+    pains: [...activePain].map(pid=>PAIN_ZONES.find(z=>z.id===pid)?.name).filter(Boolean)
   });
-  if(h.length > 60) h.pop();
+  if(h.length>60) h.pop();
   saveTH(h);
-  // Reset for next time
   doneEx.clear(); openCards.clear();
-  treinoGerado = false; painOpen = true;
+  treinoGerado=false; painOpen=true;
   renderTreino();
-  toast('Treino salvo!');
+  toast('Treino salvo! 💪');
 }
 
 function togglePain(id){
   if(activePain.has(id)) activePain.delete(id); else activePain.add(id);
-  doneEx.clear(); openCards.clear();
-  treinoGerado = false;
+  doneEx.clear(); openCards.clear(); treinoGerado=false;
   renderTreino();
 }
 function clearPain(){ activePain.clear(); doneEx.clear(); openCards.clear(); treinoGerado=false; renderTreino(); }
 function selDayFn(i){ selDay=i; doneEx.clear(); openCards.clear(); treinoGerado=false; renderTreino(); }
 function togglePainPanel(){ painOpen=!painOpen; renderTreino(); }
-function toggleCard(id){ if(openCards.has(id)) openCards.delete(id); else openCards.add(id); renderTreino(); }
-function toggleDone(e,id){ e.stopPropagation(); if(doneEx.has(id)) doneEx.delete(id); else doneEx.add(id); renderTreino(); }
+function toggleCard(id){
+  if(openCards.has(id)) openCards.delete(id); else openCards.add(id);
+  renderTreino();
+}
+function toggleDone(e,id){
+  e.stopPropagation();
+  if(doneEx.has(id)) doneEx.delete(id); else doneEx.add(id);
+  renderTreino();
+}
 
 function getTH(){try{return JSON.parse(localStorage.getItem('leo_th')||'[]');}catch{return[];}}
 function saveTH(h){try{localStorage.setItem('leo_th',JSON.stringify(h));}catch{}}
 
 function rTreinoDin(){
   const wkey = WEEK_MAP[selDay];
-  const wk = WORKOUTS[wkey];
-  const painNames = [...activePain].map(pid => PAIN_ZONES.find(z => z.id === pid)?.name).filter(Boolean);
-
+  const wk   = WORKOUTS[wkey];
+  const painNames = [...activePain].map(pid=>PAIN_ZONES.find(z=>z.id===pid)?.name).filter(Boolean);
+  const hasPain   = activePain.size > 0;
   let html = '<div class="page act">';
 
   // ── DAY SELECTOR ──
   html += '<div class="day-sel">';
-  DAY_SHORT.forEach((d,i) => {
-    const k = WEEK_MAP[i], isAct = i===selDay, isRest = k==='REST';
+  DAY_SHORT.forEach((d,i)=>{
+    const k=WEEK_MAP[i], isAct=i===selDay, isRest=k==='REST';
     html += `<button class="dsb${isAct?' act':''}${isRest?' rest-d':''}" onclick="selDayFn(${i})">${d}<br><span style="font-size:8px;opacity:.6">${isRest?'desc':k==='BIKE'?'bike':'treino'}</span></button>`;
   });
   html += '</div>';
 
-  // ── PAIN PANEL ──
-  const hasPain = activePain.size > 0;
-  html += `<div class="card" style="margin-bottom:10px">`;
-  html += `<div onclick="togglePainPanel()" style="display:flex;justify-content:space-between;align-items:center;cursor:pointer">`;
-  html += `<div class="ct" style="margin-bottom:0">O que doi hoje?${hasPain ? ` <span style="color:var(--a3);font-size:10px">(${activePain.size} marcado)</span>` : ''}</div>`;
-  html += `<span style="color:var(--t3);font-size:14px;transition:transform .2s;display:inline-block;transform:rotate(${painOpen?'180':'0'}deg)">▼</span>`;
-  html += `</div>`;
+  // ── PAIN PANEL (collapsible) ──
+  html += '<div class="card" style="margin-bottom:10px">';
+  html += `<div onclick="togglePainPanel()" style="display:flex;justify-content:space-between;align-items:center;cursor:pointer;user-select:none">`;
+  html += `<div class="ct" style="margin-bottom:0">Incomodo muscular hoje?${hasPain?` <span style="color:var(--a3);font-size:10px">(${activePain.size} marcado)</span>`:''}</div>`;
+  html += `<span style="color:var(--t3);font-size:13px;display:inline-block;transform:rotate(${painOpen?'180':'0'}deg);transition:transform .2s">▼</span>`;
+  html += '</div>';
 
   if(painOpen){
     html += '<div style="margin-top:10px"><div class="pain-grid">';
-    PAIN_ZONES.forEach(z => {
+    PAIN_ZONES.forEach(z=>{
       const chk = activePain.has(z.id);
       html += `<div class="pain-item${chk?' checked':''}" onclick="togglePain('${z.id}')">`;
       html += `<span class="pain-dot">${z.emoji}</span>`;
@@ -930,51 +1024,52 @@ function rTreinoDin(){
     });
     html += '</div>';
     if(hasPain) html += `<button onclick="clearPain()" style="width:100%;padding:7px;border-radius:7px;border:1px solid var(--br);background:transparent;color:var(--t3);font-family:Syne,sans-serif;font-size:11px;cursor:pointer;margin-top:8px">Limpar selecao</button>`;
-    // CRIAR TREINO button
-    html += `<button onclick="gerarTreino()" style="width:100%;margin-top:8px;padding:12px;border-radius:10px;border:none;background:var(--a);color:#000;font-family:Syne,sans-serif;font-size:14px;font-weight:700;cursor:pointer">Criar Treino →</button>`;
+    html += `<button onclick="gerarTreino()" style="width:100%;margin-top:8px;padding:13px;border-radius:10px;border:none;background:var(--a);color:#000;font-family:Syne,sans-serif;font-size:14px;font-weight:700;cursor:pointer">Criar Treino →</button>`;
     html += '</div>';
   }
   html += '</div>';
 
   // ── REST DAY ──
-  if(wkey === 'REST'){
-    html += '<div class="card"><div style="font-family:Syne,sans-serif;font-size:18px;font-weight:700;color:var(--t3);margin-bottom:6px">DESCANSO</div>';
+  if(wkey==='REST'){
+    html += '<div class="card">';
+    html += '<div style="font-family:Syne,sans-serif;font-size:18px;font-weight:700;color:var(--t3);margin-bottom:6px">DESCANSO</div>';
     html += '<p style="font-size:12px;color:var(--t3);margin-bottom:10px">Recuperacao e onde o corpo muda.</p>';
-    if(hasPain) html += '<div class="ws-strip ws-y"><span>💡</span><div>Dores marcadas. Gelo 15min. Evite cargas.</div></div>';
+    if(hasPain) html += '<div class="ws-strip ws-y"><span>💡</span><div>Incomodo registrado. Gelo 15min. Evite cargas.</div></div>';
     html += '<div class="ct" style="margin-top:8px">Mobilidade opcional</div>';
-    [{n:'Cat-Cow',s:'2x10',f:'Lombar'},{n:'Hip 90/90',s:'2x45s cada',f:'Quadril'},{n:'Couch Stretch',s:'2x45s cada',f:'Iliopsoas'},{n:'Deadbug',s:'2x8 cada',f:'Core'},{n:'Circulos tornozelo',s:'2x15 cada',f:'Tornozelo'}].forEach(m => {
+    [{n:'Cat-Cow',s:'2x10',f:'Lombar'},{n:'Hip 90/90',s:'2x45s cada',f:'Quadril'},{n:'Couch Stretch',s:'2x45s cada',f:'Iliopsoas'},{n:'Deadbug',s:'2x8 cada',f:'Core'},{n:'Circulos tornozelo',s:'2x15 cada',f:'Tornozelo'}].forEach(m=>{
       html += `<div style="display:flex;gap:8px;padding:7px 0;border-bottom:1px solid var(--br)"><div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--a);min-width:70px">${m.s}</div><div><div style="font-size:12px">${m.n}</div><div style="font-size:10px;color:var(--t3)">${m.f}</div></div></div>`;
     });
     html += '</div></div>';
     return html;
   }
 
-  // ── TREINO NOT GENERATED YET ──
+  // ── NOT YET GENERATED ──
   if(!treinoGerado){
-    html += `<div class="card" style="text-align:center;padding:28px 16px">`;
-    html += `<div style="font-size:32px;margin-bottom:10px">💪</div>`;
-    html += `<div style="font-family:Syne,sans-serif;font-size:16px;font-weight:700;margin-bottom:6px">Pronto para treinar?</div>`;
-    html += `<div style="font-size:12px;color:var(--t3);margin-bottom:16px">Marque o que doi acima e clique em Criar Treino.<br>Se nao doi nada, clique diretamente.</div>`;
+    html += '<div class="card" style="text-align:center;padding:28px 16px">';
+    html += '<div style="font-size:36px;margin-bottom:10px">💪</div>';
+    html += '<div style="font-family:Syne,sans-serif;font-size:16px;font-weight:700;margin-bottom:6px">Pronto para treinar?</div>';
+    html += `<div style="font-size:12px;color:var(--t3);margin-bottom:16px;line-height:1.6">Marque o incomodo acima se tiver algo doendo.<br>Se estiver tudo bem, clique direto.</div>`;
     html += `<button onclick="gerarTreino()" style="width:100%;padding:14px;border-radius:12px;border:none;background:var(--a);color:#000;font-family:Syne,sans-serif;font-size:15px;font-weight:700;cursor:pointer">Criar Treino →</button>`;
-    html += `</div>`;
-    html += '</div>';
+    html += '</div></div>';
     return html;
   }
 
-  // ── WORKOUT GENERATED ──
-  const analyzed = wk.exercises.map(ex => {
-    const conf = ex.risks.filter(r => activePain.has(r));
-    return Object.assign({}, ex, {status: conf.length===0 ? 'safe' : (ex.sub ? 'substituted' : 'blocked')});
+  // ── WORKOUT ──
+  const analyzed = wk.exercises.map(ex=>{
+    const conf = ex.risks.filter(r=>activePain.has(r));
+    return Object.assign({},ex,{status: conf.length===0?'safe':(ex.sub?'substituted':'blocked')});
   });
-  const blocked = analyzed.filter(e => e.status==='blocked').length;
-  const subst   = analyzed.filter(e => e.status==='substituted').length;
-  const active  = analyzed.filter(e => e.status!=='blocked');
+  const blocked    = analyzed.filter(e=>e.status==='blocked').length;
+  const subst      = analyzed.filter(e=>e.status==='substituted').length;
+  const active     = analyzed.filter(e=>e.status!=='blocked');
   const allBlocked = active.length===0 && wk.exercises.length>0;
+  const allDone    = active.length>0 && doneEx.size===active.length;
 
-  let sText = wk.label, sClass = '';
-  if(hasPain && allBlocked){ sText='BLOQUEADO'; sClass='red'; }
-  else if(hasPain && (blocked>0||subst>0)){ sText=wk.label+' ADAPTADO'; sClass='yellow'; }
+  let sText=wk.label, sClass='';
+  if(hasPain&&allBlocked){sText='BLOQUEADO';sClass='red';}
+  else if(hasPain&&(blocked>0||subst>0)){sText=wk.label+' ADAPTADO';sClass='yellow';}
 
+  // Status bar
   html += `<div class="status-row">
     <div style="font-size:20px">${hasPain&&allBlocked?'🚫':hasPain&&(blocked||subst)?'⚠️':'✅'}</div>
     <div>
@@ -988,24 +1083,26 @@ function rTreinoDin(){
     </div>
   </div>`;
 
-  if(hasPain) html += `<div class="ws-strip ws-r"><span>⚠️</span><div><strong>Dor: ${painNames.join(', ')}</strong> — ${blocked} removido · ${subst} substituido</div></div>`;
-  if(allBlocked) html += '<div class="card"><div style="font-size:16px;font-weight:700;color:var(--a3);margin-bottom:6px">TREINO INCOMPATIVEL</div><div style="font-size:12px;color:var(--t3)">Opcoes: ergometrica 20 min ou mobilidade.</div></div>';
+  if(hasPain) html += `<div class="ws-strip ws-r"><span>⚠️</span><div><strong>Incomodo: ${painNames.join(', ')}</strong> — ${blocked} removido · ${subst} substituido</div></div>`;
 
-  if(!allBlocked){
+  if(allBlocked){
+    html += '<div class="card"><div style="font-size:16px;font-weight:700;color:var(--a3);margin-bottom:6px">TREINO INCOMPATIVEL</div><div style="font-size:12px;color:var(--t3)">Opcoes: ergometrica 20 min ou mobilidade.</div></div>';
+  } else {
+    // Progress bar
     const pct = active.length ? Math.round(doneEx.size/active.length*100) : 0;
     html += `<div class="comp-bar"><div class="comp-fill" style="width:${pct}%"></div></div>`;
     html += `<div class="comp-txt"><span>Progresso</span><span>${doneEx.size}/${active.length} · ${pct}%</span></div>`;
-    html += '<div style="font-size:10px;color:var(--t3);margin-bottom:8px">TOQUE NO EXERCICIO PARA VER COMO FAZER</div>';
+    html += '<div style="font-size:10px;color:var(--t3);margin-bottom:8px;letter-spacing:.05em">TOQUE NO EXERCICIO PARA VER COMO FAZER</div>';
 
-    analyzed.forEach((ex,i) => {
-      const isDone = doneEx.has(ex.id);
-      const isOpen = openCards.has(ex.id);
+    // Exercise list
+    analyzed.forEach((ex,i)=>{
+      const isDone  = doneEx.has(ex.id);
+      const isOpen  = openCards.has(ex.id);
       const nm = ex.status==='substituted' ? ex.sub.name : ex.name;
       const st = ex.status==='substituted' ? ex.sub.sets : ex.sets;
-      const svgContent = SVG[ex.id] || SVG['default_ex'] || '';
 
       if(ex.status==='blocked'){
-        const painList = ex.risks.filter(r=>activePain.has(r)).map(r=>PAIN_ZONES.find(z=>z.id===r)?.name).filter(Boolean).join(', ');
+        const pl = ex.risks.filter(r=>activePain.has(r)).map(r=>PAIN_ZONES.find(z=>z.id===r)?.name).filter(Boolean).join(', ');
         html += `<div class="ex-card blocked">
           <div class="ex-hdr" style="cursor:default">
             <div class="ex-num">✕</div>
@@ -1014,7 +1111,7 @@ function rTreinoDin(){
               <div class="ex-mt"><span class="ex-sets">${ex.sets}</span><span class="ex-tag tg-r">BLOQUEADO</span></div>
             </div>
           </div>
-          <div class="ex-reason">Agrava: ${painList}</div>
+          <div class="ex-reason">Agrava: ${pl}</div>
         </div>`;
         return;
       }
@@ -1036,48 +1133,26 @@ function rTreinoDin(){
       if(isOpen){
         html += `<div class="ex-body open">`;
         if(ex.status==='substituted') html += `<div class="ex-sub-r">Substituido: ${ex.sub.reason}</div>`;
-        html += `<div class="ex-svg" style="padding:14px;text-align:center;background:rgba(0,0,0,.25)">`;
-        html += svgContent;
-        html += `<div class="ex-tip" style="font-size:11px;color:var(--t3);margin-top:8px;line-height:1.5">${ex.tip||''}</div>`;
-        html += `</div>`;
+        // SVG injected AFTER render via data attribute — avoids all escaping issues
+        html += `<div class="ex-svg svg-slot" data-svgkey="${ex.id}" style="padding:14px;text-align:center;background:rgba(0,0,0,.25);min-height:80px"></div>`;
+        html += `<div class="ex-tip" style="font-size:11px;color:var(--t3);margin:0 12px 8px;line-height:1.5">${ex.tip||''}</div>`;
         html += `<button class="ex-done-btn ${isDone?'done':''}" onclick="toggleDone(event,'${ex.id}')">${isDone?'✅ Concluido — toque para desfazer':'✓ Marcar como feito'}</button>`;
         html += `</div>`;
       }
-
       html += `</div>`;
     });
-
-    // TREINO CONCLUÍDO button - always visible during workout
-    html += `<div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--br)">`;
-    if(doneEx.size===active.length && active.length>0){
-      html += '<div class="ws-strip ws-g"><span>🎉</span><div><strong>Treino concluido!</strong> Proteina em ate 60 min.</div></div>';
-    }
-    html += `<button onclick="concluirTreino()" style="width:100%;padding:14px;border-radius:12px;border:${doneEx.size===active.length&&active.length>0?'none':'1px solid var(--br)'};background:${doneEx.size===active.length&&active.length>0?'var(--a)':'var(--bg3)'};color:${doneEx.size===active.length&&active.length>0?'#000':'var(--t3)'};font-family:Syne,sans-serif;font-size:14px;font-weight:700;cursor:pointer">`;
-    html += doneEx.size===active.length&&active.length>0 ? '🏁 Treino Concluido — Salvar' : '⏭ Encerrar treino sem salvar';
-    html += `</button></div>`;
   }
 
-  // History
-  const th = getTH();
-  if(th.length > 0){
-    const avgPct = Math.round(th.reduce((a,sv)=>a+(sv.total>0?sv.done/sv.total*100:0),0)/th.length);
-    html += `<div class="sh">Historico</div>
-    <div class="h3grid">
-      <div class="h3c"><div class="h3v">${th.length}</div><div class="h3l">Sessoes</div></div>
-      <div class="h3c"><div class="h3v">${th.reduce((a,sv)=>a+sv.kcal,0).toLocaleString('pt-BR')}</div><div class="h3l">Kcal</div></div>
-      <div class="h3c"><div class="h3v">${avgPct}%</div><div class="h3l">Media</div></div>
-    </div>`;
-    th.slice(0,3).forEach(sv => {
-      const p = sv.total>0 ? Math.round(sv.done/sv.total*100) : 100;
-      html += `<div class="hc">
-        <div class="hc-date">${sv.date}</div>
-        <div class="hc-type">${sv.type}</div>
-        <div><span class="hbadge hb-ok">${sv.workout}</span>${sv.pains&&sv.pains.length?`<span class="hbadge hb-pain">Dor: ${sv.pains.join(', ')}</span>`:''}</div>
-        <div class="comp-bar" style="margin:8px 0 3px"><div class="comp-fill" style="width:${p}%"></div></div>
-        <div class="comp-txt"><span>${sv.done}/${sv.total}</span><span>${p}%</span></div>
-      </div>`;
-    });
+  // ── TREINO CONCLUÍDO button — always visible ──
+  html += `<div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--br)">`;
+  if(allDone){
+    html += '<div class="ws-strip ws-g" style="margin-bottom:10px"><span>🎉</span><div><strong>Treino concluido!</strong> Proteina em ate 60 min. 500ml agua.</div></div>';
+    html += `<button onclick="concluirTreino()" style="width:100%;padding:14px;border-radius:12px;border:none;background:var(--a);color:#000;font-family:Syne,sans-serif;font-size:15px;font-weight:700;cursor:pointer">🏁 Treino Concluido — Salvar</button>`;
+  } else {
+    html += `<button onclick="concluirTreino()" style="width:100%;padding:12px;border-radius:12px;border:1px solid var(--br);background:var(--bg3);color:var(--t3);font-family:Syne,sans-serif;font-size:13px;font-weight:600;cursor:pointer">Encerrar sem salvar</button>`;
   }
+  html += '</div>';
+
 
   html += '</div>';
   return html;
