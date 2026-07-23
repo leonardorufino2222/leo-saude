@@ -273,14 +273,18 @@ function go(p){CP=p;document.querySelectorAll('.nb').forEach(b=>b.classList.remo
 
 // ======= RENDER =======
 function render(){
-  document.getElementById('topdate').textContent=new Date().toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'short'});
-  const c=document.getElementById('content');
-  if(CP==='home')c.innerHTML=rHome();
-  else if(CP==='log')c.innerHTML=rLog();
-  else if(CP==='treino'){c.innerHTML=rTreinoDin();return;}
-  else if(CP==='nutri')c.innerHTML=rNutri();
-  else if(CP==='mais')c.innerHTML=rMais();
-  attachEv();
+  try{
+    document.getElementById('topdate').textContent=new Date().toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'short'});
+    const c=document.getElementById('content');
+    if(CP==='home')c.innerHTML=rHome();
+    else if(CP==='log')c.innerHTML=rLog();
+    else if(CP==='treino'){c.innerHTML=rTreinoDin();return;}
+    else if(CP==='nutri')c.innerHTML=rNutri();
+    else if(CP==='mais')c.innerHTML=rMais();
+    attachEv();
+  }catch(err){
+    document.getElementById('content').innerHTML='<div style="padding:20px;color:#ff4444;font-family:monospace;font-size:12px;background:#1a0000;margin:10px;border-radius:8px"><strong>ERRO v6:</strong><br>'+err.message+'<br><br>'+err.stack+'</div>';
+  }
 }
 
 // ======= HOME =======
