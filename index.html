@@ -8,14 +8,14 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <meta name="apple-mobile-web-app-title" content="Leo Saude"/>
 <link rel="manifest" href="manifest.json"/>
-<title>Trinca de Asnos v6</title>
+<title>Trinca de Asnos v7</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700&display=swap" rel="stylesheet"/>
 <style>
 
 :root{
-  --bg:#0b0b10;--bg2:#14141c;--bg3:#1e1e2a;--bg4:#272735;
-  --a:#00e5a0;--a2:#00b8ff;--a3:#ff6b6b;--aw:#ffb347;--ap:#b085f5;
-  --t:#f0f0f8;--t2:#8888a8;--t3:#55556a;--br:#28283a;
+  --bg:#0a0d08;--bg2:#111810;--bg3:#182013;--bg4:#202b18;
+  --a:#84cc16;--a2:#f97316;--a3:#f87171;--aw:#eab308;--ap:#a78bfa;
+  --t:#fef9ee;--t2:#c2cdb0;--t3:#6b7a5e;--br:rgba(132,204,22,.12);
   --r:14px;--st:env(safe-area-inset-top,0px);--sb:env(safe-area-inset-bottom,0px);
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -207,7 +207,7 @@ html,body{height:100%;background:var(--bg);color:var(--t);font-family:'Syne',san
 <body>
 <div id="app">
   <div class="topbar">
-    <div><div class="tt">Trinca de Asnos 🐴 <span style="font-size:9px;color:var(--t3);font-family:'DM Mono',monospace;background:var(--bg3);padding:1px 5px;border-radius:4px;border:1px solid var(--br)">v6</span></div><div class="td" id="topdate"></div></div>
+    <div><div class="tt">Trinca de Asnos 🐴 <span style="font-size:9px;color:var(--t3);font-family:'DM Mono',monospace;background:var(--bg3);padding:1px 5px;border-radius:4px;border:1px solid var(--br)">v7</span></div><div class="td" id="topdate"></div></div>
     <div class="tlogo">L</div>
   </div>
   <div class="content" id="content"></div>
@@ -216,10 +216,10 @@ html,body{height:100%;background:var(--bg);color:var(--t);font-family:'Syne',san
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>Início</span>
     </button>
     <button class="nb" onclick="go('treino')" id="nv-treino">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg><span>Registrar</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6.5 6.5h11M6.5 17.5h11M4 12h16M2 9l2 3-2 3M22 9l-2 3 2 3"/></svg><span>Treino</span>
     </button>
     <button class="nb" onclick="go('log')" id="nv-log">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6.5 6.5h11M6.5 17.5h11M4 12h16M2 9l2 3-2 3M22 9l-2 3 2 3"/></svg><span>Treino</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg><span>Registrar</span>
     </button>
     <button class="nb" onclick="go('nutri')" id="nv-nutri">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2a7 7 0 0 1 7 7c0 5-7 13-7 13S5 14 5 9a7 7 0 0 1 7-7z"/><circle cx="12" cy="9" r="2.5"/></svg><span>Nutrição</span>
@@ -235,8 +235,26 @@ html,body{height:100%;background:var(--bg);color:var(--t);font-family:'Syne',san
 <script>
 
 // ======= CONSTANTS =======
-const PI=94, AL=1.79, PM=78, DI='2026-05-18';
-const TMB=1897, TDEE=2466;
+let PI=94, AL=1.79, PM=78, DI='2026-05-18', UNAME='';
+let TMB=1897, TDEE=2466;
+
+function getProfile(){
+  try{return JSON.parse(localStorage.getItem('ta_profile')||'null');}catch(e){return null;}
+}
+function saveProfile(p){
+  try{localStorage.setItem('ta_profile',JSON.stringify(p));}catch(e){}
+}
+function applyProfile(p){
+  UNAME = p.nome || '';
+  PI = p.peso || 94;
+  AL = p.altura || 1.79;
+  PM = p.meta || 78;
+  DI = p.data || new Date().toISOString().slice(0,10);
+  TMB = Math.round(10*PI + 625*AL - 5*40 + 5);
+  TDEE = Math.round(TMB*1.375);
+}
+var __prof = getProfile();
+if(__prof){ applyProfile(__prof); }
 
 // ======= STATE =======
 let S={logs:[],ph:0,tr:'A',nt:'treino',st:'alertas',sE:0,sS:0};
@@ -260,6 +278,10 @@ function go(p){CP=p;document.querySelectorAll('.nb').forEach(b=>b.classList.remo
 
 // ======= RENDER =======
 function render(){
+  if(!getProfile()){
+    document.getElementById('content').innerHTML = rOnboarding();
+    return;
+  }
   document.getElementById('topdate').textContent=new Date().toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'short'});
   const c=document.getElementById('content');
   if(CP==='home')c.innerHTML=rHome();
@@ -268,6 +290,51 @@ function render(){
   else if(CP==='nutri')c.innerHTML=rNutri();
   else if(CP==='mais')c.innerHTML=rMais();
   attachEv();
+}
+
+function rOnboarding(){
+  var h = '<div class="page act" style="padding-top:40px">';
+  h += '<div style="text-align:center;margin-bottom:24px">';
+  h += '<div style="font-size:40px;margin-bottom:10px">🐴</div>';
+  h += '<div style="font-family:Syne,sans-serif;font-size:19px;font-weight:700;color:var(--t);margin-bottom:6px">Bem vindo ao seu assistente de saúde Trinca de Asnos</div>';
+  h += '<div style="font-size:12px;color:var(--t3)">Vamos configurar seu perfil rapidinho</div>';
+  h += '</div>';
+  h += '<div class="card">';
+  h += '<div class="ct">Seu nome</div>';
+  h += '<input type="text" id="ob-nome" placeholder="Como podemos te chamar?" style="width:100%;background:var(--bg3);border:1px solid var(--br);border-radius:8px;padding:11px;font-size:14px;color:var(--t);outline:none;margin-bottom:4px"/>';
+  h += '</div>';
+  h += '<div class="card">';
+  h += '<div class="ct">Peso atual (kg)</div>';
+  h += '<input type="number" id="ob-peso" placeholder="ex: 85" step="0.1" style="width:100%;background:var(--bg3);border:1px solid var(--br);border-radius:8px;padding:11px;font-size:14px;color:var(--t);outline:none"/>';
+  h += '</div>';
+  h += '<div class="card">';
+  h += '<div class="ct">Altura (m)</div>';
+  h += '<input type="number" id="ob-altura" placeholder="ex: 1.75" step="0.01" style="width:100%;background:var(--bg3);border:1px solid var(--br);border-radius:8px;padding:11px;font-size:14px;color:var(--t);outline:none"/>';
+  h += '</div>';
+  h += '<div class="card">';
+  h += '<div class="ct">Meta de peso (kg)</div>';
+  h += '<input type="number" id="ob-meta" placeholder="ex: 75" step="0.1" style="width:100%;background:var(--bg3);border:1px solid var(--br);border-radius:8px;padding:11px;font-size:14px;color:var(--t);outline:none"/>';
+  h += '</div>';
+  h += '<div id="ob-err" style="color:var(--a3);font-size:12px;text-align:center;margin-bottom:10px"></div>';
+  h += '<button onclick="submitOnboarding()" style="width:100%;padding:14px;border-radius:12px;border:none;background:var(--a);color:#000;font-family:Syne,sans-serif;font-size:15px;font-weight:700;cursor:pointer">Começar meu programa →</button>';
+  h += '</div>';
+  return h;
+}
+
+function submitOnboarding(){
+  var nome = document.getElementById('ob-nome').value.trim();
+  var peso = parseFloat(document.getElementById('ob-peso').value);
+  var altura = parseFloat(document.getElementById('ob-altura').value);
+  var meta = parseFloat(document.getElementById('ob-meta').value);
+  var err = document.getElementById('ob-err');
+  if(!nome){ err.textContent='Digite seu nome'; return; }
+  if(!peso||peso<30||peso>300){ err.textContent='Peso inválido'; return; }
+  if(!altura||altura<1||altura>2.5){ err.textContent='Altura inválida (em metros, ex: 1.75)'; return; }
+  if(!meta||meta<30||meta>300){ err.textContent='Meta inválida'; return; }
+  var profile = {nome:nome, peso:peso, altura:altura, meta:meta, data:new Date().toISOString().slice(0,10)};
+  saveProfile(profile);
+  applyProfile(profile);
+  render();
 }
 
 // ======= HOME =======
@@ -318,6 +385,7 @@ function rHome(){
   const avgComp=th.length?Math.round(th.slice(0,20).reduce((a,s)=>a+(s.total>0?s.done/s.total*100:0),0)/Math.min(th.length,20)):0;
 
   let out=`<div class="page act">`;
+  if(UNAME) out += `<div style="font-size:15px;font-weight:700;color:var(--t);margin-bottom:10px">Olá, ${UNAME} 👋</div>`;
 
   // ── METRICS GRID ──
   out+=`<div class="m2">
@@ -1044,6 +1112,33 @@ const DAY_NAMES_PT = ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','S�
 function getTH(){try{return JSON.parse(localStorage.getItem('leo_th')||'[]');}catch(e){return[];}}
 function saveTH(h){try{localStorage.setItem('leo_th',JSON.stringify(h));}catch(e){}}
 
+function getLoads(){try{return JSON.parse(localStorage.getItem('leo_loads')||'{}');}catch(e){return{};}}
+function saveLoads(l){try{localStorage.setItem('leo_loads',JSON.stringify(l));}catch(e){}}
+function getLastLoad(exId){
+  var loads = getLoads();
+  var arr = loads[exId];
+  if(!arr||!arr.length) return null;
+  return arr[arr.length-1];
+}
+function saveLoad(exId, kg){
+  if(!kg||kg<=0) return;
+  var loads = getLoads();
+  if(!loads[exId]) loads[exId]=[];
+  var today = new Date().toISOString().slice(0,10);
+  var arr = loads[exId];
+  if(arr.length && arr[arr.length-1].date===today){
+    arr[arr.length-1].kg = kg;
+  } else {
+    arr.push({date:today, kg:kg});
+  }
+  if(arr.length>30) arr.shift();
+  saveLoads(loads);
+}
+function onLoadInput(exId, val){
+  var kg = parseFloat(val);
+  if(kg && kg>0) saveLoad(exId, kg);
+}
+
 function renderTreino(){
   document.getElementById('content').innerHTML = rTreinoDin();
 }
@@ -1316,6 +1411,12 @@ function rTreinoDin(){
           }
           if(ex.tip) html += '<div style="display:flex;gap:8px;align-items:flex-start;padding:8px 12px;background:rgba(255,179,71,.05);border-bottom:1px solid var(--br)"><span style="font-size:13px;flex-shrink:0">⚠️</span><span style="font-size:11px;color:var(--aw);line-height:1.5">'+ex.tip+'</span></div>';
           if(info.url) html += '<div style="padding:10px 12px;border-bottom:1px solid var(--br)"><a href="'+info.url+'" target="_blank" style="display:flex;align-items:center;justify-content:space-between;text-decoration:none;padding:10px 12px;background:var(--bg2);border:1px solid var(--br);border-radius:8px"><div style="display:flex;align-items:center;gap:8px"><span style="font-size:16px">🎬</span><div><div style="font-size:12px;font-weight:600;color:var(--t)">Ver no YouTube</div><div style="font-size:10px;color:var(--t3)">Vídeos demonstrativos</div></div></div><span style="color:var(--a)">→</span></a></div>';
+          var lastLoad = getLastLoad(ex.id);
+          html += '<div style="padding:10px 12px;border-bottom:1px solid var(--br);display:flex;align-items:center;gap:10px">';
+          html += '<span style="font-size:16px;flex-shrink:0">🏋️</span>';
+          html += '<div style="flex:1"><div style="font-size:11px;color:var(--t3);margin-bottom:3px">Carga usada (kg)'+(lastLoad?' · última: '+lastLoad.kg+'kg':'')+'</div>';
+          html += '<input type="number" step="0.5" placeholder="'+(lastLoad?lastLoad.kg:'ex: 12')+'" onchange="onLoadInput(\''+ex.id+'\',this.value)" style="width:100%;background:var(--bg3);border:1px solid var(--br);border-radius:7px;padding:8px 10px;font-size:13px;color:var(--t);outline:none;font-family:\'DM Mono\',monospace"/>';
+          html += '</div></div>';
           html += '<button class="ex-done-btn '+(isDone?'done':'')+'" onclick="toggleDone(event,\''+ex.id+'\')"> '+(isDone?'✅ Concluído — toque para desfazer':'✓ Marcar como feito')+'</button>';
           html += '</div>';
         }
