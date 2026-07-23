@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#0b0b10"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
-<meta name="apple-mobile-web-app-title" content="Trinca de Asnos"/>
+<meta name="apple-mobile-web-app-title" content="Leo Saude"/>
 <link rel="manifest" href="manifest.json"/>
 <title>Trinca de Asnos v6</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700&display=swap" rel="stylesheet"/>
@@ -213,16 +213,16 @@ html,body{height:100%;background:var(--bg);color:var(--t);font-family:'Syne',san
   <div class="content" id="content"></div>
   <nav class="nav">
     <button class="nb act" onclick="go('home')" id="nv-home">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>Inicio</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>Início</span>
     </button>
     <button class="nb" onclick="go('treino')" id="nv-treino">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6.5 6.5h11M6.5 17.5h11M4 12h16M2 9l2 3-2 3M22 9l-2 3 2 3"/></svg><span>Treino</span>
-    </button>
-    <button class="nb" onclick="go('log')" id="nv-log">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg><span>Registrar</span>
     </button>
+    <button class="nb" onclick="go('log')" id="nv-log">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6.5 6.5h11M6.5 17.5h11M4 12h16M2 9l2 3-2 3M22 9l-2 3 2 3"/></svg><span>Treino</span>
+    </button>
     <button class="nb" onclick="go('nutri')" id="nv-nutri">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2a7 7 0 0 1 7 7c0 5-7 13-7 13S5 14 5 9a7 7 0 0 1 7-7z"/><circle cx="12" cy="9" r="2.5"/></svg><span>Nutricao</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2a7 7 0 0 1 7 7c0 5-7 13-7 13S5 14 5 9a7 7 0 0 1 7-7z"/><circle cx="12" cy="9" r="2.5"/></svg><span>Nutrição</span>
     </button>
     <button class="nb" onclick="go('mais')" id="nv-mais">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg><span>Mais</span>
@@ -240,20 +240,7 @@ const TMB=1897, TDEE=2466;
 
 // ======= STATE =======
 let S={logs:[],ph:0,tr:'A',nt:'treino',st:'alertas',sE:0,sS:0};
-
-// ── ONBOARDING STATE ──
-function getProfile(){try{return JSON.parse(localStorage.getItem('ta_profile')||'null');}catch{return null;}
-function saveProfile(p){localStorage.setItem('ta_profile',JSON.stringify(p));}
-
-// ── TREINO FLOW STATE ──
-let flowStep=0;       // 0=tipo, 1=config, 2=sessao
-let flowTipo='';      // 'treino'|'mobilidade'|'aerobico'|'descanso'
-let flowGrupo='';     // 'A'|'B'|'C'
-let flowTempo=45;     // minutes
-let flowAerobico='';  // 'natacao'|'bike'|'ergometrica'|'caminhada'
-let flowDescanso=new Set(); // selected rest options
-
-function ls(){try{const s=localStorage.getItem('lv5');if(s)S={...S,...JSON.parse(s)}catch(e){}
+function ls(){try{const s=localStorage.getItem('lv5');if(s)S={...S,...JSON.parse(s)}}catch(e){}}
 function ss(){localStorage.setItem('lv5',JSON.stringify(S))}
 ls();
 
@@ -265,7 +252,7 @@ function toast(m){const t=document.getElementById('toast');t.textContent=m;t.cla
 function lp(){const l=S.logs.length?S.logs[S.logs.length-1]:null;return l?l.peso:PI}
 function wk(){return Math.min(12,Math.max(1,Math.ceil((new Date()-new Date(DI))/(7*864e5))))}
 function dayT(){const d=new Date().getDay();return{0:'REST',1:'A',2:'BIKE',3:'REST',4:'B',5:'C',6:'BIKE'}[d]}
-function dayKcal(){const t=dayT();if(t==='REST')return{k:1750,l:'Descanso',c:'var(--t3)'};if(t==='BIKE')return{k:1900,l:'Bicicleta',c:'var(--ap)'};return{k:1950,l:'Treino '+t,c:'var(--a)'}
+function dayKcal(){const t=dayT();if(t==='REST')return{k:1750,l:'Descanso',c:'var(--t3)'};if(t==='BIKE')return{k:1900,l:'Bicicleta',c:'var(--ap)'};return{k:1950,l:'Treino '+t,c:'var(--a)'}}
 
 // ======= NAV =======
 let CP='home';
@@ -273,18 +260,14 @@ function go(p){CP=p;document.querySelectorAll('.nb').forEach(b=>b.classList.remo
 
 // ======= RENDER =======
 function render(){
-  try{
-    document.getElementById('topdate').textContent=new Date().toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'short'});
-    const c=document.getElementById('content');
-    if(CP==='home')c.innerHTML=rHome();
-    else if(CP==='log')c.innerHTML=rLog();
-    else if(CP==='treino'){c.innerHTML=rTreinoDin();return;}
-    else if(CP==='nutri')c.innerHTML=rNutri();
-    else if(CP==='mais')c.innerHTML=rMais();
-    attachEv();
-  }catch(err){
-    document.getElementById('content').innerHTML='<div style="padding:20px;color:#ff4444;font-family:monospace;font-size:12px;background:#1a0000;margin:10px;border-radius:8px"><strong>ERRO v6:</strong><br>'+err.message+'<br><br>'+err.stack+'</div>';
-  }
+  document.getElementById('topdate').textContent=new Date().toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'short'});
+  const c=document.getElementById('content');
+  if(CP==='home')c.innerHTML=rHome();
+  else if(CP==='log')c.innerHTML=rLog();
+  else if(CP==='treino'){renderTreino();return;}
+  else if(CP==='nutri')c.innerHTML=rNutri();
+  else if(CP==='mais')c.innerHTML=rMais();
+  attachEv();
 }
 
 // ======= HOME =======
@@ -477,7 +460,7 @@ function rLog(){
   </div>`;
 }
 
-function sN(key,n){S[key]=n;const pre=key==='sE'?'en':'sn';const col=key==='sE'?'var(--a)':'var(--a2)';[1,2,3,4,5,6,7,8,9,10].forEach(i=>{const b=document.getElementById(pre+i);if(b){b.style.background=i<=n?col:'var(--bg3)';b.style.color=i<=n?'#000':'var(--t)'});}
+function sN(key,n){S[key]=n;const pre=key==='sE'?'en':'sn';const col=key==='sE'?'var(--a)':'var(--a2)';[1,2,3,4,5,6,7,8,9,10].forEach(i=>{const b=document.getElementById(pre+i);if(b){b.style.background=i<=n?col:'var(--bg3)';b.style.color=i<=n?'#000':'var(--t)'}});}
 function saveL(){
   const p=parseFloat(document.getElementById('ip').value);
   if(!p||p<40||p>300){toast('⚠ Peso inválido');return}
@@ -859,110 +842,6 @@ function attachEv(){
   }
 }
 
-// ── DEFAULT per weekday ──
-const DAY_DEFAULTS = {0:{tipo:'descanso',grupo:'',tempo:20},1:{tipo:'treino',grupo:'A',tempo:45},2:{tipo:'aerobico',aerobico:'bike',tempo:45},3:{tipo:'mobilidade',grupo:'',tempo:20},4:{tipo:'treino',grupo:'B',tempo:45},5:{tipo:'treino',grupo:'C',tempo:45},6:{tipo:'aerobico',aerobico:'bike',tempo:45}};
-
-const AEROBICO_PROTOCOLS = {
-  natacao:{
-    name:'Natação',emoji:'🏊',
-    tempos:{
-      20:{blocos:['5 min aquecimento nado costas leve','10 min crawl ritmo constante','5 min desaquecimento costas'],kcal:180,tip:'Pace leve — consegue falar frases completas'},
-      30:{blocos:['5 min aquecimento','15 min crawl contínuo','4x50m moderado c/ 20s descanso','6 min desaquecimento'],kcal:280,tip:'Foque na técnica de respiração — expira na água'},
-      45:{blocos:['5 min aquecimento','20 min crawl contínuo','6x100m moderado c/ 30s descanso','5 min kickboard pernas','5 min desaquecimento costas'],kcal:420,tip:'Hidrate antes — no mar/piscina não sente sede mas sua'},
-      60:{blocos:['8 min aquecimento variado','25 min crawl contínuo','8x100m progressivo','5 min borboleta opcional','7 min desaquecimento'],kcal:560,tip:'Sessão completa — tome 500ml água antes de entrar'},
-    }
-  },
-  bike:{
-    name:'Bicicleta (Rua)',emoji:'🚵',
-    tempos:{
-      20:{blocos:['5 min aquecimento ritmo leve','10 min ritmo constante 18-20km/h','5 min desaquecimento'],kcal:200,tip:'Ajuste o selim — joelho quase estendido no ponto mais baixo'},
-      30:{blocos:['5 min aquecimento','20 min ritmo constante 18-22km/h','5 min desaquecimento'],kcal:300,tip:'Mantenha cadência constante — evite pedalar em marcha pesada demais'},
-      45:{blocos:['5 min aquecimento','25 min ritmo constante','3x3min ritmo forte c/ 2min leve','5 min desaquecimento'],kcal:450,tip:'Use capacete e leve água. Em caso de gota no tornozelo: prefira ergométrica'},
-      60:{blocos:['8 min aquecimento','30 min ritmo constante','5x3min intervalos moderados','7 min desaquecimento'],kcal:600,tip:'Sessão longa — leve garrafa de água na bike'},
-    }
-  },
-  ergometrica:{
-    name:'Ergométrica (Casa)',emoji:'🏠',
-    tempos:{
-      20:{blocos:['5 min resistência baixa (nível 2-3)','10 min resistência moderada (nível 4-5)','5 min desaquecimento'],kcal:180,tip:'Zero impacto no tornozelo — ideal para dias de gota. Pode assistir algo enquanto pedala'},
-      30:{blocos:['5 min aquecimento','20 min resistência moderada (5-6/10)','5 min desaquecimento'],kcal:270,tip:'Mantenha a cadência acima de 60rpm para maior queima calórica'},
-      45:{blocos:['5 min aquecimento','15 min resistência moderada','4x4min resistência alta c/ 3min leve','5 min desaquecimento'],kcal:380,tip:'HIIT suave — ótimo para dias que não pode sair de casa'},
-      60:{blocos:['8 min aquecimento','20 min constante','6x3min intervalos c/ 2min leve','10 min constante moderado','5 min desaquecimento'],kcal:500,tip:'Sessão completa em casa — hidrate bem durante toda a sessão'},
-    }
-  },
-  caminhada:{
-    name:'Caminhada',emoji:'🚶',
-    tempos:{
-      20:{blocos:['20 min caminhada ritmo confortável','Foco: postura ereta, passos largos'],kcal:100,tip:'Braços em movimento ativo — aumenta gasto calórico em 10-15%'},
-      30:{blocos:['5 min aquecimento (ritmo leve)','20 min ritmo moderado (consegue falar mas levemente ofegante)','5 min desaquecimento'],kcal:150,tip:'Use tênis com boa amortecimento — protege tornozelo'},
-      45:{blocos:['5 min leve','30 min ritmo moderado','2x5min ritmo forte intercalado','5 min desaquecimento'],kcal:220,tip:'Hidrate a cada 15 min mesmo sem sentir sede'},
-      60:{blocos:['10 min aquecimento leve','35 min ritmo moderado-forte','3x3min ritmo intenso','7 min desaquecimento'],kcal:300,tip:'Sessão longa — leve garrafa de água. Evite superfícies irregulares se tornozelo doer'},
-    }
-  },
-};
-
-const DESCANSO_OPTIONS = [
-  {id:'respiracao',emoji:'😮‍💨',label:'Respiração 4-7-8',desc:'Ativa o parassimpático — reduz cortisol em minutos'},
-  {id:'meditacao',emoji:'🧘',label:'Meditação guiada',desc:'Reduz ansiedade e melhora foco'},
-  {id:'relaxamento',emoji:'😌',label:'Relaxamento muscular',desc:'Tensão progressiva e liberação dos músculos'},
-  {id:'sono',emoji:'💤',label:'Dicas de sono para hoje',desc:'Rotina noturna personalizada'},
-];
-
-function renderTreino(){
-  document.getElementById('content').innerHTML = rTreinoDin();
-}
-
-function setFlowTipo(tipo){
-  flowTipo = tipo;
-  // Set defaults for the day
-  const def = DAY_DEFAULTS[new Date().getDay()];
-  flowGrupo  = def.grupo || 'A';
-  flowTempo  = def.tempo || 45;
-  flowAerobico = def.aerobico || 'ergometrica';
-  flowDescanso = new Set();
-  flowStep = 1;
-  renderTreino();
-}
-function setFlowGrupo(g){ flowGrupo=g; renderTreino(); }
-function setFlowTempo(t){ flowTempo=t; renderTreino(); }
-function setFlowAerobico(a){ flowAerobico=a; renderTreino(); }
-function toggleDescanso(id){ if(flowDescanso.has(id))flowDescanso.delete(id);else flowDescanso.add(id); renderTreino(); }
-function gerarTreino(){ treinoGerado=true; painOpen=false; flowStep=2; renderTreino(); }
-function resetFlow(){ flowStep=0; flowTipo=''; treinoGerado=false; painOpen=true; doneEx.clear(); openCards.clear(); renderTreino(); }
-
-function concluirTreino(){
-  const th=getTH();
-  const now=new Date();
-  const kcalMap={treino:flowGrupo==='A'?280:flowGrupo==='B'?270:320, mobilidade:80, descanso:0};
-  const aero = AEROBICO_PROTOCOLS[flowAerobico];
-  const kcal = flowTipo==='aerobico' ? (aero?.tempos[flowTempo]?.kcal||200) : (kcalMap[flowTipo]||0);
-  th.unshift({
-    date: now.toLocaleDateString('pt-BR',{weekday:'short',day:'numeric',month:'short'})+' '+now.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}),
-    ts: now.getTime(),
-    tipo: flowTipo,
-    workout: flowTipo==='treino'?('Push/Pull/Legs '[flowGrupo==='A'?0:flowGrupo==='B'?1:2].split('')[0]+' '+flowGrupo):flowTipo,
-    type: flowTipo==='treino'?(flowGrupo==='A'?'Peito · Ombro · Tríceps':flowGrupo==='B'?'Costas · Bíceps · Core':'Quadríceps · Glúteo · Posterior'):flowTipo==='aerobico'?(aero?.name||'Aeróbico'):'Mobilidade / Descanso',
-    done: doneEx.size,
-    total: flowTipo==='mobilidade'?MOBILITY.length:flowTipo==='treino'?WORKOUTS[flowGrupo]?.exercises.filter(e=>e.risks.filter(r=>activePain.has(r)).length===0||e.sub).length||6:1,
-    kcal, duration: flowTempo,
-    pains: [...activePain].map(pid=>PAIN_ZONES.find(z=>z.id===pid)?.name).filter(Boolean),
-    agua: '💧 Beba 500ml de água agora!'
-  });
-  if(th.length>60)th.pop();
-  saveTH(th);
-  toast('Sessão salva! 💧 Beba água agora!');
-  resetFlow();
-}
-
-function togglePain(id){ if(activePain.has(id))activePain.delete(id);else activePain.add(id); renderTreino(); }
-function clearPain(){ activePain.clear(); renderTreino(); }
-function toggleCard(id){ if(openCards.has(id))openCards.delete(id);else openCards.add(id); renderTreino(); }
-function toggleDone(e,id){ e.stopPropagation(); if(doneEx.has(id))doneEx.delete(id);else doneEx.add(id); renderTreino(); }
-function togglePainPanel(){ painOpen=!painOpen; renderTreino(); }
-function selDayFn(i){ selDay=i; doneEx.clear(); openCards.clear(); treinoGerado=false; renderTreino(); }
-
-function getTH(){try{return JSON.parse(localStorage.getItem('leo_th')||'[]');}catch{return[];}}
-function saveTH(h){try{localStorage.setItem('leo_th',JSON.stringify(h));}catch{}}
 
 const MOBILITY = [
   {id:'cat_cow',name:'Cat-Cow',sets:'2x10 lentas',muscles:'Coluna lombar · Coluna torácica · Core',
@@ -990,6 +869,7 @@ const MOBILITY = [
    tip:'Fundamental para você — melhora circulação e reduz acúmulo de ácido úrico nos tornozelos.',
    yt:'https://www.youtube.com/results?search_query=mobilidade+tornozelo+exercicios+como+fazer'},
 ];
+
 
 const EXERCISE_INFO = {
   supino_inclinado:{
@@ -1089,420 +969,456 @@ const EXERCISE_INFO = {
   }
 };
 
-// ── EXERCISE CARD RENDERER (shared) ──
-function renderExCard(ex, i, isDone, isOpen){
-  const nm = ex.status==='substituted' ? ex.sub.name : ex.name;
-  const st = ex.status==='substituted' ? ex.sub.sets : ex.sets;
-  const info = EXERCISE_INFO[ex.id] || {};
 
-  if(ex.status==='blocked'){
-    const pl = ex.risks.filter(r=>activePain.has(r)).map(r=>PAIN_ZONES.find(z=>z.id===r)?.name).filter(Boolean).join(', ');
-    return `<div class="ex-card blocked">
-      <div class="ex-hdr" style="cursor:default">
-        <div class="ex-num">✕</div>
-        <div class="ex-inf"><div class="ex-nm">${ex.name}</div>
-          <div class="ex-mt"><span class="ex-sets">${ex.sets}</span><span class="ex-tag tg-r">BLOQUEADO</span></div>
-        </div>
-      </div>
-      <div class="ex-reason">Agrava: ${pl}</div>
-    </div>`;
+// ── TREINO V6 STATE ──
+let painOpen = true;
+let treinoGerado = false;
+let flowStep = 0;      // 0=tipo, 1=config, 2=sessao
+let flowTipo = '';     // 'treino'|'mobilidade'|'aerobico'|'descanso'
+let flowGrupo = 'A';
+let flowTempo = 45;
+let flowAerobico = 'ergometrica';
+let flowDescanso = new Set();
+
+// Day defaults: Sun=0 Mon=1 Tue=2 Wed=3 Thu=4 Fri=5 Sat=6
+const DAY_DEF = {
+  0:{tipo:'descanso',   grupo:'',  aero:'ergometrica', tempo:20},
+  1:{tipo:'treino',     grupo:'A', aero:'ergometrica', tempo:45},
+  2:{tipo:'aerobico',   grupo:'A', aero:'bike',        tempo:45},
+  3:{tipo:'mobilidade', grupo:'',  aero:'ergometrica', tempo:20},
+  4:{tipo:'treino',     grupo:'B', aero:'ergometrica', tempo:45},
+  5:{tipo:'treino',     grupo:'C', aero:'ergometrica', tempo:45},
+  6:{tipo:'aerobico',   grupo:'',  aero:'bike',        tempo:45}
+};
+
+const AERO = {
+  natacao:     {name:'Natação',         emoji:'🏊'},
+  bike:        {name:'Bicicleta (Rua)', emoji:'🚵'},
+  ergometrica: {name:'Ergométrica',     emoji:'🏠'},
+  caminhada:   {name:'Caminhada',       emoji:'🚶'}
+};
+
+const AERO_KCAL = {
+  natacao:     {20:180, 30:280, 45:420, 60:560},
+  bike:        {20:200, 30:300, 45:450, 60:600},
+  ergometrica: {20:180, 30:270, 45:380, 60:500},
+  caminhada:   {20:100, 30:150, 45:220, 60:300}
+};
+
+const AERO_BLOCOS = {
+  natacao: {
+    20:['5 min aquecimento nado costas','10 min crawl ritmo confortável','5 min desaquecimento'],
+    30:['5 min aquecimento','15 min crawl contínuo','4x50m moderado c/20s descanso','6 min desaquecimento'],
+    45:['5 min aquecimento','20 min crawl contínuo','6x100m moderado c/30s descanso','5 min kickboard','5 min desaquecimento'],
+    60:['8 min aquecimento variado','25 min crawl contínuo','8x100m progressivo','7 min desaquecimento']
+  },
+  bike: {
+    20:['5 min aquecimento leve','10 min ritmo 18-20km/h','5 min desaquecimento'],
+    30:['5 min aquecimento','20 min ritmo constante 18-22km/h','5 min desaquecimento'],
+    45:['5 min aquecimento','25 min ritmo constante','3x3min ritmo forte c/2min leve','5 min desaquecimento'],
+    60:['8 min aquecimento','30 min ritmo constante','5x3min intervalos','7 min desaquecimento']
+  },
+  ergometrica: {
+    20:['5 min resistência baixa','10 min resistência moderada','5 min desaquecimento'],
+    30:['5 min aquecimento','20 min resistência moderada','5 min desaquecimento'],
+    45:['5 min aquecimento','15 min moderado','4x4min resistência alta c/3min leve','5 min desaquecimento'],
+    60:['8 min aquecimento','20 min constante','6x3min intervalos c/2min leve','10 min moderado','5 min desaquecimento']
+  },
+  caminhada: {
+    20:['20 min caminhada ritmo confortável'],
+    30:['5 min leve','20 min ritmo moderado','5 min desaquecimento'],
+    45:['5 min leve','30 min moderado','2x5min forte','5 min desaquecimento'],
+    60:['10 min leve','35 min moderado-forte','3x3min intenso','7 min desaquecimento']
   }
+};
 
-  let h = `<div class="ex-card ${ex.status}">
-    <div class="ex-hdr" onclick="toggleCard('${ex.id}')">
-      <div class="ex-num" style="${isDone?'background:rgba(0,229,160,.18);color:var(--a)':''}">${isDone?'✓':i+1}</div>
-      <div class="ex-inf">
-        <div class="ex-nm" style="${isDone?'opacity:.45':''}">${nm}</div>
-        <div class="ex-mt"><span class="ex-sets">${st} · ${ex.focus}</span>
-          ${ex.status==='substituted'?'<span class="ex-tag tg-y">SUBSTITUTO</span>':'<span class="ex-tag tg-g">OK</span>'}
-        </div>
-      </div>
-      <div style="font-size:14px;flex-shrink:0">${isDone?'✅':'○'}</div>
-      <div class="ex-arr ${isOpen?'open':''}" style="margin-left:4px">▼</div>
-    </div>`;
+const DESCANSO_OPTS = [
+  {id:'respiracao', emoji:'😮', label:'Respiração 4-7-8',    desc:'Reduz cortisol em minutos'},
+  {id:'meditacao',  emoji:'🧘', label:'Meditação guiada',    desc:'Reduz ansiedade e melhora foco'},
+  {id:'relaxamento',emoji:'😌', label:'Relaxamento muscular', desc:'Tensão progressiva e liberação'},
+  {id:'sono',       emoji:'💤', label:'Dicas de sono',        desc:'Rotina noturna para hoje'}
+];
 
-  if(isOpen){
-    h += `<div class="ex-body open">`;
-    if(ex.status==='substituted') h += `<div class="ex-sub-r">Substituido: ${ex.sub.reason}</div>`;
-    if(info.muscles) h += `<div style="display:flex;align-items:flex-start;gap:8px;padding:10px 12px;background:rgba(0,229,160,.05);border-bottom:1px solid var(--br)">
-      <span style="font-size:14px;flex-shrink:0">💪</span>
-      <div><div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px">Músculos</div>
-      <div style="font-size:12px;color:var(--a);font-weight:600">${info.muscles}</div></div></div>`;
-    if(info.steps?.length){
-      h += `<div style="padding:10px 12px;border-bottom:1px solid var(--br)">
-        <div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Como fazer</div>`;
-      info.steps.forEach((step,si)=>{
-        h += `<div style="display:flex;gap:8px;margin-bottom:6px">
-          <span style="width:18px;height:18px;border-radius:50%;background:var(--a2);color:#000;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">${si+1}</span>
-          <span style="font-size:12px;color:var(--t);line-height:1.5">${step}</span></div>`;
-      });
-      h += `</div>`;
-    }
-    if(ex.tip) h += `<div style="display:flex;gap:8px;align-items:flex-start;padding:8px 12px;background:rgba(255,179,71,.05);border-bottom:1px solid var(--br)">
-      <span style="font-size:13px;flex-shrink:0">⚠️</span>
-      <span style="font-size:11px;color:var(--aw);line-height:1.5">${ex.tip}</span></div>`;
-    if(info.url) h += `<div style="padding:10px 12px;border-bottom:1px solid var(--br)">
-      <a href="${info.url}" target="_blank" style="display:flex;align-items:center;justify-content:space-between;text-decoration:none;padding:10px 12px;background:var(--bg2);border:1px solid var(--br);border-radius:8px">
-        <div style="display:flex;align-items:center;gap:8px"><span style="font-size:16px">🎬</span>
-          <div><div style="font-size:12px;font-weight:600;color:var(--t)">Ver no YouTube</div>
-          <div style="font-size:10px;color:var(--t3)">Abre busca de vídeos demonstrativos</div></div></div>
-        <span style="color:var(--a);font-size:14px">→</span></a></div>`;
-    h += `<button class="ex-done-btn ${isDone?'done':''}" onclick="toggleDone(event,'${ex.id}')">${isDone?'✅ Concluido — toque para desfazer':'✓ Marcar como feito'}</button>`;
-    h += `</div>`;
-  }
-  h += `</div>`;
-  return h;
+const DAY_NAMES_PT = ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
+
+function getTH(){try{return JSON.parse(localStorage.getItem('leo_th')||'[]');}catch(e){return[];}}
+function saveTH(h){try{localStorage.setItem('leo_th',JSON.stringify(h));}catch(e){}}
+
+function renderTreino(){
+  document.getElementById('content').innerHTML = rTreinoDin();
 }
 
-function renderMobCard(mob, i){
-  const isDone = doneEx.has(mob.id);
-  const isOpen = openCards.has(mob.id);
-  let h = `<div class="ex-card">
-    <div class="ex-hdr" onclick="toggleCard('${mob.id}')">
-      <div class="ex-num" style="${isDone?'background:rgba(0,229,160,.18);color:var(--a)':''}">${isDone?'✓':i+1}</div>
-      <div class="ex-inf"><div class="ex-nm" style="${isDone?'opacity:.45':''}">${mob.name}</div>
-        <div class="ex-mt"><span class="ex-sets">${mob.sets}</span><span class="ex-tag tg-g">MOBILIDADE</span></div>
-      </div>
-      <div style="font-size:14px;flex-shrink:0">${isDone?'✅':'○'}</div>
-      <div class="ex-arr ${isOpen?'open':''}" style="margin-left:4px">▼</div>
-    </div>`;
-  if(isOpen){
-    h += `<div class="ex-body open">
-      <div style="display:flex;align-items:flex-start;gap:8px;padding:10px 12px;background:rgba(0,229,160,.05);border-bottom:1px solid var(--br)">
-        <span style="font-size:14px;flex-shrink:0">💪</span>
-        <div><div style="font-size:10px;color:var(--t3);text-transform:uppercase;margin-bottom:2px">Área trabalhada</div>
-        <div style="font-size:12px;color:var(--a);font-weight:600">${mob.muscles}</div></div></div>
-      <div style="padding:10px 12px;border-bottom:1px solid var(--br)">
-        <div style="font-size:10px;color:var(--t3);text-transform:uppercase;margin-bottom:8px">Como fazer</div>`;
-    mob.steps.forEach((s,si)=>{
-      h+=`<div style="display:flex;gap:8px;margin-bottom:6px">
-        <span style="width:18px;height:18px;border-radius:50%;background:var(--a2);color:#000;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">${si+1}</span>
-        <span style="font-size:12px;color:var(--t);line-height:1.5">${s}</span></div>`;
-    });
-    h += `</div>
-      <div style="display:flex;gap:8px;align-items:flex-start;padding:8px 12px;background:rgba(255,179,71,.05);border-bottom:1px solid var(--br)">
-        <span style="font-size:13px;flex-shrink:0">⚠️</span>
-        <span style="font-size:11px;color:var(--aw);line-height:1.5">${mob.tip}</span></div>
-      <div style="padding:10px 12px;border-bottom:1px solid var(--br)">
-        <a href="${mob.yt}" target="_blank" style="display:flex;align-items:center;justify-content:space-between;text-decoration:none;padding:10px 12px;background:var(--bg2);border:1px solid var(--br);border-radius:8px">
-          <div style="display:flex;align-items:center;gap:8px"><span>🎬</span>
-            <div><div style="font-size:12px;font-weight:600;color:var(--t)">Ver no YouTube</div>
-            <div style="font-size:10px;color:var(--t3)">Vídeos demonstrativos</div></div></div>
-          <span style="color:var(--a)">→</span></a></div>
-      <button class="ex-done-btn ${isDone?'done':''}" onclick="toggleDone(event,'${mob.id}')">${isDone?'✅ Concluido':'✓ Marcar como feito'}</button>
-    </div>`;
-  }
-  h += `</div>`;
-  return h;
+function setFlowTipo(tipo){
+  var def = DAY_DEF[new Date().getDay()];
+  flowTipo = tipo;
+  flowGrupo = def.grupo || 'A';
+  flowTempo = def.tempo || 45;
+  flowAerobico = def.aero || 'ergometrica';
+  flowDescanso = new Set();
+  flowStep = 1;
+  renderTreino();
+}
+function setFlowGrupo(g){ flowGrupo=g; renderTreino(); }
+function setFlowTempo(t){ flowTempo=t; renderTreino(); }
+function setFlowAerobico(a){ flowAerobico=a; renderTreino(); }
+function toggleDescanso(id){ if(flowDescanso.has(id))flowDescanso.delete(id);else flowDescanso.add(id); renderTreino(); }
+function gerarTreino(){ treinoGerado=true; painOpen=false; flowStep=2; renderTreino(); }
+function resetFlow(){ flowStep=0; flowTipo=''; treinoGerado=false; painOpen=true; doneEx.clear(); openCards.clear(); renderTreino(); }
+function togglePain(id){ if(activePain.has(id))activePain.delete(id);else activePain.add(id); renderTreino(); }
+function clearPain(){ activePain.clear(); renderTreino(); }
+function toggleCard(id){ if(openCards.has(id))openCards.delete(id);else openCards.add(id); renderTreino(); }
+function toggleDone(e,id){ e.stopPropagation(); if(doneEx.has(id))doneEx.delete(id);else doneEx.add(id); renderTreino(); }
+function togglePainPanel(){ painOpen=!painOpen; renderTreino(); }
+function selDayFn(i){ selDay=i; doneEx.clear(); openCards.clear(); treinoGerado=false; renderTreino(); }
+
+function concluirTreino(){
+  var wk = WORKOUTS[WEEK_MAP[selDay]];
+  var active = wk ? wk.exercises.filter(function(ex){ return ex.risks.filter(function(r){return activePain.has(r);}).length===0 || ex.sub; }) : [];
+  var h = getTH();
+  var now = new Date();
+  var aeroName = AERO[flowAerobico] ? AERO[flowAerobico].name : 'Aeróbico';
+  var tipoLabel = flowTipo==='treino' ? ('Musculação '+flowGrupo) : flowTipo==='aerobico' ? aeroName : flowTipo;
+  h.unshift({
+    date: now.toLocaleDateString('pt-BR',{weekday:'short',day:'numeric',month:'short'})+' '+now.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}),
+    ts: now.getTime(),
+    workout: tipoLabel,
+    type: flowTipo==='treino' ? (flowGrupo==='A'?'Peito · Ombro · Tríceps':flowGrupo==='B'?'Costas · Bíceps · Core':'Quadríceps · Glúteo') : tipoLabel,
+    done: doneEx.size,
+    total: flowTipo==='mobilidade' ? MOBILITY.length : (active.length || 1),
+    kcal: flowTipo==='aerobico' ? (AERO_KCAL[flowAerobico]||{})[flowTempo]||200 : flowTipo==='treino' ? (flowGrupo==='A'?280:flowGrupo==='B'?270:320) : 80,
+    duration: flowTempo,
+    pains: Array.from(activePain).map(function(pid){var z=PAIN_ZONES.find(function(z){return z.id===pid;});return z?z.name:'';}).filter(Boolean)
+  });
+  if(h.length>60)h.pop();
+  saveTH(h);
+  toast('Sessão salva! Beba água agora!');
+  resetFlow();
 }
 
 function rTreinoDin(){
-  const today = new Date().getDay();
-  const def = DAY_DEFAULTS[today];
-  const DAY_NAMES = ['Domingo','Segunda','Terca','Quarta','Quinta','Sexta','Sabado'];
-  const SUGESTAO_LABEL = {
-    treino: `Treino ${def.grupo} (${def.grupo==='A'?'Push · Peito/Ombro':def.grupo==='B'?'Pull · Costas/Bíceps':'Legs · Pernas/Glúteo'})`,
-    mobilidade: 'Mobilidade e Alongamento',
-    aerobico: `Aeróbico — ${AEROBICO_PROTOCOLS[def.aerobico]?.name||'Cardio'}`,
-    descanso: 'Descanso e Recuperação',
-  };
+  var today = new Date().getDay();
+  var def = DAY_DEF[today];
+  var html = '<div class="page act">';
 
-  let html = '<div class="page act">';
-
-  // ── STEP 0 — Choose type ──
+  // ── STEP 0: Choose activity ──
   if(flowStep===0){
-    html += `<div class="card">
-      <div style="font-size:11px;color:var(--a2);font-family:'DM Mono',monospace;margin-bottom:3px;text-transform:uppercase;letter-spacing:.08em">💡 Sugestão para ${DAY_NAMES[today]}</div>
-      <div style="font-size:14px;font-weight:700;color:var(--t);margin-bottom:4px">${SUGESTAO_LABEL[def.tipo]}</div>
-      <div style="font-size:11px;color:var(--t3)">${def.tempo} min · recomendação padrão do programa</div>
-    </div>`;
-    html += `<div class="ct" style="margin-top:4px">O que você quer fazer hoje?</div>`;
-    html += `<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:6px">`;
-    [
-      {tipo:'treino',   emoji:'💪', label:'Treino',      desc:'Musculação'},
-      {tipo:'mobilidade',emoji:'🧘',label:'Mobilidade',  desc:'Alongamento e flexibilidade'},
-      {tipo:'aerobico', emoji:'🚴', label:'Aeróbico',    desc:'Cardio e queima calórica'},
-      {tipo:'descanso', emoji:'😴', label:'Descanso',    desc:'Recuperação mental e física'},
-    ].forEach(opt=>{
-      const isSug = opt.tipo===def.tipo;
-      html += `<div onclick="setFlowTipo('${opt.tipo}')" style="background:${isSug?'rgba(0,229,160,.1)':'var(--bg3)'};border:1px solid ${isSug?'var(--a)':'var(--br)'};border-radius:12px;padding:16px 12px;cursor:pointer;text-align:center;transition:all .2s">
-        <div style="font-size:28px;margin-bottom:6px">${opt.emoji}</div>
-        <div style="font-size:13px;font-weight:700;color:${isSug?'var(--a)':'var(--t)'}">${opt.label}</div>
-        <div style="font-size:10px;color:var(--t3);margin-top:2px">${opt.desc}</div>
-        ${isSug?'<div style="font-size:9px;color:var(--a);margin-top:4px;font-family:'DM Mono',monospace">⭐ sugerido hoje</div>':''}
-      </div>`;
-    });
-    html += `</div>`;
-    html += `</div>`;
+    var sugestoes = {
+      treino: 'Treino de Musculação',
+      mobilidade: 'Mobilidade e Alongamento',
+      aerobico: 'Aeróbico',
+      descanso: 'Descanso e Recuperação'
+    };
+    html += '<div class="card">';
+    html += '<div style="font-size:11px;color:var(--a2);font-family:\'DM Mono\',monospace;margin-bottom:3px;text-transform:uppercase;letter-spacing:.08em">Sugestão para ' + DAY_NAMES_PT[today] + '</div>';
+    html += '<div style="font-size:14px;font-weight:700;color:var(--t);margin-bottom:4px">' + sugestoes[def.tipo] + '</div>';
+    html += '<div style="font-size:11px;color:var(--t3)">' + def.tempo + ' min · recomendação do programa</div>';
+    html += '</div>';
+    html += '<div class="ct" style="margin-top:4px">O que você quer fazer hoje?</div>';
+    html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:6px">';
+    var opts = [
+      {tipo:'treino',    emoji:'💪', label:'Treino',      desc:'Musculação'},
+      {tipo:'mobilidade',emoji:'🧘', label:'Mobilidade',  desc:'Alongamento e flexibilidade'},
+      {tipo:'aerobico',  emoji:'🚴', label:'Aeróbico',    desc:'Cardio e queima calórica'},
+      {tipo:'descanso',  emoji:'😴', label:'Descanso',    desc:'Recuperação mental e física'}
+    ];
+    for(var oi=0;oi<opts.length;oi++){
+      var opt = opts[oi];
+      var isSug = opt.tipo===def.tipo;
+      html += '<div onclick="setFlowTipo(\''+opt.tipo+'\')" style="background:'+(isSug?'rgba(0,229,160,.1)':'var(--bg3)')+';border:1px solid '+(isSug?'var(--a)':'var(--br)')+';border-radius:12px;padding:16px 12px;cursor:pointer;text-align:center">';
+      html += '<div style="font-size:28px;margin-bottom:6px">'+opt.emoji+'</div>';
+      html += '<div style="font-size:13px;font-weight:700;color:'+(isSug?'var(--a)':'var(--t)')+'">'+opt.label+'</div>';
+      html += '<div style="font-size:10px;color:var(--t3);margin-top:2px">'+opt.desc+'</div>';
+      if(isSug) html += '<div style="font-size:9px;color:var(--a);margin-top:4px">⭐ sugerido hoje</div>';
+      html += '</div>';
+    }
+    html += '</div>';
+    html += '</div>';
     return html;
   }
 
-  // ── STEP 1 — Configure ──
+  // ── STEP 1: Configure ──
   if(flowStep===1){
-    // Back button
-    html += `<button onclick="resetFlow()" style="display:flex;align-items:center;gap:6px;background:transparent;border:none;color:var(--t3);font-family:Syne,sans-serif;font-size:13px;cursor:pointer;padding:0;margin-bottom:14px">← Voltar</button>`;
+    html += '<button onclick="resetFlow()" style="display:flex;align-items:center;gap:6px;background:transparent;border:none;color:var(--t3);font-family:Syne,sans-serif;font-size:13px;cursor:pointer;padding:0;margin-bottom:14px">← Voltar</button>';
+    var tipoEmojis = {treino:'💪',mobilidade:'🧘',aerobico:'🚴',descanso:'😴'};
+    var tipoLabels = {treino:'Treino',mobilidade:'Mobilidade',aerobico:'Aeróbico',descanso:'Descanso'};
+    html += '<div class="card" style="margin-bottom:10px"><div style="font-size:18px;font-weight:700">'+tipoEmojis[flowTipo]+' '+tipoLabels[flowTipo]+'</div></div>';
 
-    const TIPO_ICONS = {treino:'💪',mobilidade:'🧘',aerobico:'🚴',descanso:'😴'};
-    const TIPO_LABELS = {treino:'Treino',mobilidade:'Mobilidade',aerobico:'Aeróbico',descanso:'Descanso'};
-    html += `<div class="card" style="margin-bottom:10px">
-      <div style="font-size:18px;font-weight:700;color:var(--t)">${TIPO_ICONS[flowTipo]} ${TIPO_LABELS[flowTipo]}</div>
-    </div>`;
+    // Time selector
+    var tempos = flowTipo==='mobilidade' ? [10,20,30] : [20,30,45,60];
+    html += '<div class="card" style="margin-bottom:10px"><div class="ct">Quanto tempo você tem?</div>';
+    html += '<div style="display:flex;gap:8px;flex-wrap:wrap">';
+    for(var ti=0;ti<tempos.length;ti++){
+      var t = tempos[ti];
+      var isSel = t===flowTempo;
+      html += '<button onclick="setFlowTempo('+t+')" style="flex:1;min-width:50px;padding:10px 4px;border-radius:9px;border:1px solid '+(isSel?'var(--a)':'var(--br)')+';background:'+(isSel?'rgba(0,229,160,.15)':'var(--bg3)')+';color:'+(isSel?'var(--a)':'var(--t3)')+';font-family:Syne,sans-serif;font-size:13px;font-weight:700;cursor:pointer">'+t+' min</button>';
+    }
+    html += '</div></div>';
 
-    // ── Time selector ──
-    const tempos = flowTipo==='mobilidade' ? [10,20,30] : [20,30,45,60];
-    html += `<div class="card" style="margin-bottom:10px">
-      <div class="ct">⏱ Quanto tempo você tem?</div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap">`;
-    tempos.forEach(t=>{
-      const isSel = t===flowTempo;
-      html += `<button onclick="setFlowTempo(${t})" style="flex:1;min-width:50px;padding:10px 4px;border-radius:9px;border:1px solid ${isSel?'var(--a)':'var(--br)'};background:${isSel?'rgba(0,229,160,.15)':'var(--bg3)'};color:${isSel?'var(--a)':'var(--t3)'};font-family:Syne,sans-serif;font-size:13px;font-weight:700;cursor:pointer">${t} min</button>`;
-    });
-    html += `</div></div>`;
-
-    // ── TREINO: group selector + pain ──
+    // Treino group selector
     if(flowTipo==='treino'){
-      html += `<div class="card" style="margin-bottom:10px"><div class="ct">Qual grupo muscular?</div>
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">`;
-      [{g:'A',n:'Push',d:'Peito · Ombro · Tríceps'},{g:'B',n:'Pull',d:'Costas · Bíceps · Core'},{g:'C',n:'Legs',d:'Pernas · Glúteo'}].forEach(gr=>{
-        const isSel=gr.g===flowGrupo;
-        html+=`<div onclick="setFlowGrupo('${gr.g}')" style="background:${isSel?'rgba(0,184,255,.1)':'var(--bg3)'};border:1px solid ${isSel?'var(--a2)':'var(--br)'};border-radius:10px;padding:12px 8px;cursor:pointer;text-align:center">
-          <div style="font-size:15px;font-weight:700;color:${isSel?'var(--a2)':'var(--t)'}">${gr.n}</div>
-          <div style="font-size:10px;color:var(--t3);margin-top:3px;line-height:1.4">${gr.d}</div>
-          ${isSel?'<div style="font-size:9px;color:var(--a2);margin-top:3px">✓ selecionado</div>':''}
-        </div>`;
-      });
-      html += `</div></div>`;
-    }
-
-    // ── AEROBICO: modality selector ──
-    if(flowTipo==='aerobico'){
-      html += `<div class="card" style="margin-bottom:10px"><div class="ct">Qual atividade?</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">`;
-      Object.entries(AEROBICO_PROTOCOLS).forEach(([key,val])=>{
-        const isSel=key===flowAerobico;
-        html+=`<div onclick="setFlowAerobico('${key}')" style="background:${isSel?'rgba(176,133,245,.1)':'var(--bg3)'};border:1px solid ${isSel?'var(--ap)':'var(--br)'};border-radius:10px;padding:12px;cursor:pointer;text-align:center">
-          <div style="font-size:22px">${val.emoji}</div>
-          <div style="font-size:12px;font-weight:700;color:${isSel?'var(--ap)':'var(--t)'};margin-top:4px">${val.name}</div>
-        </div>`;
-      });
-      html += `</div></div>`;
-    }
-
-    // ── DESCANSO: multi-select ──
-    if(flowTipo==='descanso'){
-      html += `<div class="card" style="margin-bottom:10px"><div class="ct">O que prefere? (pode selecionar vários)</div>`;
-      DESCANSO_OPTIONS.forEach(opt=>{
-        const isSel=flowDescanso.has(opt.id);
-        html+=`<div onclick="toggleDescanso('${opt.id}')" style="display:flex;align-items:center;gap:12px;padding:12px;border-radius:10px;border:1px solid ${isSel?'var(--a)':'var(--br)'};background:${isSel?'rgba(0,229,160,.07)':'transparent'};cursor:pointer;margin-bottom:8px">
-          <span style="font-size:22px">${opt.emoji}</span>
-          <div style="flex:1"><div style="font-size:13px;font-weight:600;color:${isSel?'var(--a)':'var(--t)'}">${opt.label}</div>
-          <div style="font-size:11px;color:var(--t3)">${opt.desc}</div></div>
-          <div style="width:20px;height:20px;border-radius:6px;border:1.5px solid ${isSel?'var(--a)':'var(--t3)'};background:${isSel?'var(--a)':'transparent'};display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:12px;color:#000">${isSel?'✓':''}</div>
-        </div>`;
-      });
-      html += `</div>`;
-    }
-
-    // ── PAIN panel (treino + mobilidade) ──
-    if(flowTipo==='treino'||flowTipo==='mobilidade'){
-      const hasPain=activePain.size>0;
-      html += `<div class="card" style="margin-bottom:10px">
-        <div onclick="togglePainPanel()" style="display:flex;justify-content:space-between;align-items:center;cursor:pointer;user-select:none">
-          <div class="ct" style="margin-bottom:0">Incomodo muscular hoje?${hasPain?` <span style="color:var(--a3);font-size:10px">(${activePain.size} marcado)</span>`:''} <span style="font-size:10px;color:var(--t3)">— opcional</span></div>
-          <span style="color:var(--t3);font-size:13px;transform:rotate(${painOpen?'180':'0'}deg);display:inline-block">▼</span>
-        </div>`;
-      if(painOpen){
-        html += `<div style="margin-top:10px"><div class="pain-grid">`;
-        PAIN_ZONES.forEach(z=>{
-          const chk=activePain.has(z.id);
-          html+=`<div class="pain-item${chk?' checked':''}" onclick="togglePain('${z.id}')">
-            <span class="pain-dot">${z.emoji}</span><span class="pain-name">${z.name}</span>
-            <span class="pain-check">${chk?'✓':''}</span></div>`;
-        });
-        html += `</div>`;
-        if(hasPain) html+=`<button onclick="clearPain()" style="width:100%;padding:7px;border-radius:7px;border:1px solid var(--br);background:transparent;color:var(--t3);font-family:Syne,sans-serif;font-size:11px;cursor:pointer;margin-top:8px">Limpar seleção</button>`;
-        html += `</div>`;
+      html += '<div class="card" style="margin-bottom:10px"><div class="ct">Qual grupo muscular?</div>';
+      html += '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">';
+      var grupos = [{g:'A',n:'Push',d:'Peito · Ombro · Tríceps'},{g:'B',n:'Pull',d:'Costas · Bíceps · Core'},{g:'C',n:'Legs',d:'Pernas · Glúteo'}];
+      for(var gi=0;gi<grupos.length;gi++){
+        var gr = grupos[gi];
+        var isSel = gr.g===flowGrupo;
+        html += '<div onclick="setFlowGrupo(\''+gr.g+'\')" style="background:'+(isSel?'rgba(0,184,255,.1)':'var(--bg3)')+';border:1px solid '+(isSel?'var(--a2)':'var(--br)')+';border-radius:10px;padding:12px 8px;cursor:pointer;text-align:center">';
+        html += '<div style="font-size:15px;font-weight:700;color:'+(isSel?'var(--a2)':'var(--t)')+'">'+gr.n+'</div>';
+        html += '<div style="font-size:10px;color:var(--t3);margin-top:3px;line-height:1.4">'+gr.d+'</div>';
+        if(isSel) html += '<div style="font-size:9px;color:var(--a2);margin-top:3px">✓ selecionado</div>';
+        html += '</div>';
       }
-      html += `</div>`;
+      html += '</div></div>';
     }
 
-    // ── Generate button ──
-    const canGenerate = flowTipo==='treino'||flowTipo==='mobilidade'||(flowTipo==='aerobico'&&flowAerobico)||(flowTipo==='descanso'&&flowDescanso.size>0);
-    html += `<button onclick="${canGenerate?'gerarTreino()':'void(0)'}" style="width:100%;padding:14px;border-radius:12px;border:none;background:${canGenerate?'var(--a)':'var(--bg4)'};color:${canGenerate?'#000':'var(--t3)'};font-family:Syne,sans-serif;font-size:15px;font-weight:700;cursor:${canGenerate?'pointer':'default'}">
-      ${flowTipo==='descanso'?'Iniciar Sessão →':flowTipo==='mobilidade'?'Criar Protocolo →':flowTipo==='aerobico'?'Criar Sessão Aeróbica →':'Criar Treino →'}
-    </button>`;
-    if(flowTipo==='descanso'&&flowDescanso.size===0) html+=`<div style="text-align:center;font-size:11px;color:var(--t3);margin-top:8px">Selecione ao menos uma opção acima</div>`;
+    // Aerobico modality
+    if(flowTipo==='aerobico'){
+      html += '<div class="card" style="margin-bottom:10px"><div class="ct">Qual atividade?</div>';
+      html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">';
+      var aeroKeys = ['natacao','bike','ergometrica','caminhada'];
+      for(var ai=0;ai<aeroKeys.length;ai++){
+        var ak = aeroKeys[ai];
+        var av = AERO[ak];
+        var isSel = ak===flowAerobico;
+        html += '<div onclick="setFlowAerobico(\''+ak+'\')" style="background:'+(isSel?'rgba(176,133,245,.1)':'var(--bg3)')+';border:1px solid '+(isSel?'var(--ap)':'var(--br)')+';border-radius:10px;padding:12px;cursor:pointer;text-align:center">';
+        html += '<div style="font-size:22px">'+av.emoji+'</div>';
+        html += '<div style="font-size:12px;font-weight:700;color:'+(isSel?'var(--ap)':'var(--t)')+';margin-top:4px">'+av.name+'</div>';
+        html += '</div>';
+      }
+      html += '</div></div>';
+    }
 
-    html += `</div>`;
+    // Descanso multi-select
+    if(flowTipo==='descanso'){
+      html += '<div class="card" style="margin-bottom:10px"><div class="ct">O que prefere? (pode selecionar vários)</div>';
+      for(var di=0;di<DESCANSO_OPTS.length;di++){
+        var dopt = DESCANSO_OPTS[di];
+        var isSel = flowDescanso.has(dopt.id);
+        html += '<div onclick="toggleDescanso(\''+dopt.id+'\')" style="display:flex;align-items:center;gap:12px;padding:12px;border-radius:10px;border:1px solid '+(isSel?'var(--a)':'var(--br)')+';background:'+(isSel?'rgba(0,229,160,.07)':'transparent')+';cursor:pointer;margin-bottom:8px">';
+        html += '<span style="font-size:22px">'+dopt.emoji+'</span>';
+        html += '<div style="flex:1"><div style="font-size:13px;font-weight:600;color:'+(isSel?'var(--a)':'var(--t)')+'">'+dopt.label+'</div><div style="font-size:11px;color:var(--t3)">'+dopt.desc+'</div></div>';
+        html += '<div style="width:20px;height:20px;border-radius:6px;border:1.5px solid '+(isSel?'var(--a)':'var(--t3)')+';background:'+(isSel?'var(--a)':'transparent')+';display:flex;align-items:center;justify-content:center;color:#000;font-size:12px">'+(isSel?'✓':'')+'</div>';
+        html += '</div>';
+      }
+      html += '</div>';
+    }
+
+    // Pain panel (treino + mobilidade only)
+    if(flowTipo==='treino'||flowTipo==='mobilidade'){
+      var hasPain = activePain.size>0;
+      html += '<div class="card" style="margin-bottom:10px">';
+      html += '<div onclick="togglePainPanel()" style="display:flex;justify-content:space-between;align-items:center;cursor:pointer;user-select:none">';
+      html += '<div class="ct" style="margin-bottom:0">Incomodo muscular hoje?'+(hasPain?' <span style="color:var(--a3);font-size:10px">('+activePain.size+' marcado)</span>':'')+' <span style="font-size:10px;color:var(--t3)">— opcional</span></div>';
+      html += '<span style="color:var(--t3);font-size:13px">'+( painOpen?'▲':'▼')+'</span>';
+      html += '</div>';
+      if(painOpen){
+        html += '<div style="margin-top:10px"><div class="pain-grid">';
+        for(var pi=0;pi<PAIN_ZONES.length;pi++){
+          var z = PAIN_ZONES[pi];
+          var chk = activePain.has(z.id);
+          html += '<div class="pain-item'+(chk?' checked':'')+'" onclick="togglePain(\''+z.id+'\')">';
+          html += '<span class="pain-dot">'+z.emoji+'</span><span class="pain-name">'+z.name+'</span>';
+          html += '<span class="pain-check">'+(chk?'✓':'')+'</span></div>';
+        }
+        html += '</div>';
+        if(hasPain) html += '<button onclick="clearPain()" style="width:100%;padding:7px;border-radius:7px;border:1px solid var(--br);background:transparent;color:var(--t3);font-family:Syne,sans-serif;font-size:11px;cursor:pointer;margin-top:8px">Limpar seleção</button>';
+        html += '</div>';
+      }
+      html += '</div>';
+    }
+
+    // Generate button
+    var canGen = flowTipo==='treino' || flowTipo==='mobilidade' || (flowTipo==='aerobico' && flowAerobico) || (flowTipo==='descanso' && flowDescanso.size>0);
+    var btnLabels = {treino:'Criar Treino →',mobilidade:'Criar Protocolo →',aerobico:'Criar Sessão →',descanso:'Iniciar Sessão →'};
+    html += '<button onclick="'+(canGen?'gerarTreino()':'void(0)')+'" style="width:100%;padding:14px;border-radius:12px;border:none;background:'+(canGen?'var(--a)':'var(--bg4)')+';color:'+(canGen?'#000':'var(--t3)')+';font-family:Syne,sans-serif;font-size:15px;font-weight:700;cursor:'+(canGen?'pointer':'default')+'">';
+    html += (btnLabels[flowTipo]||'Gerar →');
+    html += '</button>';
+    if(flowTipo==='descanso'&&flowDescanso.size===0) html += '<div style="text-align:center;font-size:11px;color:var(--t3);margin-top:8px">Selecione ao menos uma opção acima</div>';
+    html += '</div>';
     return html;
   }
 
-  // ── STEP 2 — Session generated ──
+  // ── STEP 2: Session ──
   if(flowStep===2){
-    html += `<button onclick="resetFlow()" style="display:flex;align-items:center;gap:6px;background:transparent;border:none;color:var(--t3);font-family:Syne,sans-serif;font-size:13px;cursor:pointer;padding:0;margin-bottom:14px">← Novo treino</button>`;
+    html += '<button onclick="resetFlow()" style="display:flex;align-items:center;gap:6px;background:transparent;border:none;color:var(--t3);font-family:Syne,sans-serif;font-size:13px;cursor:pointer;padding:0;margin-bottom:14px">← Novo treino</button>';
 
-    // ── TREINO ──
+    // TREINO
     if(flowTipo==='treino'){
-      const wk = WORKOUTS[flowGrupo];
-      const analyzed = wk.exercises.map(ex=>{
-        const conf=ex.risks.filter(r=>activePain.has(r));
-        return Object.assign({},ex,{status:conf.length===0?'safe':(ex.sub?'substituted':'blocked')});
-      });
-      // Filter by time: 20min=3ex, 30min=4ex, 45min=all, 60min=all+extra sets label
-      const maxEx = flowTempo<=20?3:flowTempo<=30?4:wk.exercises.length;
-      const analyzed2 = analyzed.slice(0,maxEx);
-      const active = analyzed2.filter(e=>e.status!=='blocked');
-      const blocked = analyzed2.filter(e=>e.status==='blocked').length;
-      const subst = analyzed2.filter(e=>e.status==='substituted').length;
-      const allDone = active.length>0 && doneEx.size===active.length;
-      const pct = active.length?Math.round(doneEx.size/active.length*100):0;
-      const grupNm = flowGrupo==='A'?'PUSH':flowGrupo==='B'?'PULL + CORE':'LEGS';
-      const grupType = flowGrupo==='A'?'Peito · Ombro · Tríceps':flowGrupo==='B'?'Costas · Bíceps · Core':'Quadríceps · Glúteo · Posterior';
-
-      html+=`<div class="status-row">
-        <div style="font-size:20px">${activePain.size>0&&blocked?'⚠️':'✅'}</div>
-        <div><div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:1px">${grupType}</div>
-          <div class="sr-main">${grupNm}${activePain.size>0&&blocked?' ADAPTADO':''}</div>
-          <div class="sr-sub">${flowTempo} min · ${wk.kcal} kcal est.</div></div>
-        <div style="margin-left:auto;text-align:right">
-          <div style="font-family:'DM Mono',monospace;font-size:22px;color:var(--aw)">${doneEx.size}/${active.length}</div>
-          <div style="font-size:10px;color:var(--t3)">feitos</div></div>
-      </div>`;
-      if(activePain.size>0) html+=`<div class="ws-strip ws-r"><span>⚠️</span><div>Incomodo: ${[...activePain].map(pid=>PAIN_ZONES.find(z=>z.id===pid)?.name).filter(Boolean).join(', ')} — ${blocked} removido · ${subst} substituido</div></div>`;
-      if(flowTempo<=20) html+=`<div class="ws-strip ws-y"><span>⏱</span><div>20 min — treino rápido com os 3 exercícios principais</div></div>`;
-      html+=`<div class="comp-bar"><div class="comp-fill" style="width:${pct}%"></div></div>`;
-      html+=`<div class="comp-txt"><span>Progresso</span><span>${doneEx.size}/${active.length} · ${pct}%</span></div>`;
-      html+='<div style="font-size:10px;color:var(--t3);margin-bottom:8px">TOQUE PARA VER COMO FAZER</div>';
-      analyzed2.forEach((ex,i)=>{ html+=renderExCard(ex,i,doneEx.has(ex.id),openCards.has(ex.id)); });
-      html+=`<div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--br)">`;
-      if(allDone){
-        html+='<div class="ws-strip ws-g" style="margin-bottom:10px"><span>🎉</span><div><strong>Treino concluído!</strong> 💧 Beba 500ml de água agora!</div></div>';
-        html+=`<button onclick="concluirTreino()" style="width:100%;padding:14px;border-radius:12px;border:none;background:var(--a);color:#000;font-family:Syne,sans-serif;font-size:15px;font-weight:700;cursor:pointer">🏁 Treino Concluído — Salvar</button>`;
-      } else {
-        html+=`<button onclick="concluirTreino()" style="width:100%;padding:12px;border-radius:12px;border:1px solid var(--br);background:var(--bg3);color:var(--t3);font-family:Syne,sans-serif;font-size:13px;font-weight:600;cursor:pointer">Encerrar sem salvar</button>`;
+      var wk = WORKOUTS[flowGrupo];
+      if(!wk){html+='<div class="card">Treino não encontrado</div></div>';return html;}
+      var analyzed = [];
+      for(var ei=0;ei<wk.exercises.length;ei++){
+        var ex = wk.exercises[ei];
+        var conf = ex.risks.filter(function(r){return activePain.has(r);});
+        var status = conf.length===0 ? 'safe' : (ex.sub ? 'substituted' : 'blocked');
+        analyzed.push(Object.assign({},ex,{status:status}));
       }
-      html+=`</div>`;
-    }
+      var maxEx = flowTempo<=20?3:flowTempo<=30?4:wk.exercises.length;
+      analyzed = analyzed.slice(0,maxEx);
+      var active = analyzed.filter(function(e){return e.status!=='blocked';});
+      var blocked = analyzed.filter(function(e){return e.status==='blocked';}).length;
+      var subst = analyzed.filter(function(e){return e.status==='substituted';}).length;
+      var allDone = active.length>0 && doneEx.size===active.length;
+      var pct = active.length ? Math.round(doneEx.size/active.length*100) : 0;
+      var grupNm = flowGrupo==='A'?'PUSH':flowGrupo==='B'?'PULL + CORE':'LEGS';
+      var hasPain = activePain.size>0;
+      var painNames = Array.from(activePain).map(function(pid){var z=PAIN_ZONES.find(function(z){return z.id===pid;});return z?z.name:'';}).filter(Boolean);
 
-    // ── MOBILIDADE ──
-    else if(flowTipo==='mobilidade'){
-      const maxMob = flowTempo<=10?2:flowTempo<=20?4:MOBILITY.length;
-      const mobs = MOBILITY.slice(0,maxMob);
-      const mobDone = mobs.filter(m=>doneEx.has(m.id));
-      const mobPct = Math.round(mobDone.length/mobs.length*100);
-      const allDone = mobDone.length===mobs.length;
-      html+=`<div class="status-row"><div style="font-size:20px">🧘</div>
-        <div><div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:1px">Recuperação Ativa</div>
-          <div class="sr-main">MOBILIDADE</div>
-          <div class="sr-sub">${flowTempo} min · ${mobs.length} exercícios</div></div>
-        <div style="margin-left:auto;text-align:right">
-          <div style="font-family:'DM Mono',monospace;font-size:22px;color:var(--aw)">${mobDone.length}/${mobs.length}</div>
-          <div style="font-size:10px;color:var(--t3)">feitos</div></div>
-      </div>`;
-      if(activePain.size>0) html+=`<div class="ws-strip ws-y"><span>💡</span><div>Protocolo adaptado para: ${[...activePain].map(pid=>PAIN_ZONES.find(z=>z.id===pid)?.name).filter(Boolean).join(', ')}</div></div>`;
-      html+=`<div class="comp-bar"><div class="comp-fill" style="width:${mobPct}%"></div></div>`;
-      html+=`<div class="comp-txt"><span>Progresso</span><span>${mobDone.length}/${mobs.length} · ${mobPct}%</span></div>`;
-      html+='<div style="font-size:10px;color:var(--t3);margin-bottom:8px">TOQUE PARA VER COMO FAZER</div>';
-      mobs.forEach((m,i)=>{ html+=renderMobCard(m,i); });
-      html+=`<div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--br)">`;
-      if(allDone){
-        html+='<div class="ws-strip ws-g" style="margin-bottom:10px"><span>🎉</span><div><strong>Mobilidade concluída!</strong> 💧 Beba água e descanse bem.</div></div>';
-        html+=`<button onclick="concluirTreino()" style="width:100%;padding:14px;border-radius:12px;border:none;background:var(--a);color:#000;font-family:Syne,sans-serif;font-size:15px;font-weight:700;cursor:pointer">🏁 Concluir — Salvar</button>`;
-      } else {
-        html+=`<button onclick="concluirTreino()" style="width:100%;padding:12px;border-radius:12px;border:1px solid var(--br);background:var(--bg3);color:var(--t3);font-family:Syne,sans-serif;font-size:13px;font-weight:600;cursor:pointer">Encerrar sem salvar</button>`;
-      }
-      html+=`</div>`;
-    }
+      html += '<div class="status-row">';
+      html += '<div style="font-size:20px">'+(hasPain&&blocked?'⚠️':'✅')+'</div>';
+      html += '<div><div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:1px">Musculação '+flowGrupo+'</div>';
+      html += '<div class="sr-main">'+(grupNm+(hasPain&&blocked?' ADAPTADO':''))+'</div>';
+      html += '<div class="sr-sub">'+flowTempo+' min · '+wk.kcal+' kcal est.</div></div>';
+      html += '<div style="margin-left:auto;text-align:right"><div style="font-family:\'DM Mono\',monospace;font-size:22px;color:var(--aw)">'+doneEx.size+'/'+active.length+'</div><div style="font-size:10px;color:var(--t3)">feitos</div></div>';
+      html += '</div>';
 
-    // ── AERÓBICO ──
-    else if(flowTipo==='aerobico'){
-      const aero = AEROBICO_PROTOCOLS[flowAerobico];
-      const proto = aero?.tempos[flowTempo] || aero?.tempos[45];
-      html+=`<div class="status-row"><div style="font-size:22px">${aero?.emoji||'🚴'}</div>
-        <div><div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:1px">Cardio</div>
-          <div class="sr-main">${aero?.name?.toUpperCase()||'AERÓBICO'}</div>
-          <div class="sr-sub">${flowTempo} min · ${proto?.kcal||0} kcal est.</div></div>
-        <div style="margin-left:auto;text-align:right">
-          <div style="font-family:'DM Mono',monospace;font-size:22px;color:var(--aw)">${flowTempo}</div>
-          <div style="font-size:10px;color:var(--t3)">minutos</div></div>
-      </div>`;
-      if(activePain.has('ankle')||activePain.has('knee')) html+=`<div class="ws-strip ws-y"><span>🦶</span><div>Incomodo no tornozelo/joelho detectado — ergométrica em casa é a melhor opção hoje.</div></div>`;
-      html+=`<div class="card">
-        <div class="ct">Protocolo da sessão</div>`;
-      proto?.blocos.forEach((b,i)=>{
-        html+=`<div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--br)">
-          <span style="width:22px;height:22px;border-radius:50%;background:var(--ap);color:#000;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">${i+1}</span>
-          <span style="font-size:13px;color:var(--t);line-height:1.4">${b}</span></div>`;
-      });
-      html+=`</div>`;
-      if(proto?.tip) html+=`<div class="ws-strip ws-y"><span>💡</span><div>${proto.tip}</div></div>`;
-      html+=`<div class="card"><div class="ct">FC alvo</div>
-        <div style="font-size:13px;color:var(--t3);line-height:1.8">
-          Zona aeróbica (60-70%): <span style="color:var(--a);font-family:'DM Mono',monospace">108–126 bpm</span><br>
-          Zona moderada (70-80%): <span style="color:var(--aw);font-family:'DM Mono',monospace">126–144 bpm</span><br>
-          <span style="font-size:11px">FCmax estimada para 40 anos: 180 bpm</span>
-        </div>
-      </div>`;
-      html+=`<div style="margin-top:16px">
-        <button onclick="concluirTreino()" style="width:100%;padding:14px;border-radius:12px;border:none;background:var(--a);color:#000;font-family:Syne,sans-serif;font-size:15px;font-weight:700;cursor:pointer">🏁 Sessão Concluída — Salvar</button>
-      </div>`;
-    }
+      if(hasPain) html += '<div class="ws-strip ws-r"><span>⚠️</span><div><strong>Incomodo: '+painNames.join(', ')+'</strong> — '+blocked+' removido · '+subst+' substituído</div></div>';
+      if(flowTempo<=20) html += '<div class="ws-strip ws-y"><span>⏱</span><div>20 min — treino rápido com os 3 exercícios principais</div></div>';
 
-    // ── DESCANSO ──
-    else if(flowTipo==='descanso'){
-      const selected = DESCANSO_OPTIONS.filter(o=>flowDescanso.has(o.id));
-      html+=`<div class="status-row"><div style="font-size:22px">😴</div>
-        <div><div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:1px">Recuperação</div>
-          <div class="sr-main">DESCANSO</div>
-          <div class="sr-sub">${selected.map(o=>o.label).join(' · ')}</div></div>
-      </div>`;
+      html += '<div class="comp-bar"><div class="comp-fill" style="width:'+pct+'%"></div></div>';
+      html += '<div class="comp-txt"><span>Progresso</span><span>'+doneEx.size+'/'+active.length+' · '+pct+'%</span></div>';
+      html += '<div style="font-size:10px;color:var(--t3);margin-bottom:8px">TOQUE PARA VER COMO FAZER</div>';
 
-      selected.forEach(opt=>{
-        html+=`<div class="card" style="margin-bottom:10px">`;
-        html+=`<div style="font-size:22px;margin-bottom:6px">${opt.emoji}</div>`;
-        html+=`<div style="font-size:15px;font-weight:700;color:var(--t);margin-bottom:8px">${opt.label}</div>`;
+      for(var xi=0;xi<analyzed.length;xi++){
+        var ex = analyzed[xi];
+        var isDone = doneEx.has(ex.id);
+        var isOpen = openCards.has(ex.id);
+        var nm = ex.status==='substituted' ? ex.sub.name : ex.name;
+        var st = ex.status==='substituted' ? ex.sub.sets : ex.sets;
+        var info = EXERCISE_INFO[ex.id]||{};
 
-        if(opt.id==='respiracao'){
-          html+=`<div style="font-size:12px;color:var(--t3);line-height:1.8;margin-bottom:10px">
-            4s inspirar → 7s prender → 8s expirar<br>
-            Repita 4 ciclos (~2 min) · Ativa nervo vago · Reduz cortisol
-          </div>`;
-          html+=`<button onclick="setSt('breath');go('mais')" style="width:100%;padding:11px;border-radius:9px;border:1px solid var(--a);background:rgba(0,229,160,.1);color:var(--a);font-family:Syne,sans-serif;font-size:13px;font-weight:600;cursor:pointer">Abrir exercício de respiração →</button>`;
-        } else if(opt.id==='meditacao'){
-          const ytMed = `https://www.youtube.com/results?search_query=meditacao+guiada+${flowTempo}+minutos`;
-          html+=`<div style="font-size:12px;color:var(--t3);line-height:1.8;margin-bottom:10px">
-            Sessão de ${flowTempo} minutos · Reduz ansiedade e cortisol · Melhora foco e qualidade do sono
-          </div>`;
-          html+=`<a href="${ytMed}" target="_blank" style="display:flex;align-items:center;justify-content:space-between;text-decoration:none;padding:11px 14px;background:var(--bg2);border:1px solid var(--br);border-radius:9px">
-            <div style="display:flex;align-items:center;gap:8px"><span>🎬</span>
-              <div><div style="font-size:12px;font-weight:600;color:var(--t)">Meditação ${flowTempo} min no YouTube</div>
-              <div style="font-size:10px;color:var(--t3)">Busca vídeos de meditação guiada</div></div></div>
-            <span style="color:var(--a)">→</span></a>`;
-        } else if(opt.id==='relaxamento'){
-          html+=`<div style="font-size:12px;color:var(--t3);line-height:1.8;margin-bottom:10px">
-            Tensão progressiva e liberação muscular — 10 a 15 min
-          </div>`;
-          const ytRel = `https://www.youtube.com/results?search_query=relaxamento+muscular+progressivo+${flowTempo}+minutos`;
-          html+=`<a href="${ytRel}" target="_blank" style="display:flex;align-items:center;justify-content:space-between;text-decoration:none;padding:11px 14px;background:var(--bg2);border:1px solid var(--br);border-radius:9px">
-            <div style="display:flex;align-items:center;gap:8px"><span>🎬</span>
-              <div><div style="font-size:12px;font-weight:600;color:var(--t)">Relaxamento ${flowTempo} min no YouTube</div>
-              <div style="font-size:10px;color:var(--t3)">Relaxamento muscular progressivo</div></div></div>
-            <span style="color:var(--a)">→</span></a>`;
-        } else if(opt.id==='sono'){
-          html+=`<div style="font-size:12px;color:var(--t3);line-height:2;margin-bottom:8px">
-            🌙 Dorme às: <strong style="color:var(--t)">22:30</strong><br>
-            ⏰ Acorda às: <strong style="color:var(--t)">06:30</strong> (7h30 de sono)<br>
-            📵 Telas modo noite: <strong style="color:var(--t)">21:00</strong><br>
-            🛁 Banho morno: <strong style="color:var(--t)">22:00</strong><br>
-            💊 Magnésio 300mg: <strong style="color:var(--t)">22:00</strong>
-          </div>`;
+        if(ex.status==='blocked'){
+          var pl = ex.risks.filter(function(r){return activePain.has(r);}).map(function(r){var z=PAIN_ZONES.find(function(z){return z.id===r;});return z?z.name:'';}).filter(Boolean).join(', ');
+          html += '<div class="ex-card blocked"><div class="ex-hdr" style="cursor:default"><div class="ex-num">✕</div>';
+          html += '<div class="ex-inf"><div class="ex-nm">'+ex.name+'</div><div class="ex-mt"><span class="ex-sets">'+ex.sets+'</span><span class="ex-tag tg-r">BLOQUEADO</span></div></div></div>';
+          html += '<div class="ex-reason">Agrava: '+pl+'</div></div>';
+          continue;
         }
-        html+=`</div>`;
-      });
 
-      html+=`<div style="margin-top:8px">
-        <button onclick="concluirTreino()" style="width:100%;padding:14px;border-radius:12px;border:none;background:var(--a);color:#000;font-family:Syne,sans-serif;font-size:15px;font-weight:700;cursor:pointer">✅ Sessão Concluída — Salvar</button>
-      </div>`;
+        html += '<div class="ex-card '+ex.status+'">';
+        html += '<div class="ex-hdr" onclick="toggleCard(\''+ex.id+'\')">';
+        html += '<div class="ex-num" style="'+(isDone?'background:rgba(0,229,160,.18);color:var(--a)':'')+'">'+(isDone?'✓':(xi+1))+'</div>';
+        html += '<div class="ex-inf"><div class="ex-nm" style="'+(isDone?'opacity:.45':'')+'">'+nm+'</div>';
+        html += '<div class="ex-mt"><span class="ex-sets">'+st+' · '+ex.focus+'</span>'+(ex.status==='substituted'?'<span class="ex-tag tg-y">SUBSTITUTO</span>':'<span class="ex-tag tg-g">OK</span>')+'</div></div>';
+        html += '<div style="font-size:14px;flex-shrink:0">'+(isDone?'✅':'○')+'</div>';
+        html += '<div class="ex-arr '+(isOpen?'open':'')+'" style="margin-left:4px">▼</div></div>';
+
+        if(isOpen){
+          html += '<div class="ex-body open">';
+          if(ex.status==='substituted') html += '<div class="ex-sub-r">Substituído: '+ex.sub.reason+'</div>';
+          if(info.muscles) html += '<div style="display:flex;align-items:flex-start;gap:8px;padding:10px 12px;background:rgba(0,229,160,.05);border-bottom:1px solid var(--br)"><span style="font-size:14px;flex-shrink:0">💪</span><div><div style="font-size:10px;color:var(--t3);text-transform:uppercase;margin-bottom:2px">Músculos</div><div style="font-size:12px;color:var(--a);font-weight:600">'+info.muscles+'</div></div></div>';
+          if(info.steps&&info.steps.length){
+            html += '<div style="padding:10px 12px;border-bottom:1px solid var(--br)"><div style="font-size:10px;color:var(--t3);text-transform:uppercase;margin-bottom:8px">Como fazer</div>';
+            for(var si=0;si<info.steps.length;si++){
+              html += '<div style="display:flex;gap:8px;margin-bottom:6px"><span style="width:18px;height:18px;border-radius:50%;background:var(--a2);color:#000;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">'+(si+1)+'</span><span style="font-size:12px;color:var(--t);line-height:1.5">'+info.steps[si]+'</span></div>';
+            }
+            html += '</div>';
+          }
+          if(ex.tip) html += '<div style="display:flex;gap:8px;align-items:flex-start;padding:8px 12px;background:rgba(255,179,71,.05);border-bottom:1px solid var(--br)"><span style="font-size:13px;flex-shrink:0">⚠️</span><span style="font-size:11px;color:var(--aw);line-height:1.5">'+ex.tip+'</span></div>';
+          if(info.url) html += '<div style="padding:10px 12px;border-bottom:1px solid var(--br)"><a href="'+info.url+'" target="_blank" style="display:flex;align-items:center;justify-content:space-between;text-decoration:none;padding:10px 12px;background:var(--bg2);border:1px solid var(--br);border-radius:8px"><div style="display:flex;align-items:center;gap:8px"><span style="font-size:16px">🎬</span><div><div style="font-size:12px;font-weight:600;color:var(--t)">Ver no YouTube</div><div style="font-size:10px;color:var(--t3)">Vídeos demonstrativos</div></div></div><span style="color:var(--a)">→</span></a></div>';
+          html += '<button class="ex-done-btn '+(isDone?'done':'')+'" onclick="toggleDone(event,\''+ex.id+'\')"> '+(isDone?'✅ Concluído — toque para desfazer':'✓ Marcar como feito')+'</button>';
+          html += '</div>';
+        }
+        html += '</div>';
+      }
+
+      html += '<div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--br)">';
+      if(allDone){
+        html += '<div class="ws-strip ws-g" style="margin-bottom:10px"><span>🎉</span><div><strong>Treino concluído!</strong> Beba 500ml de água agora!</div></div>';
+        html += '<button onclick="concluirTreino()" style="width:100%;padding:14px;border-radius:12px;border:none;background:var(--a);color:#000;font-family:Syne,sans-serif;font-size:15px;font-weight:700;cursor:pointer">🏁 Treino Concluído — Salvar</button>';
+      } else {
+        html += '<button onclick="concluirTreino()" style="width:100%;padding:12px;border-radius:12px;border:1px solid var(--br);background:var(--bg3);color:var(--t3);font-family:Syne,sans-serif;font-size:13px;font-weight:600;cursor:pointer">Encerrar sem salvar</button>';
+      }
+      html += '</div>';
+    }
+
+    // MOBILIDADE
+    else if(flowTipo==='mobilidade'){
+      var maxMob = flowTempo<=10?2:flowTempo<=20?4:MOBILITY.length;
+      var mobs = MOBILITY.slice(0,maxMob);
+      var mobDone = mobs.filter(function(m){return doneEx.has(m.id);});
+      var mobPct = Math.round(mobDone.length/mobs.length*100);
+      var allDone = mobDone.length===mobs.length;
+      html += '<div class="status-row"><div style="font-size:20px">🧘</div><div><div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:1px">Recuperação Ativa</div><div class="sr-main">MOBILIDADE</div><div class="sr-sub">'+flowTempo+' min · '+mobs.length+' exercícios</div></div><div style="margin-left:auto;text-align:right"><div style="font-family:\'DM Mono\',monospace;font-size:22px;color:var(--aw)">'+mobDone.length+'/'+mobs.length+'</div><div style="font-size:10px;color:var(--t3)">feitos</div></div></div>';
+      html += '<div class="comp-bar"><div class="comp-fill" style="width:'+mobPct+'%"></div></div>';
+      html += '<div class="comp-txt"><span>Progresso</span><span>'+mobDone.length+'/'+mobs.length+' · '+mobPct+'%</span></div>';
+      html += '<div style="font-size:10px;color:var(--t3);margin-bottom:8px">TOQUE PARA VER COMO FAZER</div>';
+
+      for(var mi=0;mi<mobs.length;mi++){
+        var mob = mobs[mi];
+        var isDone = doneEx.has(mob.id);
+        var isOpen = openCards.has(mob.id);
+        html += '<div class="ex-card"><div class="ex-hdr" onclick="toggleCard(\''+mob.id+'\')">';
+        html += '<div class="ex-num" style="'+(isDone?'background:rgba(0,229,160,.18);color:var(--a)':'')+'">'+(isDone?'✓':(mi+1))+'</div>';
+        html += '<div class="ex-inf"><div class="ex-nm" style="'+(isDone?'opacity:.45':'')+'">'+mob.name+'</div><div class="ex-mt"><span class="ex-sets">'+mob.sets+'</span><span class="ex-tag tg-g">MOBILIDADE</span></div></div>';
+        html += '<div style="font-size:14px;flex-shrink:0">'+(isDone?'✅':'○')+'</div>';
+        html += '<div class="ex-arr '+(isOpen?'open':'')+'" style="margin-left:4px">▼</div></div>';
+        if(isOpen){
+          html += '<div class="ex-body open">';
+          html += '<div style="display:flex;align-items:flex-start;gap:8px;padding:10px 12px;background:rgba(0,229,160,.05);border-bottom:1px solid var(--br)"><span style="font-size:14px;flex-shrink:0">💪</span><div><div style="font-size:10px;color:var(--t3);text-transform:uppercase;margin-bottom:2px">Área</div><div style="font-size:12px;color:var(--a);font-weight:600">'+mob.muscles+'</div></div></div>';
+          html += '<div style="padding:10px 12px;border-bottom:1px solid var(--br)"><div style="font-size:10px;color:var(--t3);text-transform:uppercase;margin-bottom:8px">Como fazer</div>';
+          for(var msi=0;msi<mob.steps.length;msi++){
+            html += '<div style="display:flex;gap:8px;margin-bottom:6px"><span style="width:18px;height:18px;border-radius:50%;background:var(--a2);color:#000;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">'+(msi+1)+'</span><span style="font-size:12px;color:var(--t);line-height:1.5">'+mob.steps[msi]+'</span></div>';
+          }
+          html += '</div>';
+          html += '<div style="display:flex;gap:8px;align-items:flex-start;padding:8px 12px;background:rgba(255,179,71,.05);border-bottom:1px solid var(--br)"><span>⚠️</span><span style="font-size:11px;color:var(--aw);line-height:1.5">'+mob.tip+'</span></div>';
+          html += '<div style="padding:10px 12px;border-bottom:1px solid var(--br)"><a href="'+mob.yt+'" target="_blank" style="display:flex;align-items:center;justify-content:space-between;text-decoration:none;padding:10px 12px;background:var(--bg2);border:1px solid var(--br);border-radius:8px"><div style="display:flex;align-items:center;gap:8px"><span>🎬</span><div><div style="font-size:12px;font-weight:600;color:var(--t)">Ver no YouTube</div><div style="font-size:10px;color:var(--t3)">Vídeos demonstrativos</div></div></div><span style="color:var(--a)">→</span></a></div>';
+          html += '<button class="ex-done-btn '+(isDone?'done':'')+'" onclick="toggleDone(event,\''+mob.id+'\')">'+(isDone?'✅ Concluído':'✓ Marcar como feito')+'</button>';
+          html += '</div>';
+        }
+        html += '</div>';
+      }
+
+      html += '<div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--br)">';
+      if(allDone){
+        html += '<div class="ws-strip ws-g" style="margin-bottom:10px"><span>🎉</span><div><strong>Mobilidade concluída!</strong> Beba água e descanse bem.</div></div>';
+        html += '<button onclick="concluirTreino()" style="width:100%;padding:14px;border-radius:12px;border:none;background:var(--a);color:#000;font-family:Syne,sans-serif;font-size:15px;font-weight:700;cursor:pointer">🏁 Concluir — Salvar</button>';
+      } else {
+        html += '<button onclick="concluirTreino()" style="width:100%;padding:12px;border-radius:12px;border:1px solid var(--br);background:var(--bg3);color:var(--t3);font-family:Syne,sans-serif;font-size:13px;font-weight:600;cursor:pointer">Encerrar sem salvar</button>';
+      }
+      html += '</div>';
+    }
+
+    // AEROBICO
+    else if(flowTipo==='aerobico'){
+      var aeroInfo = AERO[flowAerobico]||{name:'Aeróbico',emoji:'🚴'};
+      var blocos = (AERO_BLOCOS[flowAerobico]||{})[flowTempo] || (AERO_BLOCOS[flowAerobico]||{})[45] || [];
+      var kcal = (AERO_KCAL[flowAerobico]||{})[flowTempo] || 200;
+      html += '<div class="status-row"><div style="font-size:22px">'+aeroInfo.emoji+'</div><div><div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:1px">Cardio</div><div class="sr-main">'+aeroInfo.name.toUpperCase()+'</div><div class="sr-sub">'+flowTempo+' min · '+kcal+' kcal est.</div></div><div style="margin-left:auto;text-align:right"><div style="font-family:\'DM Mono\',monospace;font-size:22px;color:var(--aw)">'+flowTempo+'</div><div style="font-size:10px;color:var(--t3)">minutos</div></div></div>';
+      if(activePain.has('ankle')||activePain.has('knee')) html += '<div class="ws-strip ws-y"><span>🦶</span><div>Incomodo no tornozelo/joelho — ergométrica em casa é a melhor opção.</div></div>';
+      html += '<div class="card"><div class="ct">Protocolo da sessão</div>';
+      for(var bi=0;bi<blocos.length;bi++){
+        html += '<div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--br)"><span style="width:22px;height:22px;border-radius:50%;background:var(--ap);color:#000;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">'+(bi+1)+'</span><span style="font-size:13px;color:var(--t);line-height:1.4">'+blocos[bi]+'</span></div>';
+      }
+      html += '</div>';
+      html += '<div class="card"><div class="ct">FC alvo</div><div style="font-size:13px;color:var(--t3);line-height:1.8">Zona aeróbica 60-70%: <span style="color:var(--a);font-family:\'DM Mono\',monospace">108–126 bpm</span><br>Zona moderada 70-80%: <span style="color:var(--aw);font-family:\'DM Mono\',monospace">126–144 bpm</span><br><span style="font-size:11px">FCmax estimada: 180 bpm (40 anos)</span></div></div>';
+      html += '<div style="margin-top:16px"><button onclick="concluirTreino()" style="width:100%;padding:14px;border-radius:12px;border:none;background:var(--a);color:#000;font-family:Syne,sans-serif;font-size:15px;font-weight:700;cursor:pointer">🏁 Sessão Concluída — Salvar</button></div>';
+    }
+
+    // DESCANSO
+    else if(flowTipo==='descanso'){
+      var selected = DESCANSO_OPTS.filter(function(o){return flowDescanso.has(o.id);});
+      html += '<div class="status-row"><div style="font-size:22px">😴</div><div><div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:1px">Recuperação</div><div class="sr-main">DESCANSO</div><div class="sr-sub">'+selected.map(function(o){return o.label;}).join(' · ')+'</div></div></div>';
+      for(var sdi=0;sdi<selected.length;sdi++){
+        var sopt = selected[sdi];
+        html += '<div class="card" style="margin-bottom:10px"><div style="font-size:22px;margin-bottom:6px">'+sopt.emoji+'</div><div style="font-size:15px;font-weight:700;color:var(--t);margin-bottom:8px">'+sopt.label+'</div>';
+        if(sopt.id==='respiracao'){
+          html += '<div style="font-size:12px;color:var(--t3);line-height:1.8;margin-bottom:10px">4s inspirar → 7s prender → 8s expirar<br>Repita 4 ciclos · Ativa nervo vago · Reduz cortisol</div>';
+          html += '<button onclick="S.st=\'breath\';go(\'mais\')" style="width:100%;padding:11px;border-radius:9px;border:1px solid var(--a);background:rgba(0,229,160,.1);color:var(--a);font-family:Syne,sans-serif;font-size:13px;font-weight:600;cursor:pointer">Abrir exercício de respiração →</button>';
+        } else if(sopt.id==='meditacao'){
+          var ytMed = 'https://www.youtube.com/results?search_query=meditacao+guiada+'+flowTempo+'+minutos';
+          html += '<div style="font-size:12px;color:var(--t3);line-height:1.8;margin-bottom:10px">Sessão de '+flowTempo+' minutos · Reduz ansiedade e cortisol</div>';
+          html += '<a href="'+ytMed+'" target="_blank" style="display:flex;align-items:center;justify-content:space-between;text-decoration:none;padding:11px 14px;background:var(--bg2);border:1px solid var(--br);border-radius:9px"><div style="display:flex;align-items:center;gap:8px"><span>🎬</span><div><div style="font-size:12px;font-weight:600;color:var(--t)">Meditação '+flowTempo+' min no YouTube</div><div style="font-size:10px;color:var(--t3)">Busca vídeos de meditação guiada</div></div></div><span style="color:var(--a)">→</span></a>';
+        } else if(sopt.id==='relaxamento'){
+          var ytRel = 'https://www.youtube.com/results?search_query=relaxamento+muscular+progressivo+'+flowTempo+'+minutos';
+          html += '<div style="font-size:12px;color:var(--t3);line-height:1.8;margin-bottom:10px">Tensão progressiva e liberação muscular · '+flowTempo+' min</div>';
+          html += '<a href="'+ytRel+'" target="_blank" style="display:flex;align-items:center;justify-content:space-between;text-decoration:none;padding:11px 14px;background:var(--bg2);border:1px solid var(--br);border-radius:9px"><div style="display:flex;align-items:center;gap:8px"><span>🎬</span><div><div style="font-size:12px;font-weight:600;color:var(--t)">Relaxamento '+flowTempo+' min no YouTube</div><div style="font-size:10px;color:var(--t3)">Relaxamento muscular progressivo</div></div></div><span style="color:var(--a)">→</span></a>';
+        } else if(sopt.id==='sono'){
+          html += '<div style="font-size:12px;color:var(--t3);line-height:2;margin-bottom:8px">🌙 Dormir às: <strong style="color:var(--t)">22:30</strong><br>⏰ Acordar às: <strong style="color:var(--t)">06:30</strong><br>📵 Telas modo noite: <strong style="color:var(--t)">21:00</strong><br>🛁 Banho morno: <strong style="color:var(--t)">22:00</strong><br>💊 Magnésio 300mg: <strong style="color:var(--t)">22:00</strong></div>';
+        }
+        html += '</div>';
+      }
+      html += '<div style="margin-top:8px"><button onclick="concluirTreino()" style="width:100%;padding:14px;border-radius:12px;border:none;background:var(--a);color:#000;font-family:Syne,sans-serif;font-size:15px;font-weight:700;cursor:pointer">✅ Sessão Concluída — Salvar</button></div>';
     }
 
     html += '</div>';
@@ -1512,7 +1428,6 @@ function rTreinoDin(){
   html += '</div>';
   return html;
 }
-
 
 // ======= INIT =======
 render();
@@ -1566,31 +1481,31 @@ const PAIN_ZONES=[
 
 const WORKOUTS={
   A:{label:'PUSH',type:'Peito · Ombro · Triceps',duration:45,kcal:280,exercises:[
-    {id:'supino_inclinado',name:'Supino inclinado halteres',sets:'3x12',focus:'Peito superior',risks:['chest','shoulder','elbow','forearm','wrist'],tip:'Escapulas retraidas o tempo todo. Desça devagar 3 segundos.',sub:{name:'Flexao inclinada (pes no banco)',sets:'3x12-15',reason:'Elimina carga nos pulsos, mesmo padrao'},
-    {id:'crucifixo',name:'Crucifixo maquina',sets:'3x15',focus:'Peito medial',risks:['chest','shoulder'],tip:'Para antes de sentir apertar no ombro. Cotovelo semi-flexionado.',sub:{name:'Cabo voador baixo (cable crossover)',sets:'3x15',reason:'Menor pico de forca no alongamento'},
-    {id:'desenvolvimento',name:'Desenvolvimento halteres',sets:'3x12',focus:'Ombro anterior',risks:['shoulder','elbow','forearm','wrist','neck'],tip:'Cotovelos a 90 graus na posicao baixa. Core ativado sentado.',sub:{name:'Elevacao frontal leve no cabo',sets:'3x15',reason:'Menor estresse no ombro com impingement'},
-    {id:'elevacao_lateral',name:'Elevacao lateral halteres',sets:'3x15',focus:'Deltatoide medial',risks:['shoulder','elbow','forearm','wrist'],tip:'Cotovelo levemente dobrado. Sobe ate paralelo ao chao, nao mais.',sub:{name:'Elevacao lateral no cabo unilateral',sets:'3x15',reason:'Tensao constante, menos impacto articular'},
-    {id:'facepull',name:'Facepull cabo (chave postura)',sets:'3x15',focus:'Manguito / postura',risks:['shoulder','neck','elbow','forearm'],tip:'Puxar ate a face, cotovelos altos e abertos. NUNCA pule este exercicio.',sub:{name:'Band pull-apart com elastico',sets:'3x20',reason:'Zero carga nos cotovelos, mesmo padrao'},
-    {id:'triceps_corda',name:'Triceps corda',sets:'3x15',focus:'Triceps',risks:['elbow','forearm','shoulder','wrist'],tip:'Cotovelos fixos ao lado do corpo. Abre a corda no final do movimento.',sub:{name:'Extensao triceps com halter neutro',sets:'3x12',reason:'Menos estresse no cotovelo'},
+    {id:'supino_inclinado',name:'Supino inclinado halteres',sets:'3x12',focus:'Peito superior',risks:['chest','shoulder','elbow','forearm','wrist'],tip:'Escapulas retraidas o tempo todo. Desça devagar 3 segundos.',sub:{name:'Flexao inclinada (pes no banco)',sets:'3x12-15',reason:'Elimina carga nos pulsos, mesmo padrao'}},
+    {id:'crucifixo',name:'Crucifixo maquina',sets:'3x15',focus:'Peito medial',risks:['chest','shoulder'],tip:'Para antes de sentir apertar no ombro. Cotovelo semi-flexionado.',sub:{name:'Cabo voador baixo (cable crossover)',sets:'3x15',reason:'Menor pico de forca no alongamento'}},
+    {id:'desenvolvimento',name:'Desenvolvimento halteres',sets:'3x12',focus:'Ombro anterior',risks:['shoulder','elbow','forearm','wrist','neck'],tip:'Cotovelos a 90 graus na posicao baixa. Core ativado sentado.',sub:{name:'Elevacao frontal leve no cabo',sets:'3x15',reason:'Menor estresse no ombro com impingement'}},
+    {id:'elevacao_lateral',name:'Elevacao lateral halteres',sets:'3x15',focus:'Deltatoide medial',risks:['shoulder','elbow','forearm','wrist'],tip:'Cotovelo levemente dobrado. Sobe ate paralelo ao chao, nao mais.',sub:{name:'Elevacao lateral no cabo unilateral',sets:'3x15',reason:'Tensao constante, menos impacto articular'}},
+    {id:'facepull',name:'Facepull cabo (chave postura)',sets:'3x15',focus:'Manguito / postura',risks:['shoulder','neck','elbow','forearm'],tip:'Puxar ate a face, cotovelos altos e abertos. NUNCA pule este exercicio.',sub:{name:'Band pull-apart com elastico',sets:'3x20',reason:'Zero carga nos cotovelos, mesmo padrao'}},
+    {id:'triceps_corda',name:'Triceps corda',sets:'3x15',focus:'Triceps',risks:['elbow','forearm','shoulder','wrist'],tip:'Cotovelos fixos ao lado do corpo. Abre a corda no final do movimento.',sub:{name:'Extensao triceps com halter neutro',sets:'3x12',reason:'Menos estresse no cotovelo'}},
   ]},
   B:{label:'PULL + CORE',type:'Costas · Biceps · Core',duration:45,kcal:270,exercises:[
-    {id:'remada_baixa',name:'Remada baixa cabo (chave lombar)',sets:'3x12',focus:'Costas / postura',risks:['lowerback','upperback','elbow','forearm','wrist','shoulder'],tip:'Nao curve a lombar no final. Cotovelos perto do corpo, puxar ate o umbigo.',sub:{name:'Remada maquina apoiada (chest supported)',sets:'3x12',reason:'Lombar descarregada completamente'},
-    {id:'pulldown',name:'Pulldown barra larga',sets:'3x12',focus:'Lat / largura',risks:['shoulder','elbow','forearm','wrist'],tip:'Deixa o ombro descer ao final da subida. Puxa ate o queixo.',sub:{name:'Pulldown neutro (triangulo)',sets:'3x12',reason:'Posicao mais segura para o manguito'},
-    {id:'remada_uni',name:'Remada unilateral halter',sets:'3x12',focus:'Costas + core',risks:['lowerback','elbow','forearm','wrist'],tip:'Apoio solido no banco. Nao gire o tronco. Puxe ate o quadril.',sub:{name:'Remada unilateral no cabo em pe',sets:'3x12',reason:'Menor torque na lombar'},
-    {id:'rosca_ez',name:'Rosca barra EZ',sets:'3x12',focus:'Biceps',risks:['elbow','forearm','wrist'],tip:'Cotovelos fixos ao lado do corpo. Sem balanco do tronco.',sub:{name:'Rosca alternada halteres neutro',sets:'3x12',reason:'Pulso em posicao neutra, alivia cotovelo'},
-    {id:'deadbug',name:'Deadbug core (chave lombar)',sets:'3x8 cada',focus:'Anti-extensao lombar',risks:['abs','lowerback'],tip:'COLUNA NO CHAO o tempo todo. Expira ao esticar braco e perna opostos.',sub:{name:'Marcha supina lenta',sets:'3x10 cada',reason:'Mesma ativacao, menos exigencia'},
-    {id:'prancha',name:'Prancha frontal',sets:'3x30s',focus:'Core geral',risks:['abs','lowerback','shoulder','wrist'],tip:'Corpo em linha reta. Quadril nao sobe nem desce. Respira normalmente.',sub:{name:'Prancha em cotovelos (low plank)',sets:'3x30s',reason:'Sem carga nos pulsos, mesma ativacao'},
+    {id:'remada_baixa',name:'Remada baixa cabo (chave lombar)',sets:'3x12',focus:'Costas / postura',risks:['lowerback','upperback','elbow','forearm','wrist','shoulder'],tip:'Nao curve a lombar no final. Cotovelos perto do corpo, puxar ate o umbigo.',sub:{name:'Remada maquina apoiada (chest supported)',sets:'3x12',reason:'Lombar descarregada completamente'}},
+    {id:'pulldown',name:'Pulldown barra larga',sets:'3x12',focus:'Lat / largura',risks:['shoulder','elbow','forearm','wrist'],tip:'Deixa o ombro descer ao final da subida. Puxa ate o queixo.',sub:{name:'Pulldown neutro (triangulo)',sets:'3x12',reason:'Posicao mais segura para o manguito'}},
+    {id:'remada_uni',name:'Remada unilateral halter',sets:'3x12',focus:'Costas + core',risks:['lowerback','elbow','forearm','wrist'],tip:'Apoio solido no banco. Nao gire o tronco. Puxe ate o quadril.',sub:{name:'Remada unilateral no cabo em pe',sets:'3x12',reason:'Menor torque na lombar'}},
+    {id:'rosca_ez',name:'Rosca barra EZ',sets:'3x12',focus:'Biceps',risks:['elbow','forearm','wrist'],tip:'Cotovelos fixos ao lado do corpo. Sem balanco do tronco.',sub:{name:'Rosca alternada halteres neutro',sets:'3x12',reason:'Pulso em posicao neutra, alivia cotovelo'}},
+    {id:'deadbug',name:'Deadbug core (chave lombar)',sets:'3x8 cada',focus:'Anti-extensao lombar',risks:['abs','lowerback'],tip:'COLUNA NO CHAO o tempo todo. Expira ao esticar braco e perna opostos.',sub:{name:'Marcha supina lenta',sets:'3x10 cada',reason:'Mesma ativacao, menos exigencia'}},
+    {id:'prancha',name:'Prancha frontal',sets:'3x30s',focus:'Core geral',risks:['abs','lowerback','shoulder','wrist'],tip:'Corpo em linha reta. Quadril nao sobe nem desce. Respira normalmente.',sub:{name:'Prancha em cotovelos (low plank)',sets:'3x30s',reason:'Sem carga nos pulsos, mesma ativacao'}},
   ]},
   C:{label:'LEGS',type:'Quadriceps · Gluteo · Posterior',duration:45,kcal:320,exercises:[
-    {id:'agachamento',name:'Agachamento goblet halter',sets:'3x12',focus:'Quadriceps / gluteo',risks:['knee','hip','groin','quadriceps','lowerback','ankle'],tip:'Joelhos seguem a linha dos dedos dos pes. Costas retas. Desça devagar.',sub:{name:'Leg press 45 graus (amplitude reduzida)',sets:'3x15',reason:'Sem compressao axial na coluna'},
-    {id:'legpress',name:'Leg press 45 graus',sets:'3x15',focus:'Quadriceps completo',risks:['knee','hip','quadriceps','lowerback'],tip:'Pes paralelos largos. Nao fecha os joelhos. Para antes de travar.',sub:{name:'Cadeira extensora (parcial)',sets:'3x15',reason:'Isola quad sem envolver lombar'},
-    {id:'mesa_flex',name:'Mesa flexora (chave lombar)',sets:'3x15',focus:'Isquiotibiais',risks:['knee','hip','hamstring'],tip:'Movimento controlado sem balanco. Isquio fraco = dor lombar.',sub:{name:'Stiff halter leve (amplitude reduzida)',sets:'3x12',reason:'Ativa isquio sem comprimir o joelho'},
-    {id:'hip_thrust',name:'Hip thrust / Glute bridge (chave gluteo)',sets:'3x15',focus:'Gluteo = protege lombar',risks:['lowerback','hip','knee','hamstring'],tip:'Ombros apoiados no banco. Esprema o gluteo no topo. Pausa 1 segundo.',sub:{name:'Glute bridge no chao sem peso',sets:'3x20',reason:'Mesmo padrao, sem carga axial'},
-    {id:'cadeira_ext',name:'Cadeira extensora',sets:'3x15',focus:'Quadriceps isolado',risks:['knee','quadriceps'],tip:'Nao trava o joelho. Para a 10 graus do final para proteger patela.',sub:{name:'Mini-squat isometrico na parede',sets:'3x30s',reason:'Ativa quad sem pico de carga patelar'},
-    {id:'panturrilha',name:'Panturrilha em pe',sets:'3x20',focus:'Gastrocnemio / tornozelo',risks:['ankle','knee','calf','foot'],tip:'Sobe na ponta do pe. Amplitude total. Pausa 1 segundo em cima.',sub:{name:'Panturrilha sentado maquina',sets:'3x20',reason:'Menos estresse no tornozelo e Aquiles'},
+    {id:'agachamento',name:'Agachamento goblet halter',sets:'3x12',focus:'Quadriceps / gluteo',risks:['knee','hip','groin','quadriceps','lowerback','ankle'],tip:'Joelhos seguem a linha dos dedos dos pes. Costas retas. Desça devagar.',sub:{name:'Leg press 45 graus (amplitude reduzida)',sets:'3x15',reason:'Sem compressao axial na coluna'}},
+    {id:'legpress',name:'Leg press 45 graus',sets:'3x15',focus:'Quadriceps completo',risks:['knee','hip','quadriceps','lowerback'],tip:'Pes paralelos largos. Nao fecha os joelhos. Para antes de travar.',sub:{name:'Cadeira extensora (parcial)',sets:'3x15',reason:'Isola quad sem envolver lombar'}},
+    {id:'mesa_flex',name:'Mesa flexora (chave lombar)',sets:'3x15',focus:'Isquiotibiais',risks:['knee','hip','hamstring'],tip:'Movimento controlado sem balanco. Isquio fraco = dor lombar.',sub:{name:'Stiff halter leve (amplitude reduzida)',sets:'3x12',reason:'Ativa isquio sem comprimir o joelho'}},
+    {id:'hip_thrust',name:'Hip thrust / Glute bridge (chave gluteo)',sets:'3x15',focus:'Gluteo = protege lombar',risks:['lowerback','hip','knee','hamstring'],tip:'Ombros apoiados no banco. Esprema o gluteo no topo. Pausa 1 segundo.',sub:{name:'Glute bridge no chao sem peso',sets:'3x20',reason:'Mesmo padrao, sem carga axial'}},
+    {id:'cadeira_ext',name:'Cadeira extensora',sets:'3x15',focus:'Quadriceps isolado',risks:['knee','quadriceps'],tip:'Nao trava o joelho. Para a 10 graus do final para proteger patela.',sub:{name:'Mini-squat isometrico na parede',sets:'3x30s',reason:'Ativa quad sem pico de carga patelar'}},
+    {id:'panturrilha',name:'Panturrilha em pe',sets:'3x20',focus:'Gastrocnemio / tornozelo',risks:['ankle','knee','calf','foot'],tip:'Sobe na ponta do pe. Amplitude total. Pausa 1 segundo em cima.',sub:{name:'Panturrilha sentado maquina',sets:'3x20',reason:'Menos estresse no tornozelo e Aquiles'}},
   ]},
   BIKE:{label:'BICICLETA',type:'Cardio · Queima de gordura',duration:45,kcal:420,exercises:[
-    {id:'bike_road',name:'Bicicleta continua (rua ou ergometrica)',sets:'40-50 min',focus:'Cardio aerobico',risks:['ankle','knee','calf','quadriceps','hamstring'],tip:'18-22 km/h. Pace confortavel. Ergometrica em casa e opcao valida.',sub:{name:'Ergometrica em casa (ritmo leve)',sets:'40 min',reason:'Zero impacto no tornozelo e joelho'},
+    {id:'bike_road',name:'Bicicleta continua (rua ou ergometrica)',sets:'40-50 min',focus:'Cardio aerobico',risks:['ankle','knee','calf','quadriceps','hamstring'],tip:'18-22 km/h. Pace confortavel. Ergometrica em casa e opcao valida.',sub:{name:'Ergometrica em casa (ritmo leve)',sets:'40 min',reason:'Zero impacto no tornozelo e joelho'}},
   ]},
   REST:{label:'DESCANSO',type:'Recuperacao ativa',duration:20,kcal:80,exercises:[]},
 };
@@ -1598,13 +1513,10 @@ const WORKOUTS={
 const WEEK_MAP={0:'REST',1:'A',2:'BIKE',3:'REST',4:'B',5:'C',6:'BIKE'};
 const DAY_SHORT=['DOM','SEG','TER','QUA','QUI','SEX','SAB'];
 
-function getTH(){try{return JSON.parse(localStorage.getItem('leo_th')||'[]');}catch{return[];}
-function saveTH(h){try{localStorage.setItem('leo_th',JSON.stringify(h));}catch{}
+function getTH(){try{return JSON.parse(localStorage.getItem('leo_th')||'[]');}catch{return[];}}
+function saveTH(h){try{localStorage.setItem('leo_th',JSON.stringify(h));}catch{}}
 
 // ===== TREINO DINAMICO =====
-let painOpen = true;   // pain panel collapsed state
-let treinoGerado = false; // workout generated?
-
 </script>
 </body>
 </html>
