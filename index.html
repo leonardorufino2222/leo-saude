@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <meta name="apple-mobile-web-app-title" content="Leo Saude"/>
 <link rel="manifest" href="manifest.json"/>
-<title>Trinca de Asnos v7</title>
+<title>Trinca de Asnos v8</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700&display=swap" rel="stylesheet"/>
 <style>
 
@@ -207,7 +207,7 @@ html,body{height:100%;background:var(--bg);color:var(--t);font-family:'Syne',san
 <body>
 <div id="app">
   <div class="topbar">
-    <div><div class="tt">Trinca de Asnos 🐴 <span style="font-size:9px;color:var(--t3);font-family:'DM Mono',monospace;background:var(--bg3);padding:1px 5px;border-radius:4px;border:1px solid var(--br)">v7</span></div><div class="td" id="topdate"></div></div>
+    <div><div class="tt">Trinca de Asnos 🐴 <span style="font-size:9px;color:var(--t3);font-family:'DM Mono',monospace;background:var(--bg3);padding:1px 5px;border-radius:4px;border:1px solid var(--br)">v8</span></div><div class="td" id="topdate"></div></div>
     <div class="tlogo">L</div>
   </div>
   <div class="content" id="content"></div>
@@ -1162,7 +1162,7 @@ function resetFlow(){ flowStep=0; flowTipo=''; treinoGerado=false; painOpen=true
 function togglePain(id){ if(activePain.has(id))activePain.delete(id);else activePain.add(id); renderTreino(); }
 function clearPain(){ activePain.clear(); renderTreino(); }
 function toggleCard(id){ if(openCards.has(id))openCards.delete(id);else openCards.add(id); renderTreino(); }
-function toggleDone(e,id){ e.stopPropagation(); if(doneEx.has(id))doneEx.delete(id);else doneEx.add(id); renderTreino(); }
+function toggleDone(e,id){ e.stopPropagation(); if(doneEx.has(id)){doneEx.delete(id);}else{doneEx.add(id);openCards.delete(id);} renderTreino(); }
 function togglePainPanel(){ painOpen=!painOpen; renderTreino(); }
 function selDayFn(i){ selDay=i; doneEx.clear(); openCards.clear(); treinoGerado=false; renderTreino(); }
 
