@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <meta name="apple-mobile-web-app-title" content="Leo Saude"/>
 <link rel="manifest" href="manifest.json"/>
-<title>Trinca de Asnos v8</title>
+<title>Trinca de Asnos v9</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700&display=swap" rel="stylesheet"/>
 <style>
 
@@ -207,7 +207,7 @@ html,body{height:100%;background:var(--bg);color:var(--t);font-family:'Syne',san
 <body>
 <div id="app">
   <div class="topbar">
-    <div><div class="tt">Trinca de Asnos 🐴 <span style="font-size:9px;color:var(--t3);font-family:'DM Mono',monospace;background:var(--bg3);padding:1px 5px;border-radius:4px;border:1px solid var(--br)">v8</span></div><div class="td" id="topdate"></div></div>
+    <div><div class="tt">Trinca de Asnos 🐴 <span style="font-size:9px;color:var(--t3);font-family:'DM Mono',monospace;background:var(--bg3);padding:1px 5px;border-radius:4px;border:1px solid var(--br)">v9</span></div><div class="td" id="topdate"></div></div>
     <div class="tlogo">L</div>
   </div>
   <div class="content" id="content"></div>
@@ -431,9 +431,12 @@ function rHome(){
       const hasSess=day.sess!=null;
       const isToday=day.iso===new Date().toISOString().slice(0,10);
       const bg=hasSess?'var(--a)':isToday?'var(--br)':'var(--bg3)';
-      const border=isToday?'1px solid var(--a2)':'1px solid transparent';
-      out+=`<div style="aspect-ratio:1;border-radius:4px;background:${bg};border:${border};display:flex;align-items:center;justify-content:center;font-size:9px;color:${hasSess?'#000':'var(--t3)'}">
-        ${hasSess?(day.sess.done===day.sess.total?'✓':'~'):''}
+      const border=isToday?'1.5px solid var(--a2)':'1px solid transparent';
+      const dnum=day.d.getDate();
+      const numColor=hasSess?'rgba(0,0,0,.55)':'var(--t3)';
+      out+=`<div style="aspect-ratio:1;border-radius:4px;background:${bg};border:${border};display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative">
+        <span style="font-size:8px;font-weight:700;color:${numColor};line-height:1">${dnum}</span>
+        <span style="font-size:8px;color:${hasSess?'#000':'var(--t3)'};line-height:1;margin-top:1px">${hasSess?(day.sess.done===day.sess.total?'✓':'~'):''}</span>
       </div>`;
     });
     out+=`</div>`;
@@ -940,6 +943,42 @@ const MOBILITY = [
 
 
 const EXERCISE_INFO = {
+  supino_reto:{muscles:'Peitoral · Deltóide anterior · Tríceps',url:'https://www.youtube.com/results?search_query=supino+reto+halteres+como+fazer',steps:['Deite no banco reto com halteres na altura do peito','Empurre para cima até quase estender o cotovelo','Desça devagar controlando o peso']},
+  flexao_declinada:{muscles:'Peitoral superior · Deltóide anterior · Core',url:'https://www.youtube.com/results?search_query=flexao+declinada+como+fazer',steps:['Apoie os pés num banco baixo, mãos no chão na largura dos ombros','Desça o peito em direção ao chão mantendo o corpo reto','Empurre de volta até estender os braços']},
+  crucifixo_inclinado:{muscles:'Peitoral superior · Deltóide anterior',url:'https://www.youtube.com/results?search_query=crucifixo+inclinado+halteres+como+fazer',steps:['Deite no banco inclinado com halteres acima do peito','Abra os braços em arco até sentir alongar o peitoral','Feche de volta como um abraço']},
+  peck_deck:{muscles:'Peitoral medial',url:'https://www.youtube.com/results?search_query=peck+deck+voador+como+fazer',steps:['Sente no aparelho com as costas apoiadas','Empurre os braços para frente até se tocarem','Volte devagar controlando a fase negativa']},
+  arnold_press:{muscles:'Deltóide anterior · medial · Tríceps',url:'https://www.youtube.com/results?search_query=arnold+press+como+fazer',steps:['Segure os halteres na frente dos ombros, palmas voltadas para você','Empurre para cima girando os punhos até as palmas ficarem para frente','Desça invertendo o giro devagar']},
+  desenvolvimento_maquina:{muscles:'Deltóide anterior · Trapézio',url:'https://www.youtube.com/results?search_query=desenvolvimento+ombro+maquina+como+fazer',steps:['Sente no aparelho com as costas apoiadas','Empurre os punhos para cima até quase estender','Desça controlado até a posição inicial']},
+  elevacao_lateral_cabo:{muscles:'Deltóide medial',url:'https://www.youtube.com/results?search_query=elevacao+lateral+cabo+como+fazer',steps:['Segure o cabo na lateral do corpo, cotovelo levemente flexionado','Eleve o braço até a altura do ombro','Desça controlado sentindo a tensão constante']},
+  elevacao_y:{muscles:'Deltóide medial · Trapézio inferior',url:'https://www.youtube.com/results?search_query=elevacao+em+y+ombro+como+fazer',steps:['Incline levemente o tronco à frente com halteres leves','Eleve os braços em diagonal formando um Y','Desça devagar controlando o movimento']},
+  remada_alta_cabo:{muscles:'Trapézio superior · Deltóide posterior',url:'https://www.youtube.com/results?search_query=remada+alta+cabo+como+fazer',steps:['Segure a barra com pegada fechada, cabo na altura do quadril','Puxe para cima levando os cotovelos acima das mãos','Desça controlado até estender os braços']},
+  rotacao_externa_cabo:{muscles:'Manguito rotador · Deltóide posterior',url:'https://www.youtube.com/results?search_query=rotacao+externa+ombro+cabo+como+fazer',steps:['Cotovelo fixo a 90° junto ao corpo, segurando o cabo baixo','Gire o antebraço para fora mantendo o cotovelo parado','Volte devagar controlando a fase negativa']},
+  triceps_frances:{muscles:'Tríceps (cabeça longa)',url:'https://www.youtube.com/results?search_query=triceps+frances+halter+como+fazer',steps:['Segure um halter acima da cabeça com os dois braços','Desça o halter atrás da nuca dobrando só o cotovelo','Estenda de volta sem mover o ombro']},
+  mergulho_banco:{muscles:'Tríceps · Peitoral inferior · Deltóide anterior',url:'https://www.youtube.com/results?search_query=mergulho+banco+triceps+como+fazer',steps:['Apoie as mãos num banco atrás do corpo, pernas estendidas à frente','Desça o corpo dobrando os cotovelos até 90°','Empurre de volta até estender os braços']},
+  remada_cavalinho:{muscles:'Latíssimo · Rômboides · Trapézio médio',url:'https://www.youtube.com/results?search_query=remada+cavalinho+t+bar+como+fazer',steps:['Segure a barra T com os dois braços, tronco inclinado à frente','Puxe até o peso tocar próximo ao abdômen','Desça controlado sem arredondar a lombar']},
+  remada_maquina_apoiada:{muscles:'Latíssimo · Rômboides',url:'https://www.youtube.com/results?search_query=remada+maquina+apoio+peito+como+fazer',steps:['Sente no aparelho com o peito apoiado no encosto','Puxe as alças para trás levando os cotovelos atrás do corpo','Retorne controlado até o alongamento completo']},
+  puxada_triangulo:{muscles:'Latíssimo · Rômboides',url:'https://www.youtube.com/results?search_query=puxada+triangulo+como+fazer',steps:['Segure o triângulo com as duas mãos, braços estendidos acima','Puxe para baixo levando o triângulo até o peito','Suba controlado até o alongamento total']},
+  puxada_supinada:{muscles:'Latíssimo · Bíceps',url:'https://www.youtube.com/results?search_query=puxada+pegada+supinada+como+fazer',steps:['Segure a barra com pegada supinada, mais estreita que os ombros','Puxe para baixo até a barra chegar perto do peito','Suba controlado sentindo o alongamento do latíssimo']},
+  remada_maquina_unilateral:{muscles:'Latíssimo · Rômboides',url:'https://www.youtube.com/results?search_query=remada+unilateral+maquina+como+fazer',steps:['Sente ou apoie o peito no aparelho, segure a alça com um braço','Puxe o cotovelo para trás até o fim do curso','Retorne controlado sentindo o alongamento']},
+  puxada_unilateral_cabo:{muscles:'Latíssimo · Rômboides',url:'https://www.youtube.com/results?search_query=puxada+unilateral+cabo+alto+como+fazer',steps:['Segure o cabo alto com um braço, o outro apoiado ou livre','Puxe o cotovelo para baixo e para trás, junto ao corpo','Solte devagar controlando o retorno']},
+  rosca_scott:{muscles:'Bíceps braquial',url:'https://www.youtube.com/results?search_query=rosca+scott+como+fazer',steps:['Apoie os braços no banco Scott, barra ou halteres nas mãos','Suba flexionando o cotovelo até contrair o bíceps','Desça devagar até quase estender o braço']},
+  rosca_martelo:{muscles:'Braquiorradial · Bíceps',url:'https://www.youtube.com/results?search_query=rosca+martelo+como+fazer',steps:['Segure os halteres com pegada neutra ao lado do corpo','Suba flexionando o cotovelo sem girar o punho','Desça controlado de volta à posição inicial']},
+  bird_dog:{muscles:'Core · Lombar · Glúteos',url:'https://www.youtube.com/results?search_query=bird+dog+exercicio+como+fazer',steps:['Apoie mãos e joelhos no chão, coluna neutra','Estenda o braço e a perna opostos ao mesmo tempo','Volte controlado e alterne o lado']},
+  prancha_lateral:{muscles:'Oblíquos · Core lateral',url:'https://www.youtube.com/results?search_query=prancha+lateral+como+fazer',steps:['Apoie o antebraço no chão, corpo de lado em linha reta','Eleve o quadril mantendo o corpo alinhado','Segure a posição respirando normalmente']},
+  prancha_apoio_unilateral:{muscles:'Core · Glúteos · Ombros',url:'https://www.youtube.com/results?search_query=prancha+apoio+unilateral+como+fazer',steps:['Fique em prancha frontal apoiado nos cotovelos','Levante um pé do chão mantendo o quadril nivelado','Segure e troque o lado depois de completar o tempo']},
+  rollout_abdominal:{muscles:'Reto abdominal · Core profundo',url:'https://www.youtube.com/results?search_query=rollout+abdominal+como+fazer',steps:['Ajoelhado, segure a roda ou barra com anilhas à frente','Role para frente estendendo o corpo o máximo que controlar','Puxe de volta contraindo o abdômen']},
+  afundo_halteres:{muscles:'Quadríceps · Glúteo · Isquiotibiais',url:'https://www.youtube.com/results?search_query=afundo+halteres+como+fazer',steps:['Dê um passo à frente segurando halteres ao lado do corpo','Desça até o joelho de trás quase tocar o chão','Empurre de volta à posição inicial']},
+  agachamento_sumo:{muscles:'Adutores · Quadríceps · Glúteo',url:'https://www.youtube.com/results?search_query=agachamento+sumo+halter+como+fazer',steps:['Fique com os pés bem afastados, pontas para fora','Segure um halter na vertical entre as pernas','Desça mantendo os joelhos na direção dos pés']},
+  hack_squat:{muscles:'Quadríceps · Glúteo',url:'https://www.youtube.com/results?search_query=hack+squat+maquina+como+fazer',steps:['Apoie as costas e ombros no aparelho, pés na plataforma','Desça flexionando os joelhos até 90°','Empurre de volta sem travar o joelho no topo']},
+  avanco_maquina:{muscles:'Quadríceps · Glúteo',url:'https://www.youtube.com/results?search_query=avanco+smith+como+fazer',steps:['Posicione a barra guiada nos ombros, um pé à frente','Desça controlando o movimento até quase tocar o joelho de trás no chão','Empurre de volta pela perna da frente']},
+  stiff_halteres:{muscles:'Isquiotibiais · Glúteo · Lombar',url:'https://www.youtube.com/results?search_query=stiff+halteres+como+fazer',steps:['Segure halteres à frente das coxas, joelhos levemente flexionados','Empurre o quadril para trás descendo o tronco','Suba contraindo o glúteo e isquiotibiais']},
+  flexora_em_pe:{muscles:'Isquiotibiais',url:'https://www.youtube.com/results?search_query=flexora+em+pe+como+fazer',steps:['Apoie-se no aparelho, uma perna por vez','Flexione o joelho puxando o calcanhar em direção ao glúteo','Desça controlado até estender a perna']},
+  gluteo_4_apoios:{muscles:'Glúteo máximo',url:'https://www.youtube.com/results?search_query=coice+gluteo+4+apoios+como+fazer',steps:['Apoie mãos e joelhos no chão, coluna neutra','Empurre um pé para trás e para cima, joelho dobrado','Desça controlado sem tocar o chão']},
+  stiff_unilateral:{muscles:'Glúteo · Isquiotibiais · Core',url:'https://www.youtube.com/results?search_query=stiff+unilateral+halter+como+fazer',steps:['Segure um halter, apoie o peso numa perna só','Incline o tronco à frente estendendo a perna livre para trás','Suba controlado voltando à posição ereta']},
+  passada_bulgara:{muscles:'Quadríceps · Glúteo',url:'https://www.youtube.com/results?search_query=afundo+bulgaro+como+fazer',steps:['Apoie o peito do pé de trás num banco atrás do corpo','Desça flexionando o joelho da frente até 90°','Empurre de volta pela perna da frente']},
+  leg_press_unilateral:{muscles:'Quadríceps · Glúteo',url:'https://www.youtube.com/results?search_query=leg+press+unilateral+como+fazer',steps:['Posicione um pé na plataforma do leg press','Empurre até quase estender o joelho','Desça controlado até 90°']},
+  panturrilha_leg_press:{muscles:'Gastrocnêmio · Sóleo',url:'https://www.youtube.com/results?search_query=panturrilha+leg+press+como+fazer',steps:['Posicione a ponta dos pés na base da plataforma do leg press','Empurre estendendo o tornozelo ao máximo','Volte controlado sentindo o alongamento']},
+  panturrilha_unilateral:{muscles:'Gastrocnêmio · Sóleo',url:'https://www.youtube.com/results?search_query=panturrilha+unilateral+halter+como+fazer',steps:['Fique em pé numa perna só, segurando algo para equilíbrio','Suba na ponta do pé o máximo possível','Desça controlado até o alongamento completo']},
   supino_inclinado:{
     muscles:'Peitoral superior · Deltóide anterior · Tríceps',
     url:'https://www.youtube.com/results?search_query=supino+inclinado+halteres+como+fazer',
@@ -1047,6 +1086,68 @@ let flowGrupo = 'A';
 let flowTempo = 45;
 let flowAerobico = 'ergometrica';
 let flowDescanso = new Set();
+
+// ── REFAZER TREINO STATE ──
+let customEx = {};        // { A:[...], B:[...], C:[...] } session-only overrides
+let refazerUI = null;     // null | 'choice' | 'pickExercises' | 'pickAlt'
+let refazerTargets = [];  // exercise ids marked to swap
+let refazerChoices = {};  // exId -> chosen alt index
+let refazerIdx = 0;       // current step in pickAlt flow
+
+function getWorkoutExercises(grupo){
+  return customEx[grupo] || WORKOUTS[grupo].exercises;
+}
+function openRefazer(){ refazerUI='choice'; renderTreino(); }
+function closeRefazer(){ refazerUI=null; renderTreino(); }
+function toggleRefazerTarget(id){
+  var idx = refazerTargets.indexOf(id);
+  if(idx>=0) refazerTargets.splice(idx,1); else refazerTargets.push(id);
+  renderTreino();
+}
+function startPickExercises(){ refazerUI='pickExercises'; refazerTargets=[]; renderTreino(); }
+function startSwapPicker(){
+  if(refazerTargets.length===0) return;
+  refazerIdx=0; refazerChoices={}; refazerUI='pickAlt'; renderTreino();
+}
+function chooseAlt(exId, altIdx){ refazerChoices[exId]=altIdx; renderTreino(); }
+function nextSwap(){
+  if(refazerIdx < refazerTargets.length-1){ refazerIdx++; renderTreino(); }
+  else { applySwaps(); }
+}
+function applySwaps(){
+  var list = getWorkoutExercises(flowGrupo).slice();
+  for(var i=0;i<refazerTargets.length;i++){
+    var targetId = refazerTargets[i];
+    var pool = VARIETY_POOL[targetId]||[];
+    var altIdx = refazerChoices[targetId]!==undefined ? refazerChoices[targetId] : 0;
+    var chosen = pool[altIdx];
+    if(!chosen) continue;
+    var slotIdx = -1;
+    for(var j=0;j<list.length;j++){ if(list[j].id===targetId){ slotIdx=j; break; } }
+    if(slotIdx>-1){
+      doneEx.delete(targetId); openCards.delete(targetId);
+      doneEx.delete(chosen.id); openCards.delete(chosen.id);
+      list[slotIdx]=chosen;
+    }
+  }
+  customEx[flowGrupo]=list;
+  refazerUI=null; refazerTargets=[]; refazerChoices={}; refazerIdx=0;
+  renderTreino();
+}
+function refazerInteiro(){
+  var list = getWorkoutExercises(flowGrupo).slice();
+  var newList = list.map(function(ex){
+    var pool = VARIETY_POOL[ex.id];
+    if(!pool||!pool.length) return ex;
+    var pick = pool[Math.floor(Math.random()*pool.length)];
+    doneEx.delete(ex.id); openCards.delete(ex.id);
+    doneEx.delete(pick.id); openCards.delete(pick.id);
+    return pick;
+  });
+  customEx[flowGrupo]=newList;
+  refazerUI=null;
+  renderTreino();
+}
 
 // Day defaults: Sun=0 Mon=1 Tue=2 Wed=3 Thu=4 Fri=5 Sat=6
 const DAY_DEF = {
@@ -1158,7 +1259,7 @@ function setFlowTempo(t){ flowTempo=t; renderTreino(); }
 function setFlowAerobico(a){ flowAerobico=a; renderTreino(); }
 function toggleDescanso(id){ if(flowDescanso.has(id))flowDescanso.delete(id);else flowDescanso.add(id); renderTreino(); }
 function gerarTreino(){ treinoGerado=true; painOpen=false; flowStep=2; renderTreino(); }
-function resetFlow(){ flowStep=0; flowTipo=''; treinoGerado=false; painOpen=true; doneEx.clear(); openCards.clear(); renderTreino(); }
+function resetFlow(){ flowStep=0; flowTipo=''; treinoGerado=false; painOpen=true; doneEx.clear(); openCards.clear(); customEx={}; refazerUI=null; refazerTargets=[]; refazerChoices={}; refazerIdx=0; renderTreino(); }
 function togglePain(id){ if(activePain.has(id))activePain.delete(id);else activePain.add(id); renderTreino(); }
 function clearPain(){ activePain.clear(); renderTreino(); }
 function toggleCard(id){ if(openCards.has(id))openCards.delete(id);else openCards.add(id); renderTreino(); }
@@ -1188,6 +1289,66 @@ function concluirTreino(){
   saveTH(h);
   toast('Sessão salva! Beba água agora!');
   resetFlow();
+}
+
+function rRefazerUI(){
+  var html = '<div class="page act">';
+  html += '<button onclick="closeRefazer()" style="display:flex;align-items:center;gap:6px;background:transparent;border:none;color:var(--t3);font-family:Syne,sans-serif;font-size:13px;cursor:pointer;padding:0;margin-bottom:14px">← Cancelar</button>';
+
+  if(refazerUI==='choice'){
+    html += '<div class="card"><div style="font-size:16px;font-weight:700;color:var(--t);margin-bottom:4px">Refazer treino</div><div style="font-size:12px;color:var(--t3);margin-bottom:14px">O que você quer ajustar?</div>';
+    html += '<div onclick="refazerInteiro()" style="display:flex;align-items:center;gap:12px;background:var(--bg3);border:1px solid var(--br);border-radius:10px;padding:12px;margin-bottom:8px;cursor:pointer">';
+    html += '<span style="font-size:20px">🔄</span><div><div style="font-size:13px;font-weight:700;color:var(--t)">Refazer treino inteiro</div><div style="font-size:11px;color:var(--t3)">Novo conjunto de exercícios</div></div></div>';
+    html += '<div onclick="startPickExercises()" style="display:flex;align-items:center;gap:12px;background:var(--bg3);border:1px solid var(--br);border-radius:10px;padding:12px;cursor:pointer">';
+    html += '<span style="font-size:20px">🎯</span><div><div style="font-size:13px;font-weight:700;color:var(--t)">Trocar exercícios</div><div style="font-size:11px;color:var(--t3)">Escolher quais substituir</div></div></div>';
+    html += '</div>';
+  }
+
+  else if(refazerUI==='pickExercises'){
+    var exList = getWorkoutExercises(flowGrupo);
+    html += '<div class="card"><div class="ct">Marque quais quer trocar</div>';
+    var anyPool = false;
+    for(var i=0;i<exList.length;i++){
+      var ex = exList[i];
+      var pool = VARIETY_POOL[ex.id];
+      if(!pool||!pool.length) continue;
+      anyPool = true;
+      var isSel = refazerTargets.indexOf(ex.id)>=0;
+      html += '<div onclick="toggleRefazerTarget(\''+ex.id+'\')" style="display:flex;align-items:center;gap:10px;padding:10px;border-radius:8px;border:1px solid '+(isSel?'var(--a)':'var(--br)')+';background:'+(isSel?'rgba(132,204,22,.08)':'transparent')+';cursor:pointer;margin-bottom:6px">';
+      html += '<div style="width:18px;height:18px;border-radius:5px;border:1.5px solid '+(isSel?'var(--a)':'var(--t3)')+';background:'+(isSel?'var(--a)':'transparent')+';display:flex;align-items:center;justify-content:center;font-size:11px;color:#000;flex-shrink:0">'+(isSel?'✓':'')+'</div>';
+      html += '<div style="font-size:13px;color:var(--t)">'+ex.name+'</div></div>';
+    }
+    if(!anyPool) html += '<div style="font-size:12px;color:var(--t3);text-align:center;padding:10px">Nenhuma alternativa disponível para este treino ainda.</div>';
+    html += '</div>';
+    var canGo = refazerTargets.length>0;
+    html += '<button onclick="'+(canGo?'startSwapPicker()':'void(0)')+'" style="width:100%;padding:13px;border-radius:11px;border:none;background:'+(canGo?'var(--a)':'var(--bg4)')+';color:'+(canGo?'#000':'var(--t3)')+';font-family:Syne,sans-serif;font-size:14px;font-weight:700;cursor:'+(canGo?'pointer':'default')+'">Continuar →</button>';
+  }
+
+  else if(refazerUI==='pickAlt'){
+    var targetId = refazerTargets[refazerIdx];
+    var exList2 = getWorkoutExercises(flowGrupo);
+    var current = null;
+    for(var k=0;k<exList2.length;k++){ if(exList2[k].id===targetId){ current=exList2[k]; break; } }
+    var pool = VARIETY_POOL[targetId] || [];
+    html += '<div class="ct">Trocar ('+(refazerIdx+1)+' de '+refazerTargets.length+')</div>';
+    html += '<div class="card" style="border-color:rgba(248,113,113,.3);background:rgba(248,113,113,.05)">';
+    html += '<div style="font-size:13px;font-weight:700;color:var(--a3)">✕ '+(current?current.name:'')+'</div>';
+    html += '<div style="font-size:11px;color:var(--t3);margin-top:2px">'+(current?current.focus:'')+'</div></div>';
+    html += '<div class="ct" style="margin-top:10px">Escolha a alternativa</div>';
+    var chosenIdx = refazerChoices[targetId]!==undefined ? refazerChoices[targetId] : 0;
+    for(var pi=0;pi<pool.length;pi++){
+      var alt = pool[pi];
+      var sel = pi===chosenIdx;
+      html += '<div onclick="chooseAlt(\''+targetId+'\','+pi+')" style="display:flex;align-items:center;gap:10px;background:'+(sel?'rgba(132,204,22,.08)':'var(--bg3)')+';border:1px solid '+(sel?'var(--a)':'var(--br)')+';border-radius:9px;padding:11px;margin-bottom:8px;cursor:pointer">';
+      html += '<div style="width:16px;height:16px;border-radius:50%;border:1.5px solid '+(sel?'var(--a)':'var(--t3)')+';background:'+(sel?'var(--a)':'transparent')+';flex-shrink:0"></div>';
+      html += '<div style="flex:1"><div style="font-size:13px;font-weight:600;color:var(--t)">'+alt.name+'</div><div style="font-size:10px;color:var(--t3)">'+alt.sets+' · '+alt.focus+'</div></div></div>';
+    }
+    var isLast = refazerIdx===refazerTargets.length-1;
+    html += '<button onclick="nextSwap()" style="width:100%;padding:13px;border-radius:11px;border:none;background:var(--a);color:#000;font-family:Syne,sans-serif;font-size:14px;font-weight:700;cursor:pointer">'+(isLast?'✓ Confirmar tudo':'Próximo →')+'</button>';
+  }
+
+  html += '</div>';
+  return html;
 }
 
 function rTreinoDin(){
@@ -1335,20 +1496,22 @@ function rTreinoDin(){
 
   // ── STEP 2: Session ──
   if(flowStep===2){
+    if(flowTipo==='treino' && refazerUI){ return rRefazerUI(); }
     html += '<button onclick="resetFlow()" style="display:flex;align-items:center;gap:6px;background:transparent;border:none;color:var(--t3);font-family:Syne,sans-serif;font-size:13px;cursor:pointer;padding:0;margin-bottom:14px">← Novo treino</button>';
 
     // TREINO
     if(flowTipo==='treino'){
       var wk = WORKOUTS[flowGrupo];
       if(!wk){html+='<div class="card">Treino não encontrado</div></div>';return html;}
+      var exList = getWorkoutExercises(flowGrupo);
       var analyzed = [];
-      for(var ei=0;ei<wk.exercises.length;ei++){
-        var ex = wk.exercises[ei];
+      for(var ei=0;ei<exList.length;ei++){
+        var ex = exList[ei];
         var conf = ex.risks.filter(function(r){return activePain.has(r);});
         var status = conf.length===0 ? 'safe' : (ex.sub ? 'substituted' : 'blocked');
         analyzed.push(Object.assign({},ex,{status:status}));
       }
-      var maxEx = flowTempo<=20?3:flowTempo<=30?4:wk.exercises.length;
+      var maxEx = flowTempo<=20?3:flowTempo<=30?4:exList.length;
       analyzed = analyzed.slice(0,maxEx);
       var active = analyzed.filter(function(e){return e.status!=='blocked';});
       var blocked = analyzed.filter(function(e){return e.status==='blocked';}).length;
@@ -1423,7 +1586,9 @@ function rTreinoDin(){
         html += '</div>';
       }
 
-      html += '<div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--br)">';
+      html += '<button onclick="openRefazer()" style="width:100%;padding:11px;border-radius:10px;border:1px solid var(--a2);background:rgba(249,115,22,.08);color:var(--a2);font-family:Syne,sans-serif;font-size:13px;font-weight:700;cursor:pointer;margin-top:6px">🔄 Refazer treino</button>';
+
+      html += '<div style="margin-top:12px;padding-top:14px;border-top:1px solid var(--br)">';
       if(allDone){
         html += '<div class="ws-strip ws-g" style="margin-bottom:10px"><span>🎉</span><div><strong>Treino concluído!</strong> Beba 500ml de água agora!</div></div>';
         html += '<button onclick="concluirTreino()" style="width:100%;padding:14px;border-radius:12px;border:none;background:var(--a);color:#000;font-family:Syne,sans-serif;font-size:15px;font-weight:700;cursor:pointer">🏁 Treino Concluído — Salvar</button>';
@@ -1579,6 +1744,27 @@ const PAIN_ZONES=[
   {id:'ankle',emoji:'🦶',name:'Tornozelo / Gota'},
   {id:'foot',emoji:'🦶',name:'Pe / Plantar'},
 ];
+
+const VARIETY_POOL = {
+  supino_inclinado: [{id:'supino_reto',name:'Supino reto halteres',sets:'3x12',focus:'Peito completo',risks:['chest','shoulder','elbow','forearm','wrist'],tip:'Halteres na altura do peito, cotovelos a 90 graus na base.',sub:{name:'Flexão de braço no chão',sets:'3x12-15',reason:'Elimina carga nos pulsos'}}, {id:'flexao_declinada',name:'Flexão declinada',sets:'3x12-15',focus:'Peito superior',risks:['chest','shoulder','elbow','forearm','wrist'],tip:'Pés elevados num banco. Corpo reto, sem deixar o quadril cair.',sub:{name:'Flexão normal no chão',sets:'3x15',reason:'Reduz ângulo e carga no ombro'}}],
+  crucifixo: [{id:'crucifixo_inclinado',name:'Crucifixo inclinado halteres',sets:'3x15',focus:'Peito superior',risks:['chest','shoulder'],tip:'Banco a 30-45°. Cotovelos levemente flexionados o tempo todo.',sub:{name:'Crucifixo máquina',sets:'3x15',reason:'Trajeto mais controlado e seguro'}}, {id:'peck_deck',name:'Peck deck (voador)',sets:'3x15',focus:'Peito medial',risks:['chest','shoulder'],tip:'Ajuste o banco para os braços ficarem na altura dos ombros.',sub:{name:'Crucifixo halteres leve',sets:'3x15',reason:'Menor amplitude, mais seguro'}}],
+  desenvolvimento: [{id:'arnold_press',name:'Arnold Press',sets:'3x10',focus:'Ombro completo',risks:['shoulder','elbow','forearm','wrist','neck'],tip:'Gire os punhos durante o movimento — palmas viram para frente ao subir.',sub:{name:'Desenvolvimento máquina',sets:'3x12',reason:'Trajeto fixo, menos estabilização exigida'}}, {id:'desenvolvimento_maquina',name:'Desenvolvimento máquina',sets:'3x12',focus:'Ombro anterior',risks:['shoulder','elbow','forearm','wrist','neck'],tip:'Ajuste o banco para o punho iniciar na altura do ombro.',sub:{name:'Elevação frontal leve no cabo',sets:'3x15',reason:'Menor estresse no ombro'}}],
+  elevacao_lateral: [{id:'elevacao_lateral_cabo',name:'Elevação lateral no cabo',sets:'3x15',focus:'Deltóide medial',risks:['shoulder','elbow','forearm','wrist'],tip:'Tensão constante — o cabo mantém a carga o tempo todo, diferente do halter.',sub:{name:'Elevação lateral halteres leve',sets:'3x15',reason:'Reduz pico de carga no topo'}}, {id:'elevacao_y',name:'Elevação em Y halteres',sets:'3x12',focus:'Deltóide medial e trapézio',risks:['shoulder','elbow','forearm','wrist'],tip:'Movimento em diagonal, formando um Y com o corpo.',sub:{name:'Elevação lateral sentado',sets:'3x15',reason:'Menor amplitude, mais controle'}}],
+  facepull: [{id:'remada_alta_cabo',name:'Remada alta no cabo',sets:'3x15',focus:'Trapézio e deltóide posterior',risks:['shoulder','neck','elbow','forearm'],tip:'Cotovelos sempre acima das mãos durante a puxada.',sub:{name:'Band pull-apart',sets:'3x20',reason:'Movimento mais livre, sem carga fixa'}}, {id:'rotacao_externa_cabo',name:'Rotação externa no cabo',sets:'3x15',focus:'Manguito rotador',risks:['shoulder','neck','elbow','forearm'],tip:'Cotovelo fixo ao lado do corpo o tempo todo — só o antebraço gira.',sub:{name:'Rotação externa com elástico',sets:'3x15',reason:'Mesma ativação, sem carga no cabo'}}],
+  triceps_corda: [{id:'triceps_frances',name:'Tríceps francês halter',sets:'3x12',focus:'Tríceps (cabeça longa)',risks:['elbow','forearm','shoulder','wrist'],tip:'Cotovelos apontando para o teto, fixos durante todo o movimento.',sub:{name:'Tríceps corda leve',sets:'3x15',reason:'Menor estresse no cotovelo'}}, {id:'mergulho_banco',name:'Mergulho no banco (dips)',sets:'3x12',focus:'Tríceps e peito inferior',risks:['elbow','forearm','shoulder','wrist'],tip:'Cotovelos próximos ao corpo — quanto mais abertos, mais ombro entra.',sub:{name:'Tríceps corda leve',sets:'3x15',reason:'Menos carga corporal'}}],
+  remada_baixa: [{id:'remada_cavalinho',name:'Remada cavalinho (T-bar)',sets:'3x12',focus:'Costas espessura',risks:['lowerback','upperback','elbow','forearm','wrist','shoulder'],tip:'Peito apoiado ou tronco fixo — não use impulso da lombar.',sub:{name:'Remada máquina apoiada',sets:'3x12',reason:'Lombar totalmente descarregada'}}, {id:'remada_maquina_apoiada',name:'Remada máquina com apoio no peito',sets:'3x12',focus:'Costas isolada',risks:['lowerback','upperback','elbow','forearm','wrist','shoulder'],tip:'Peito sempre apoiado — impossível compensar com a lombar.',sub:{name:'Remada baixa cabo leve',sets:'3x12',reason:'Padrão similar, carga reduzida'}}],
+  pulldown: [{id:'puxada_triangulo',name:'Puxada com triângulo',sets:'3x12',focus:'Costas centrais',risks:['shoulder','elbow','forearm','wrist'],tip:'Puxe em direção ao peito, cotovelos próximos ao corpo.',sub:{name:'Pulldown neutro',sets:'3x12',reason:'Pegada neutra, menos estresse no ombro'}}, {id:'puxada_supinada',name:'Puxada pegada supinada',sets:'3x12',focus:'Latíssimo e bíceps',risks:['shoulder','elbow','forearm','wrist'],tip:'Palmas viradas para você — recruta mais o bíceps junto com as costas.',sub:{name:'Pulldown neutro leve',sets:'3x12',reason:'Menor amplitude, mesmo padrão'}}],
+  remada_uni: [{id:'remada_maquina_unilateral',name:'Remada unilateral na máquina',sets:'3x12',focus:'Costas + core',risks:['lowerback','elbow','forearm','wrist'],tip:'Tronco fixo no encosto — isola a costa sem ajuda da lombar.',sub:{name:'Remada unilateral cabo leve',sets:'3x12',reason:'Trajeto guiado, mais seguro'}}, {id:'puxada_unilateral_cabo',name:'Puxada unilateral no cabo alto',sets:'3x12 cada',focus:'Latíssimo',risks:['lowerback','elbow','forearm','wrist'],tip:'Puxe com o cotovelo, não com a mão — imagine puxar o cotovelo para o bolso.',sub:{name:'Remada unilateral halter leve',sets:'3x12',reason:'Mesma lógica, carga menor'}}],
+  rosca_ez: [{id:'rosca_scott',name:'Rosca Scott',sets:'3x12',focus:'Bíceps (pico)',risks:['elbow','forearm','wrist'],tip:'Cotovelos apoiados no banco Scott — elimina qualquer balanço.',sub:{name:'Rosca direta leve',sets:'3x12',reason:'Mesma isolação, carga menor'}}, {id:'rosca_martelo',name:'Rosca martelo',sets:'3x12',focus:'Bíceps e antebraço',risks:['elbow','forearm','wrist'],tip:'Pegada neutra (palmas viradas uma para a outra) o tempo todo.',sub:{name:'Rosca alternada leve',sets:'3x12',reason:'Menor carga, mesmo padrão'}}],
+  deadbug: [{id:'bird_dog',name:'Bird-dog',sets:'3x8 cada',focus:'Core e estabilização lombar',risks:['abs','lowerback'],tip:'Quadril sempre nivelado — não deixe girar para o lado que se move.',sub:{name:'Marcha estática no chão',sets:'3x10',reason:'Menor exigência de equilíbrio'}}, {id:'prancha_lateral',name:'Prancha lateral',sets:'3x30s cada',focus:'Core lateral (oblíquos)',risks:['abs','lowerback'],tip:'Quadril alinhado — não deixe cair nem subir demais.',sub:{name:'Prancha lateral com joelho apoiado',sets:'3x20s',reason:'Reduz alavanca, mais fácil de sustentar'}}],
+  prancha: [{id:'prancha_apoio_unilateral',name:'Prancha com apoio unilateral',sets:'3x20s cada',focus:'Core anti-rotação',risks:['abs','lowerback','shoulder','wrist'],tip:'Quadril não pode girar ao levantar um apoio — se girar, reduza o tempo.',sub:{name:'Prancha frontal padrão',sets:'3x30s',reason:'Base mais estável, mais fácil'}}, {id:'rollout_abdominal',name:'Rollout abdominal',sets:'3x10',focus:'Core completo',risks:['abs','lowerback','shoulder','wrist'],tip:'Quadril nunca cai — se a lombar arquear, reduza a distância do rolamento.',sub:{name:'Prancha frontal padrão',sets:'3x30s',reason:'Menor exigência de core anti-extensão'}}],
+  agachamento: [{id:'afundo_halteres',name:'Afundo com halteres',sets:'3x10 cada',focus:'Quadríceps e glúteo unilateral',risks:['knee','hip','groin','quadriceps','lowerback','ankle'],tip:'Joelho da frente não ultrapassa a ponta do pé. Tronco ereto.',sub:{name:'Leg press amplitude reduzida',sets:'3x15',reason:'Sem carga axial na coluna'}}, {id:'agachamento_sumo',name:'Agachamento sumô halter',sets:'3x12',focus:'Quadríceps interno e adutores',risks:['knee','hip','groin','quadriceps','lowerback','ankle'],tip:'Pés bem abertos, pontas viradas para fora. Halter entre as pernas.',sub:{name:'Leg press pés afastados',sets:'3x15',reason:'Mesmo padrão, sem carga na coluna'}}],
+  legpress: [{id:'hack_squat',name:'Hack squat máquina',sets:'3x12',focus:'Quadríceps completo',risks:['knee','hip','quadriceps','lowerback'],tip:'Costas sempre apoiadas no encosto. Não trave os joelhos no topo.',sub:{name:'Cadeira extensora parcial',sets:'3x15',reason:'Isola o quad sem carga na coluna'}}, {id:'avanco_maquina',name:'Avanço na máquina Smith',sets:'3x10 cada',focus:'Quadríceps e glúteo unilateral',risks:['knee','hip','quadriceps','lowerback'],tip:'Passo controlado — desça reto, sem inclinar o tronco à frente.',sub:{name:'Leg press unilateral',sets:'3x15',reason:'Menor exigência de equilíbrio'}}],
+  mesa_flex: [{id:'stiff_halteres',name:'Stiff halteres',sets:'3x10',focus:'Isquiotibiais e lombar',risks:['knee','hip','hamstring'],tip:'Joelhos levemente flexionados, quadril vai para trás — não arredonde a lombar.',sub:{name:'Mesa flexora leve',sets:'3x15',reason:'Menor exigência de estabilização lombar'}}, {id:'flexora_em_pe',name:'Flexora em pé unilateral',sets:'3x12 cada',focus:'Isquiotibiais isolado',risks:['knee','hip','hamstring'],tip:'Movimento controlado — sem balançar o quadril.',sub:{name:'Mesa flexora leve',sets:'3x15',reason:'Mesmo padrão, menor carga'}}],
+  hip_thrust: [{id:'gluteo_4_apoios',name:'Glúteo em 4 apoios (coice)',sets:'3x15 cada',focus:'Glúteo isolado',risks:['lowerback','hip','knee','hamstring'],tip:'Não hiperestenda a lombar — o movimento vem do quadril, não das costas.',sub:{name:'Glute bridge no chão',sets:'3x20',reason:'Zero carga na lombar'}}, {id:'stiff_unilateral',name:'Stiff unilateral halter',sets:'3x10 cada',focus:'Glúteo e isquiotibial unilateral',risks:['lowerback','hip','knee','hamstring'],tip:'Quadril e ombros alinhados — não gire o tronco durante o movimento.',sub:{name:'Glute bridge no chão',sets:'3x20',reason:'Sem equilíbrio unilateral exigido'}}],
+  cadeira_ext: [{id:'passada_bulgara',name:'Afundo búlgaro',sets:'3x10 cada',focus:'Quadríceps e glúteo unilateral',risks:['knee','quadriceps'],tip:'Pé de trás elevado num banco — foco na perna da frente.',sub:{name:'Agachamento isométrico na parede',sets:'3x30s',reason:'Sem carga extra no joelho'}}, {id:'leg_press_unilateral',name:'Leg press unilateral',sets:'3x12 cada',focus:'Quadríceps isolado',risks:['knee','quadriceps'],tip:'Uma perna de cada vez — mesma amplitude do bilateral.',sub:{name:'Cadeira extensora leve',sets:'3x15',reason:'Padrão familiar, carga ajustável'}}],
+  panturrilha: [{id:'panturrilha_leg_press',name:'Panturrilha no leg press',sets:'3x20',focus:'Gastrocnêmio',risks:['ankle','knee','calf','foot'],tip:'Empurre só com a ponta do pé, pernas quase estendidas.',sub:{name:'Panturrilha sentado máquina',sets:'3x20',reason:'Menos carga no tornozelo'}}, {id:'panturrilha_unilateral',name:'Panturrilha unilateral halter',sets:'3x15 cada',focus:'Gastrocnêmio isolado',risks:['ankle','knee','calf','foot'],tip:'Segure em algo para equilíbrio — foco total numa perna.',sub:{name:'Panturrilha sentado máquina',sets:'3x20',reason:'Sem exigência de equilíbrio'}}],
+};
 
 const WORKOUTS={
   A:{label:'PUSH',type:'Peito · Ombro · Triceps',duration:45,kcal:280,exercises:[
