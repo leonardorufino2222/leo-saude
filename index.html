@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <meta name="apple-mobile-web-app-title" content="Leo Saude"/>
 <link rel="manifest" href="manifest.json"/>
-<title>Trinca de Asnos v9</title>
+<title>Trinca de Asnos v10</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700&display=swap" rel="stylesheet"/>
 <style>
 
@@ -207,7 +207,7 @@ html,body{height:100%;background:var(--bg);color:var(--t);font-family:'Syne',san
 <body>
 <div id="app">
   <div class="topbar">
-    <div><div class="tt">Trinca de Asnos 🐴 <span style="font-size:9px;color:var(--t3);font-family:'DM Mono',monospace;background:var(--bg3);padding:1px 5px;border-radius:4px;border:1px solid var(--br)">v9</span></div><div class="td" id="topdate"></div></div>
+    <div><div class="tt">Trinca de Asnos 🐴 <span style="font-size:9px;color:var(--t3);font-family:'DM Mono',monospace;background:var(--bg3);padding:1px 5px;border-radius:4px;border:1px solid var(--br)">v10</span></div><div class="td" id="topdate"></div></div>
     <div class="tlogo">L</div>
   </div>
   <div class="content" id="content"></div>
@@ -274,6 +274,37 @@ function dayKcal(){const t=dayT();if(t==='REST')return{k:1750,l:'Descanso',c:'va
 
 // ======= NAV =======
 let CP='home';
+
+// ── CALENDAR STATE ──
+let calYear = new Date().getFullYear();
+let calMonthIdx = new Date().getMonth();
+let calSelectedDay = null; // 'YYYY-MM-DD' or null
+
+function calPrevMonth(){
+  calMonthIdx--; if(calMonthIdx<0){calMonthIdx=11; calYear--;}
+  calSelectedDay=null; render();
+}
+function calNextMonth(){
+  calMonthIdx++; if(calMonthIdx>11){calMonthIdx=0; calYear++;}
+  calSelectedDay=null; render();
+}
+function selectCalDay(dateStr){
+  calSelectedDay = (calSelectedDay===dateStr) ? null : dateStr;
+  render();
+}
+function suggestionLabel(def){
+  if(def.tipo==='treino'){
+    var gn = def.grupo==='A'?'Push':def.grupo==='B'?'Pull + Core':'Legs';
+    return 'Treino '+def.grupo+' — '+gn;
+  }
+  if(def.tipo==='aerobico'){
+    var an = (typeof AERO!=='undefined' && AERO[def.aero]) ? AERO[def.aero].name : 'Aeróbico';
+    return 'Aeróbico — '+an;
+  }
+  if(def.tipo==='mobilidade') return 'Mobilidade e Alongamento';
+  if(def.tipo==='descanso') return 'Descanso e Recuperação';
+  return '';
+}
 function go(p){CP=p;document.querySelectorAll('.nb').forEach(b=>b.classList.remove('act'));document.getElementById('nv-'+p).classList.add('act');render()}
 
 // ======= RENDER =======
@@ -363,21 +394,26 @@ function rHome(){
   // Training history data
   const th=JSON.parse(localStorage.getItem('leo_th')||'[]');
 
-  // Build heatmap — last 28 days
-  function buildHeatmap(){
-    const today=new Date(); today.setHours(0,0,0,0);
-    const days=[];
-    for(let i=27;i>=0;i--){
-      const d=new Date(today); d.setDate(d.getDate()-i);
-      const ds=d.toLocaleDateString('pt-BR',{weekday:'short'});
-      const iso=d.toISOString().slice(0,10);
-      // find session on that day
-      const sess=th.find(s=>s.date&&s.date.includes(d.toLocaleDateString('pt-BR',{day:'numeric',month:'short'})));
-      days.push({d,iso,ds,sess});
+  // Build full month grid for calendar
+  function buildMonthGrid(year, monthIdx){
+    const firstDay = new Date(year, monthIdx, 1);
+    const startWeekday = firstDay.getDay(); // 0=Sun
+    const daysInMonth = new Date(year, monthIdx+1, 0).getDate();
+    const cells = [];
+    for(let i=0;i<startWeekday;i++) cells.push(null);
+    for(let d=1; d<=daysInMonth; d++){
+      const dt = new Date(year, monthIdx, d);
+      const iso = dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0')+'-'+String(dt.getDate()).padStart(2,'0');
+      const matchStr = dt.toLocaleDateString('pt-BR',{day:'numeric',month:'short'});
+      const sessions = th.filter(s=>s.date && s.date.includes(matchStr));
+      cells.push({d:dt, dayNum:d, iso, sessions});
     }
-    return days;
+    while(cells.length % 7 !== 0) cells.push(null);
+    return cells;
   }
-  const heatDays=buildHeatmap();
+  const monthCells = buildMonthGrid(calYear, calMonthIdx);
+  const MONTH_NAMES_PT = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+  const todayISO = new Date().toISOString().slice(0,10);
 
   // Stats
   const total4w=th.slice(0,20).length;
@@ -422,24 +458,63 @@ function rHome(){
       <div class="met cp" style="padding:10px 6px;text-align:center"><div class="mv" style="font-size:20px">${th.filter(s=>s.done===s.total&&s.total>0).length}</div><div class="ml" style="font-size:9px">Completos</div></div>
     </div>`;
 
-    // Heatmap — 4 rows of 7 days
-    out+=`<div style="font-size:10px;color:var(--t3);margin-bottom:6px;text-transform:uppercase;letter-spacing:.08em">Frequencia — 28 dias</div>`;
-    out+=`<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:14px">`;
+    out+=`<div style="font-size:10px;color:var(--t3);margin-bottom:6px;text-transform:uppercase;letter-spacing:.08em">Calendário de treinos</div>`;
+    // Month calendar with navigation
+    out+=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+      <button onclick="calPrevMonth()" style="background:var(--bg3);border:1px solid var(--br);color:var(--t2);border-radius:7px;width:28px;height:28px;font-size:13px;cursor:pointer">◀</button>
+      <div style="font-size:12px;font-weight:700;color:var(--t)">${MONTH_NAMES_PT[calMonthIdx]} ${calYear}</div>
+      <button onclick="calNextMonth()" style="background:var(--bg3);border:1px solid var(--br);color:var(--t2);border-radius:7px;width:28px;height:28px;font-size:13px;cursor:pointer">▶</button>
+    </div>`;
+    out+=`<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:8px">`;
     const dayLabels=['D','S','T','Q','Q','S','S'];
     dayLabels.forEach(l=>{ out+=`<div style="text-align:center;font-size:9px;color:var(--t3);font-family:'DM Mono',monospace">${l}</div>`; });
-    heatDays.forEach(day=>{
-      const hasSess=day.sess!=null;
-      const isToday=day.iso===new Date().toISOString().slice(0,10);
-      const bg=hasSess?'var(--a)':isToday?'var(--br)':'var(--bg3)';
-      const border=isToday?'1.5px solid var(--a2)':'1px solid transparent';
-      const dnum=day.d.getDate();
-      const numColor=hasSess?'rgba(0,0,0,.55)':'var(--t3)';
-      out+=`<div style="aspect-ratio:1;border-radius:4px;background:${bg};border:${border};display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative">
-        <span style="font-size:8px;font-weight:700;color:${numColor};line-height:1">${dnum}</span>
-        <span style="font-size:8px;color:${hasSess?'#000':'var(--t3)'};line-height:1;margin-top:1px">${hasSess?(day.sess.done===day.sess.total?'✓':'~'):''}</span>
+    monthCells.forEach(cell=>{
+      if(!cell){ out+=`<div></div>`; return; }
+      const hasSess = cell.sessions.length>0;
+      const allDone = hasSess && cell.sessions.every(s=>s.done===s.total);
+      const isToday = cell.iso===todayISO;
+      const isSel = cell.iso===calSelectedDay;
+      const bg = hasSess ? (allDone?'var(--a)':'rgba(132,204,22,.4)') : (isToday?'var(--br)':'var(--bg3)');
+      const border = isSel ? '1.5px solid var(--a2)' : (isToday?'1.5px solid var(--a2)':'1px solid transparent');
+      const numColor = hasSess ? 'rgba(0,0,0,.6)' : 'var(--t3)';
+      out+=`<div onclick="selectCalDay('${cell.iso}')" style="aspect-ratio:1;border-radius:5px;background:${bg};border:${border};display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;cursor:pointer">
+        <span style="font-size:9px;font-weight:700;color:${numColor};line-height:1">${cell.dayNum}</span>
+        <span style="font-size:7px;color:${hasSess?'#000':'var(--t3)'};line-height:1;margin-top:1px">${hasSess?(allDone?'✓':'~'):''}</span>
       </div>`;
     });
     out+=`</div>`;
+
+    // Day detail panel — shown when a day is tapped
+    if(calSelectedDay){
+      const selCell = monthCells.find(c=>c && c.iso===calSelectedDay);
+      if(selCell){
+        const isFuture = selCell.iso > todayISO;
+        const dowName = selCell.d.toLocaleDateString('pt-BR',{weekday:'long'});
+        const dateLabel = dowName.charAt(0).toUpperCase()+dowName.slice(1)+', '+selCell.dayNum+' de '+MONTH_NAMES_PT[calMonthIdx].toLowerCase();
+        out+=`<div class="crd" style="background:rgba(132,204,22,.05);border-color:rgba(132,204,22,.25);margin-bottom:10px">`;
+        out+=`<div style="font-size:12px;font-weight:700;color:var(--t);margin-bottom:8px">${dateLabel}</div>`;
+        if(selCell.sessions.length>0){
+          selCell.sessions.forEach(s=>{
+            const done = s.done===s.total;
+            out+=`<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--br)">
+              <span style="font-size:15px">${done?'✅':'⚠️'}</span>
+              <div style="flex:1"><div style="font-size:12px;font-weight:600;color:var(--t)">${s.workout}</div>
+              <div style="font-size:10px;color:var(--t3)">${s.done}/${s.total} · ${s.kcal} kcal${s.pains&&s.pains.length?' · Incomodo: '+s.pains.join(', '):''}</div></div>
+            </div>`;
+          });
+        } else if(isFuture){
+          const def = DAY_DEF[selCell.d.getDay()];
+          out+=`<div style="display:flex;align-items:center;gap:8px">
+            <span style="font-size:15px">📋</span>
+            <div><div style="font-size:12px;font-weight:600;color:var(--t)">Sugestão: ${suggestionLabel(def)}</div>
+            <div style="font-size:10px;color:var(--t3)">Exercícios definidos na hora do treino</div></div>
+          </div>`;
+        } else {
+          out+=`<div style="font-size:12px;color:var(--t3);text-align:center;padding:6px">⚪ Nenhum treino registrado</div>`;
+        }
+        out+=`</div>`;
+      }
+    }
 
     // Recent sessions list
     out+=`<div style="font-size:10px;color:var(--t3);margin-bottom:6px;text-transform:uppercase;letter-spacing:.08em">Ultimas sessoes</div>`;
