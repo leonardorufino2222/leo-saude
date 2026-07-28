@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <meta name="apple-mobile-web-app-title" content="Leo Saude"/>
 <link rel="manifest" href="manifest.json"/>
-<title>Trinca de Asnos v10</title>
+<title>Trinca de Asnos v11</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700&display=swap" rel="stylesheet"/>
 <style>
 
@@ -207,7 +207,7 @@ html,body{height:100%;background:var(--bg);color:var(--t);font-family:'Syne',san
 <body>
 <div id="app">
   <div class="topbar">
-    <div><div class="tt">Trinca de Asnos 🐴 <span style="font-size:9px;color:var(--t3);font-family:'DM Mono',monospace;background:var(--bg3);padding:1px 5px;border-radius:4px;border:1px solid var(--br)">v10</span></div><div class="td" id="topdate"></div></div>
+    <div><div class="tt">Trinca de Asnos 🐴 <span style="font-size:9px;color:var(--t3);font-family:'DM Mono',monospace;background:var(--bg3);padding:1px 5px;border-radius:4px;border:1px solid var(--br)">v11</span></div><div class="td" id="topdate"></div></div>
     <div class="tlogo">L</div>
   </div>
   <div class="content" id="content"></div>
@@ -1343,19 +1343,39 @@ function togglePainPanel(){ painOpen=!painOpen; renderTreino(); }
 function selDayFn(i){ selDay=i; doneEx.clear(); openCards.clear(); treinoGerado=false; renderTreino(); }
 
 function concluirTreino(){
-  var wk = WORKOUTS[WEEK_MAP[selDay]];
-  var active = wk ? wk.exercises.filter(function(ex){ return ex.risks.filter(function(r){return activePain.has(r);}).length===0 || ex.sub; }) : [];
   var h = getTH();
   var now = new Date();
   var aeroName = AERO[flowAerobico] ? AERO[flowAerobico].name : 'Aeróbico';
   var tipoLabel = flowTipo==='treino' ? ('Musculação '+flowGrupo) : flowTipo==='aerobico' ? aeroName : flowTipo;
+
+  // Calculate done/total based on what was ACTUALLY generated for this session
+  var doneCount, totalCount;
+  if(flowTipo==='treino'){
+    var exList = getWorkoutExercises(flowGrupo);
+    var activeList = exList.filter(function(ex){
+      var conf = ex.risks.filter(function(r){return activePain.has(r);});
+      return conf.length===0 || ex.sub;
+    });
+    var maxEx = flowTempo<=20?3:flowTempo<=30?4:activeList.length;
+    totalCount = Math.min(maxEx, activeList.length) || 1;
+    doneCount = doneEx.size;
+  } else if(flowTipo==='mobilidade'){
+    var maxMob = flowTempo<=10?2:flowTempo<=20?4:MOBILITY.length;
+    totalCount = maxMob;
+    doneCount = doneEx.size;
+  } else {
+    // aerobico e descanso: sessao continua, sem checklist de exercicios
+    totalCount = 1;
+    doneCount = 1;
+  }
+
   h.unshift({
     date: now.toLocaleDateString('pt-BR',{weekday:'short',day:'numeric',month:'short'})+' '+now.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}),
     ts: now.getTime(),
     workout: tipoLabel,
     type: flowTipo==='treino' ? (flowGrupo==='A'?'Peito · Ombro · Tríceps':flowGrupo==='B'?'Costas · Bíceps · Core':'Quadríceps · Glúteo') : tipoLabel,
-    done: doneEx.size,
-    total: flowTipo==='mobilidade' ? MOBILITY.length : (active.length || 1),
+    done: doneCount,
+    total: totalCount,
     kcal: flowTipo==='aerobico' ? (AERO_KCAL[flowAerobico]||{})[flowTempo]||200 : flowTipo==='treino' ? (flowGrupo==='A'?280:flowGrupo==='B'?270:320) : 80,
     duration: flowTempo,
     pains: Array.from(activePain).map(function(pid){var z=PAIN_ZONES.find(function(z){return z.id===pid;});return z?z.name:'';}).filter(Boolean)
