@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <meta name="apple-mobile-web-app-title" content="Leo Saude"/>
 <link rel="manifest" href="manifest.json"/>
-<title>DiLeVi Bem Estar ⭐ v13</title>
+<title>DiLeVi Bem Estar ⭐ v14</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700&display=swap" rel="stylesheet"/>
 <style>
 
@@ -178,13 +178,14 @@ html,body{height:100%;background:var(--bg);color:var(--t);font-family:'Syne',san
 .ex-sets{font-size:10px;color:var(--t3)}
 .ex-tag{font-size:9px;font-weight:700;letter-spacing:.5px;padding:1px 6px;border-radius:20px;text-transform:uppercase}
 .tg-g{background:rgba(182,255,0,.12);color:var(--a)}.tg-r{background:rgba(255,107,107,.12);color:var(--a3)}.tg-y{background:rgba(255,179,71,.12);color:var(--aw)}
-.ex-arr{font-size:10px;color:var(--t3);transition:transform .2s;flex-shrink:0}.ex-arr.open{transform:rotate(180deg)}
+.ex-arr{font-size:13px;color:var(--t);font-weight:700;transition:transform .2s;flex-shrink:0;width:26px;height:26px;border-radius:7px;background:var(--bg4);display:flex;align-items:center;justify-content:center}.ex-arr.open{transform:rotate(180deg);background:var(--a);color:#0d0a0a}
 .ex-body{display:none;border-top:1px solid var(--br)}.ex-body.open{display:block}
 .ex-svg{padding:12px;text-align:center;background:rgba(0,0,0,.2)}
 .ex-svg svg{max-width:240px;width:100%;border-radius:6px}
 .ex-tip{font-size:11px;color:var(--t3);margin-top:6px;line-height:1.5}
 .ex-reason{padding:7px 12px 8px;font-size:10px;color:var(--a3)}
 .ex-sub-r{padding:7px 12px 8px;font-size:10px;color:var(--aw)}
+.ex-ok-r{padding:7px 12px 8px;font-size:10px;color:var(--a)}
 .ex-done-btn{margin:8px 12px 10px;padding:12px;background:var(--a);border:none;color:#0d0a0a;border-radius:9px;cursor:pointer;font-family:'Syne',sans-serif;font-size:13px;font-weight:800;letter-spacing:.02em;width:calc(100% - 24px);box-shadow:0 2px 8px rgba(182,255,0,.25)}
 .ex-done-btn.done{background:var(--bg4);color:var(--a);border:1.5px solid var(--a);box-shadow:none}
 .ex-done-btn.done{background:rgba(182,255,0,.2);border-color:var(--a)}
@@ -208,7 +209,7 @@ html,body{height:100%;background:var(--bg);color:var(--t);font-family:'Syne',san
 <body>
 <div id="app">
   <div class="topbar">
-    <div><div class="tt">DiLeVi Bem Estar ⭐ <span style="font-size:9px;color:var(--t3);font-family:'DM Mono',monospace;background:var(--bg3);padding:1px 5px;border-radius:4px;border:1px solid var(--br)">v13</span></div><div class="td" id="topdate"></div></div>
+    <div><div class="tt">DiLeVi Bem Estar ⭐ <span style="font-size:9px;color:var(--t3);font-family:'DM Mono',monospace;background:var(--bg3);padding:1px 5px;border-radius:4px;border:1px solid var(--br)">v14</span></div><div class="td" id="topdate"></div></div>
     <div class="tlogo">L</div>
   </div>
   <div class="content" id="content"></div>
@@ -1568,7 +1569,7 @@ function rTreinoDin(){
       html += '<div class="card" style="margin-bottom:10px">';
       html += '<div onclick="toggleConfigPanel()" style="display:flex;justify-content:space-between;align-items:center;cursor:pointer;user-select:none">';
       html += '<div class="ct" style="margin-bottom:0">⚙️ Configurar Detalhes do Treino</div>';
-      html += '<span style="color:var(--t3);font-size:13px;display:inline-block;transform:rotate('+(prefConfigOpen?'180':'0')+'deg);transition:transform .2s">▼</span>';
+      html += '<span style="color:'+(prefConfigOpen?'#0d0a0a':'var(--t)')+';font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:7px;background:'+(prefConfigOpen?'var(--a)':'var(--bg4)')+';transform:rotate('+(prefConfigOpen?'180':'0')+'deg);transition:all .2s">▼</span>';
       html += '</div>';
       if(prefConfigOpen){
         html += '<div style="margin-top:14px">';
@@ -1626,7 +1627,7 @@ function rTreinoDin(){
       html += '<div class="card" style="margin-bottom:10px">';
       html += '<div onclick="togglePainPanel()" style="display:flex;justify-content:space-between;align-items:center;cursor:pointer;user-select:none">';
       html += '<div class="ct" style="margin-bottom:0">Incomodo muscular hoje?'+(hasPain?' <span style="color:var(--a3);font-size:10px">('+activePain.size+' marcado)</span>':'')+' <span style="font-size:10px;color:var(--t3)">— opcional</span></div>';
-      html += '<span style="color:var(--t3);font-size:13px">'+( painOpen?'▲':'▼')+'</span>';
+      html += '<span style="color:'+(painOpen?'#0d0a0a':'var(--t)')+';font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:7px;background:'+(painOpen?'var(--a)':'var(--bg4)')+'">'+( painOpen?'▲':'▼')+'</span>';
       html += '</div>';
       if(painOpen){
         html += '<div style="margin-top:10px"><div class="pain-grid">';
@@ -1718,13 +1719,14 @@ function rTreinoDin(){
         html += '<div class="ex-hdr" onclick="toggleCard(\''+ex.id+'\')">';
         html += '<div class="ex-num" style="'+(isDone?'background:rgba(182,255,0,.18);color:var(--a)':'')+'">'+(isDone?'✓':(xi+1))+'</div>';
         html += '<div class="ex-inf"><div class="ex-nm" style="'+(isDone?'opacity:.45':'')+'">'+nm+'</div>';
-        html += '<div class="ex-mt"><span class="ex-sets">'+st+' · '+ex.focus+'</span>'+(ex.status==='substituted'?'<span class="ex-tag tg-y">SUBSTITUTO</span>':'<span class="ex-tag tg-g">OK</span>')+'</div></div>';
+        html += '<div class="ex-mt"><span class="ex-sets">'+st+' · '+ex.focus+'</span>'+(ex.status==='substituted'?'<span class="ex-tag tg-y">SUBSTITUTO</span>':'')+'</div></div>';
         html += '<div style="font-size:14px;flex-shrink:0">'+(isDone?'✅':'○')+'</div>';
         html += '<div class="ex-arr '+(isOpen?'open':'')+'" style="margin-left:4px">▼</div></div>';
 
         if(isOpen){
           html += '<div class="ex-body open">';
-          if(ex.status==='substituted') html += '<div class="ex-sub-r">Substituído: '+ex.sub.reason+'</div>';
+          if(ex.status==='substituted') html += '<div class="ex-sub-r">⚠ Substituído: '+ex.sub.reason+'</div>';
+          else html += '<div class="ex-ok-r">✓ OK — Nenhuma dor reportada para esse exercício</div>';
           if(info.muscles) html += '<div style="display:flex;align-items:flex-start;gap:8px;padding:10px 12px;background:rgba(182,255,0,.05);border-bottom:1px solid var(--br)"><span style="font-size:14px;flex-shrink:0">💪</span><div><div style="font-size:10px;color:var(--t3);text-transform:uppercase;margin-bottom:2px">Músculos</div><div style="font-size:12px;color:var(--a);font-weight:600">'+info.muscles+'</div></div></div>';
           if(info.steps&&info.steps.length){
             html += '<div style="padding:10px 12px;border-bottom:1px solid var(--br)"><div style="font-size:10px;color:var(--t3);text-transform:uppercase;margin-bottom:8px">Como fazer</div>';
