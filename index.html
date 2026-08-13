@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <meta name="apple-mobile-web-app-title" content="Leo Saude"/>
 <link rel="manifest" href="manifest.json"/>
-<title>DiLeVi Bem Estar ⭐ v12</title>
+<title>DiLeVi Bem Estar ⭐ v13</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700&display=swap" rel="stylesheet"/>
 <style>
 
@@ -39,7 +39,7 @@ html,body{height:100%;background:var(--bg);color:var(--t);font-family:'Syne',san
 .page.act{display:block}
 /* CARD */
 .card{background:var(--bg2);border:1px solid var(--br);border-radius:var(--r);padding:14px;margin-bottom:10px}
-.ct{font-size:11px;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.ct{font-size:13px;font-weight:700;color:var(--t);text-transform:none;letter-spacing:.01em;margin-bottom:10px;display:flex;align-items:center;gap:6px}
 /* METRICS */
 .m2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
 .m4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px;margin-bottom:10px}
@@ -208,7 +208,7 @@ html,body{height:100%;background:var(--bg);color:var(--t);font-family:'Syne',san
 <body>
 <div id="app">
   <div class="topbar">
-    <div><div class="tt">DiLeVi Bem Estar ⭐ <span style="font-size:9px;color:var(--t3);font-family:'DM Mono',monospace;background:var(--bg3);padding:1px 5px;border-radius:4px;border:1px solid var(--br)">v12</span></div><div class="td" id="topdate"></div></div>
+    <div><div class="tt">DiLeVi Bem Estar ⭐ <span style="font-size:9px;color:var(--t3);font-family:'DM Mono',monospace;background:var(--bg3);padding:1px 5px;border-radius:4px;border:1px solid var(--br)">v13</span></div><div class="td" id="topdate"></div></div>
     <div class="tlogo">L</div>
   </div>
   <div class="content" id="content"></div>
@@ -282,8 +282,12 @@ function savePrefs(p){ try{localStorage.setItem('dlv_prefs',JSON.stringify(p));}
 var __prefs = getPrefs();
 let prefCore = !!__prefs.core;
 let prefMaquina = !!__prefs.maquina;
-function toggleCorePref(){ prefCore=!prefCore; savePrefs({core:prefCore,maquina:prefMaquina}); renderTreino(); }
-function toggleMaquinaPref(){ prefMaquina=!prefMaquina; savePrefs({core:prefCore,maquina:prefMaquina}); renderTreino(); }
+let prefPainOpen = __prefs.painOpen!==undefined ? !!__prefs.painOpen : true;
+let prefConfigOpen = __prefs.configOpen!==undefined ? !!__prefs.configOpen : true;
+function currentPrefs(){ return {core:prefCore,maquina:prefMaquina,painOpen:prefPainOpen,configOpen:prefConfigOpen}; }
+function toggleCorePref(){ prefCore=!prefCore; savePrefs(currentPrefs()); renderTreino(); }
+function toggleMaquinaPref(){ prefMaquina=!prefMaquina; savePrefs(currentPrefs()); renderTreino(); }
+function toggleConfigPanel(){ prefConfigOpen=!prefConfigOpen; savePrefs(currentPrefs()); renderTreino(); }
 
 // ── CALENDAR STATE ──
 let calYear = new Date().getFullYear();
@@ -1173,7 +1177,7 @@ const EXERCISE_INFO = {
 
 
 // ── TREINO V6 STATE ──
-let painOpen = true;
+let painOpen = prefPainOpen;
 let treinoGerado = false;
 let flowStep = 0;      // 0=tipo, 1=config, 2=sessao
 let flowTipo = '';     // 'treino'|'mobilidade'|'aerobico'|'descanso'
@@ -1373,12 +1377,12 @@ function gerarTreino(){
   }
   renderTreino();
 }
-function resetFlow(){ flowStep=0; flowTipo=''; treinoGerado=false; painOpen=true; doneEx.clear(); openCards.clear(); customEx={}; refazerUI=null; refazerTargets=[]; refazerChoices={}; refazerIdx=0; renderTreino(); }
+function resetFlow(){ flowStep=0; flowTipo=''; treinoGerado=false; painOpen=prefPainOpen; doneEx.clear(); openCards.clear(); customEx={}; refazerUI=null; refazerTargets=[]; refazerChoices={}; refazerIdx=0; renderTreino(); }
 function togglePain(id){ if(activePain.has(id))activePain.delete(id);else activePain.add(id); renderTreino(); }
 function clearPain(){ activePain.clear(); renderTreino(); }
 function toggleCard(id){ if(openCards.has(id))openCards.delete(id);else openCards.add(id); renderTreino(); }
 function toggleDone(e,id){ e.stopPropagation(); if(doneEx.has(id)){doneEx.delete(id);}else{doneEx.add(id);openCards.delete(id);} renderTreino(); }
-function togglePainPanel(){ painOpen=!painOpen; renderTreino(); }
+function togglePainPanel(){ painOpen=!painOpen; prefPainOpen=painOpen; savePrefs(currentPrefs()); renderTreino(); }
 function selDayFn(i){ selDay=i; doneEx.clear(); openCards.clear(); treinoGerado=false; renderTreino(); }
 
 function concluirTreino(){
@@ -1560,20 +1564,28 @@ function rTreinoDin(){
       }
       html += '</div></div>';
 
-      // Toggle preferences (Core + Maquina) — treino only, persisted per device
+      // Collapsible "Configurar Detalhes do Treino" — wraps Core + Maquina toggles
       html += '<div class="card" style="margin-bottom:10px">';
-      html += '<div onclick="toggleCorePref()" style="display:flex;align-items:center;gap:12px;cursor:pointer;padding:4px 0;'+(prefCore?'':'margin-bottom:2px')+'">';
-      html += '<span style="font-size:20px">🔥</span>';
-      html += '<div style="flex:1"><div style="font-size:13px;font-weight:700;color:var(--t)">Incluir Core/Abdômen?</div><div style="font-size:10px;color:var(--t3)">Intercala core com o grupo principal</div></div>';
-      html += '<div style="width:42px;height:24px;border-radius:12px;background:'+(prefCore?'var(--a)':'var(--bg4)')+';position:relative;flex-shrink:0;transition:background .2s"><div style="width:18px;height:18px;border-radius:50%;background:#0d0a0a;position:absolute;top:3px;left:'+(prefCore?'21px':'3px')+';transition:left .2s"></div></div>';
-      html += '</div></div>';
+      html += '<div onclick="toggleConfigPanel()" style="display:flex;justify-content:space-between;align-items:center;cursor:pointer;user-select:none">';
+      html += '<div class="ct" style="margin-bottom:0">⚙️ Configurar Detalhes do Treino</div>';
+      html += '<span style="color:var(--t3);font-size:13px;display:inline-block;transform:rotate('+(prefConfigOpen?'180':'0')+'deg);transition:transform .2s">▼</span>';
+      html += '</div>';
+      if(prefConfigOpen){
+        html += '<div style="margin-top:14px">';
+        html += '<div onclick="toggleCorePref()" style="display:flex;align-items:center;gap:12px;cursor:pointer;padding:8px 0;border-bottom:1px solid var(--br)">';
+        html += '<span style="font-size:20px">🔥</span>';
+        html += '<div style="flex:1"><div style="font-size:13px;font-weight:700;color:var(--t)">Incluir Core/Abdômen?</div><div style="font-size:10px;color:var(--t3)">Intercala core com o grupo principal</div></div>';
+        html += '<div style="width:42px;height:24px;border-radius:12px;background:'+(prefCore?'var(--a)':'var(--bg4)')+';position:relative;flex-shrink:0;transition:background .2s"><div style="width:18px;height:18px;border-radius:50%;background:#0d0a0a;position:absolute;top:3px;left:'+(prefCore?'21px':'3px')+';transition:left .2s"></div></div>';
+        html += '</div>';
 
-      html += '<div class="card" style="margin-bottom:10px">';
-      html += '<div onclick="toggleMaquinaPref()" style="display:flex;align-items:center;gap:12px;cursor:pointer;padding:4px 0">';
-      html += '<span style="font-size:20px">🏋️</span>';
-      html += '<div style="flex:1"><div style="font-size:13px;font-weight:700;color:var(--t)">Prefiro usar máquinas</div><div style="font-size:10px;color:var(--t3)">Troca automática por versão de máquina/cabo</div></div>';
-      html += '<div style="width:42px;height:24px;border-radius:12px;background:'+(prefMaquina?'var(--a)':'var(--bg4)')+';position:relative;flex-shrink:0;transition:background .2s"><div style="width:18px;height:18px;border-radius:50%;background:#0d0a0a;position:absolute;top:3px;left:'+(prefMaquina?'21px':'3px')+';transition:left .2s"></div></div>';
-      html += '</div></div>';
+        html += '<div onclick="toggleMaquinaPref()" style="display:flex;align-items:center;gap:12px;cursor:pointer;padding:8px 0">';
+        html += '<span style="font-size:20px">🏋️</span>';
+        html += '<div style="flex:1"><div style="font-size:13px;font-weight:700;color:var(--t)">Prefiro usar máquinas</div><div style="font-size:10px;color:var(--t3)">Troca automática por versão de máquina/cabo</div></div>';
+        html += '<div style="width:42px;height:24px;border-radius:12px;background:'+(prefMaquina?'var(--a)':'var(--bg4)')+';position:relative;flex-shrink:0;transition:background .2s"><div style="width:18px;height:18px;border-radius:50%;background:#0d0a0a;position:absolute;top:3px;left:'+(prefMaquina?'21px':'3px')+';transition:left .2s"></div></div>';
+        html += '</div>';
+        html += '</div>';
+      }
+      html += '</div>';
     }
 
     // Aerobico modality
